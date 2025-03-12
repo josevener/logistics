@@ -43,11 +43,12 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('reports/admin', [ReportController::class, 'index'])->name('report.index');
-    Route::get('reports/vendor', [ReportController::class, 'vendor'])->name('report.vendor');
+    Route::get('reports/admin', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('reports/vendor', [ReportController::class, 'vendor'])->name('reports.vendor');
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/contracts/create', [ContractController::class, 'create'])->name('contracts.create');
     Route::get('/contracts', [ContractController::class, 'index'])->name('contracts.index');
     Route::get('/contracts/admin', [ContractController::class, 'admin'])->name('contracts.admin');
 
@@ -65,11 +66,15 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/proposals', [ProposalController::class, 'index'])->name('proposals.index');
     Route::get('/proposals/admin', [ProposalController::class, 'admin'])->name('proposals.admin');
+    Route::delete('/proposals/{id}/edit', [ProposalController::class, 'edit'])->name('proposals.edit');
     Route::post('/proposals', [ProposalController::class, 'store'])->name('proposals.store');
+    Route::delete('/proposals/{id}', [ProposalController::class, 'destroy'])->name('proposals.destroy');
     Route::get('/proposals/approved', [ProposalController::class, 'approved'])->name('proposals.approved');
     Route::get('/proposals/preview/{id}', [ProposalController::class, 'preview'])->name('proposals.preview');
     Route::post('/proposals/{id}/approve', [ProposalController::class, 'approve'])->name('proposals.approve');
     Route::post('/proposals/{id}/decline', [ProposalController::class, 'decline'])->name('proposals.decline');
+
+    Route::get('/proposals/generate', [ProposalController::class, 'generateCustomContract'])->name('proposals.generate');
 });
 
 Route::middleware('auth')->group(function () {

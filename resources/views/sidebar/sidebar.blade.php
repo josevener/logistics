@@ -3,8 +3,8 @@
 
     @php
         $isAdmin = Auth::check() && Auth::user()->role === 'Admin';
-        $reportRoute = $isAdmin ? route('report.index') : route('report.vendor');
-        $isActive = Route::is('report.index') || Route::is('report.vendor');
+        $reportRoute = $isAdmin ? route('reports.index') : route('reports.vendor');
+        $isActive = Route::is('reports.index') || Route::is('reports.vendor');
     @endphp
 
     <!-- Toggle Button -->
@@ -95,9 +95,9 @@
                     <span class="text-sm md:text-base">Billing and Invoicing</span>
                 </div>
             </a>
-            <a href="{{ route('report.index') }}">
+            <a href="{{ route('reports.index') }}">
                 <div
-                    class="px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-blue-800 {{ Route::currentRouteName() === 'report.index' ? 'bg-blue-100 text-blue-800 hover:text-white' : '' }}">
+                    class="px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-blue-800 {{ Route::currentRouteName() === 'reports.index' ? 'bg-blue-100 text-blue-800 hover:text-white' : '' }}">
                     <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" />
@@ -164,6 +164,21 @@
                             stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     <span class="text-xs sm:text-sm md:text-base font-medium truncate">Compliance & Training</span>
+                </div>
+            </a>
+            <a href="{{ route('reports.vendor') }}">
+                <div
+                    class="px-3 sm:px-4 py-2 flex items-center gap-2 sm:gap-3 cursor-pointer hover:bg-blue-800 transition-colors {{ Route::currentRouteName() === 'reports.vendor' ? 'bg-blue-100 text-blue-800 hover:text-white' : '' }}">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor">
+                        <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <polyline points="7 10 12 15 17 10" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <line x1="12" y1="15" x2="12" y2="3" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span class="text-xs sm:text-sm md:text-base font-medium truncate">Write a review</span>
                 </div>
             </a>
         @endif

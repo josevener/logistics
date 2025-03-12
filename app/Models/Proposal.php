@@ -8,14 +8,18 @@ class Proposal extends Model
 {
     protected $fillable = [
         'user_id',
-        'company_info',
-        'contact_details',
-        'purpose',
-        'documentation_path',
-        'status',
+        'proposal_title',
+        'vendor_name',
+        'email',
+        'product_service_type',
+        'pricing',
+        'delivery_timeline',
+        'valid_until',
+        'ai_score',
+        'is_fraud',
+        'notes',
         'admin_status',
-        'actioned_by',
-        'approved_by',
+        'actioned_by'
     ];
 
     public function user()

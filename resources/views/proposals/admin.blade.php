@@ -42,56 +42,74 @@
                         </button>
                     </form>
 
-                    <!-- Table -->
                     <div class="overflow-x-auto">
                         <table class="w-full border-collapse">
                             <thead>
                                 <tr class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
-                                    <th
-                                        class="hidden px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        File</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        Vendor Name</th>
+                                        Rank
+                                    </th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        Email</th>
+                                        Title
+                                    </th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        Date Created</th>
+                                        Email
+                                    </th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        Purpose</th>
+                                        Type
+                                    </th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        AI Analysis</th>
+                                        Pricing
+                                    </th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        Admin Status</th>
+                                        Timeline
+                                    </th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        Performed By</th>
+                                        Valid Until
+                                    </th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        Actions</th>
+                                        AI Score
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
+                                        Status
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($proposals as $proposal)
+                                @forelse ($proposals as $index => $proposal)
                                     <tr class="border-b dark:border-gray-700 text-gray-600 dark:text-gray-300">
-                                        <td class="hidden px-4 py-3 text-sm">
-                                            {{ basename($proposal->documentation_path) }}</td>
-                                        <td class="px-4 py-3 text-sm">{{ $proposal->user->name }}</td>
+                                        <td
+                                            class="px-4 py-3 font-medium {{ $index === 0 ? 'text-green-700 dark:text-green-300' : '' }}">
+                                            {{ $index + 1 }}
+                                            {{ $index === 0 ? ' (Best)' : '' }}
+                                        </td>
+                                        <td class="px-4 py-3 text-sm">{{ $proposal->proposal_title }}</td>
                                         <td class="px-4 py-3 text-sm">{{ $proposal->user->email }}</td>
-                                        <td class="px-4 py-3 text-sm">{{ $proposal->created_at->format('Y-m-d') }}</td>
-                                        <td class="px-4 py-3 text-sm">{{ $proposal->purpose }}</td>
+                                        <td class="px-4 py-3 text-sm">{{ $proposal->product_service_type }}</td>
+                                        <td class="px-4 py-3 text-sm">{{ $proposal->pricing }}</td>
+                                        <td class="px-4 py-3 text-sm">{{ $proposal->delivery_timeline }}</td>
+                                        <td class="px-4 py-3 text-sm">
+                                            {{ \Carbon\Carbon::parse($proposal->valid_until)->format('F d, Y') }}
+                                        </td>
                                         <td class="px-4 py-3 text-sm">
                                             @php
-                                                $aiStatusClasses = match ($proposal->status) {
-                                                    'approved' => 'bg-green-100 text-green-600',
-                                                    'flagged' => 'bg-orange-100 text-orange-600',
-                                                    'pending' => 'bg-yellow-100 text-yellow-600',
-                                                    'error' => 'bg-red-100 text-red-600',
-                                                    default => 'bg-gray-100 text-gray-600',
+                                                $scoreClasses = match (true) {
+                                                    $proposal->ai_score >= 80
+                                                        => 'bg-green-200 text-green-800', // High Score
+                                                    $proposal->ai_score >= 50
+                                                        => 'bg-yellow-200 text-yellow-800', // Medium Score
+                                                    default => 'bg-red-200 text-red-800', // Low Score
                                                 };
                                             @endphp
                                             <span
-                                                class="px-2 py-1 rounded-full text-xs font-medium {{ $aiStatusClasses }}">
-                                                {{ ucfirst($proposal->status) }}
+                                                class="px-2 py-1 rounded-full text-xs font-medium {{ $scoreClasses }}">
+                                                {{ $proposal->ai_score }}/100
                                             </span>
                                         </td>
+
                                         <td class="px-4 py-3 text-sm">
                                             @php
                                                 $adminStatusClasses = match ($proposal->admin_status ?? 'pending') {
@@ -106,7 +124,6 @@
                                                 {{ ucfirst($proposal->admin_status ?? 'Pending') }}
                                             </span>
                                         </td>
-                                        <td class="px-4 py-3 text-sm">{{ $proposal->actioned_by ?? 'N/A' }}</td>
                                         <td class="px-4 py-3 text-sm">
                                             <button data-id="{{ $proposal->id }}"
                                                 class="viewProposal bg-blue-500 text-white px-3 py-1 rounded-md text-xs">

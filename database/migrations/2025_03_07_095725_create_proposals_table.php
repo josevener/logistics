@@ -13,15 +13,19 @@ return new class extends Migration
     {
         Schema::create('proposals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('company_info');
-            $table->string('contact_details');
-            $table->string('purpose');
-            $table->string('documentation_path');
-            $table->string('status')->default('pending');
-            $table->text('fraud_notes')->nullable(); // AI analysis results
-            $table->string('admin_status')->default('pending');
-            $table->tinyInteger('approved_by')->default(0);
+            $table->foreignId('user_id')->constrained();
+            $table->string('proposal_title');
+            $table->string('vendor_name')->nullable(); // Add this
+            $table->string('email')->nullable(); // Add this
+            $table->string('product_service_type')->nullable();
+            $table->text('purpose')->nullable();
+            $table->string('pricing')->nullable();
+            $table->string('delivery_timeline')->nullable();
+            $table->date('valid_until')->nullable();
+            $table->float('ai_score')->nullable();
+            $table->boolean('is_fraud')->nullable(); // Add this
+            $table->text('notes')->nullable(); // Add this (changed from JSON to text)
+            $table->string('admin_status')->nullable();
             $table->string('actioned_by')->nullable();
             $table->timestamps();
         });

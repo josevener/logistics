@@ -12,12 +12,12 @@ class ReportController extends Controller
      */
     public function vendor()
     {
-        return view('report.vendor');
+        return view('reports.vendor');
     }
 
     public function index()
     {
-        return view('report.index');
+        return view('reports.index');
     }
 
     /**

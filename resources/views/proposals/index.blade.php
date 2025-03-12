@@ -1,216 +1,474 @@
 <x-app-layout>
-    <div class="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-6 bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div
+        class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 min-h-screen flex flex-col">
         <!-- Header -->
         @include('navigation.header')
 
-        <!-- Alerts -->
-        <div class="space-y-4 mb-6">
-            <div id="alert_box_success" role="alert"
-                class="hidden w-full sm:w-1/3 bg-green-700 border-l-4 border-green-500 text-white p-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 cursor-pointer">
-                <div class="flex items-center">
-                    <svg class="h-5 w-5 flex-shrink-0 mr-2 text-green-300" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <p id="success_alert_message" class="text-sm font-semibold">Success - Everything went smoothly!</p>
+        <!-- Main Content (Fixed Height) -->
+        <div class="flex-1 flex flex-col space-y-8 overflow-hidden">
+            <!-- Create Bid Card (Fixed) -->
+            <div
+                class="w-full bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">Submit a New Bid</h2>
+                    <button id="openProposalModal"
+                        class="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 focus:ring-4 focus:ring-blue-300 focus:outline-none transition-all dark:from-blue-500 dark:to-blue-600 dark:hover:from-blue-600 dark:hover:to-blue-700">
+                        Add Bid
+                    </button>
                 </div>
+                <p class="text-gray-600 dark:text-gray-300">Submit a competitive bid for a service or product.</p>
             </div>
-            <div id="alert_box_warning" role="alert"
-                class="hidden w-full sm:w-1/3 bg-yellow-700 border-l-4 border-yellow-500 text-white p-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 cursor-pointer">
-                <div class="flex items-center">
-                    <svg class="h-5 w-5 flex-shrink-0 mr-2 text-yellow-300" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <p class="text-sm font-semibold">Warning - You cannot set a previous date.</p>
+
+            <!-- Submitted Bids Section (Fixed Height with Scrollable Table) -->
+            <div
+                class="w-full bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 flex-1 flex flex-col">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Submitted Vendor Bids</h2>
+                <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+                                <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
+                                    Title
+                                </th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
+                                    Email
+                                </th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
+                                    Type
+                                </th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
+                                    Pricing
+                                </th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
+                                    Timeline
+                                </th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
+                                    Valid Until
+                                </th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
+                                    Status
+                                </th>
+                                <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($proposals as $proposal)
+                                <tr class="border-b dark:border-gray-700 text-gray-600 dark:text-gray-300">
+                                    <td class="px-4 py-3 text-sm">{{ $proposal->proposal_title }}</td>
+                                    <td class="px-4 py-3 text-sm">{{ $proposal->user->email }}</td>
+                                    <td class="px-4 py-3 text-sm">{{ $proposal->product_service_type }}</td>
+                                    <td class="px-4 py-3 text-sm">{{ $proposal->pricing }}</td>
+                                    <td class="px-4 py-3 text-sm">{{ $proposal->delivery_timeline }}</td>
+                                    <td class="px-4 py-3 text-sm">
+                                        {{ \Carbon\Carbon::parse($proposal->valid_until)->format('F d, Y') }}
+                                    </td>
+                                    <td class="px-4 py-3 text-sm">
+                                        @php
+                                            $adminStatusClasses = match ($proposal->admin_status ?? 'pending') {
+                                                'approved' => 'bg-green-200 text-green-800',
+                                                'rejected' => 'bg-red-200 text-red-800',
+                                                'pending' => 'bg-yellow-100 text-yellow-600',
+                                                default => 'bg-gray-100 text-gray-600',
+                                            };
+                                        @endphp
+                                        <span
+                                            class="px-2 py-1 rounded-full text-xs font-medium {{ $adminStatusClasses }}">
+                                            {{ ucfirst($proposal->admin_status ?? 'Pending') }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-sm">
+                                        <button data-id="{{ $proposal->id }}"
+                                            class="viewProposal bg-blue-500 text-white px-3 py-1 rounded-md text-xs">
+                                            View
+                                        </button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="9"
+                                        class="px-4 py-3 text-center text-sm text-gray-500 dark:text-gray-400">
+                                        No proposals found.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-            <div id="alert_box_error" role="alert"
-                class="hidden w-full sm:w-1/3 bg-red-700 border-l-4 border-red-500 text-white p-4 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105 cursor-pointer">
-                <div class="flex items-center">
-                    <svg class="h-5 w-5 flex-shrink-0 mr-2 text-red-300" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                    <p class="text-sm font-semibold">Error - Something went wrong.</p>
+
+                <!-- Pagination -->
+                <div class="mt-6 flex justify-between items-center">
+                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                        Showing {{ $proposals->firstItem() }} to {{ $proposals->lastItem() }} of
+                        {{ $proposals->total() }} proposals
+                    </div>
+                    <div class="flex gap-2">
+                        @if ($proposals->onFirstPage())
+                            <span
+                                class="px-3 py-1 bg-gray-200 text-gray-500 rounded-md cursor-not-allowed">Previous</span>
+                        @else
+                            <a href="{{ $proposals->previousPageUrl() }}"
+                                class="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">Previous</a>
+                        @endif
+                        @foreach ($proposals->links()->elements[0] as $page => $url)
+                            @if ($page == $proposals->currentPage())
+                                <span class="px-3 py-1 bg-blue-600 text-white rounded-md">{{ $page }}</span>
+                            @else
+                                <a href="{{ $url }}"
+                                    class="px-3 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">{{ $page }}</a>
+                            @endif
+                        @endforeach
+                        @if ($proposals->hasMorePages())
+                            <a href="{{ $proposals->nextPageUrl() }}"
+                                class="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">Next</a>
+                        @else
+                            <span class="px-3 py-1 bg-gray-200 text-gray-500 rounded-md cursor-not-allowed">Next</span>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Main Grid Content -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Register Company Section -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
-                <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">Register Your Company</h2>
-                <form class="space-y-5" action="{{ route('proposals.store') }}" method="POST"
-                    enctype="multipart/form-data">
-                    @csrf
-                    <div>
-                        <label for="company_info" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Company Information
-                        </label>
-                        <input type="text" id="company_info" name="company_info" value="{{ old('company_info') }}"
-                            @class([
-                                'mt-1 block w-full rounded-md border py-2 px-3 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400',
-                                'border-gray-300 dark:border-gray-600' => !$errors->has('company_info'),
-                                'border-red-500' => $errors->has('company_info'),
-                            ]) required placeholder="Enter company name and details" />
-                        @error('company_info')
-                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div>
-                        <label for="contact_details" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Contact Details
-                        </label>
-                        <input type="text" id="contact_details" name="contact_details"
-                            value="{{ old('contact_details') }}" @class([
-                                'mt-1 block w-full rounded-md border py-2 px-3 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400',
-                                'border-gray-300 dark:border-gray-600' => !$errors->has('contact_details'),
-                                'border-red-500' => $errors->has('contact_details'),
-                            ]) required
-                            placeholder="e.g., email or phone" />
-                        @error('contact_details')
-                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div>
-                        <label for="documentation" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Documentation
-                        </label>
-                        <input type="file" id="documentation" name="documentation" @class([
-                            'mt-1 block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-700 dark:file:text-gray-200',
-                            'border-gray-300 dark:border-gray-600' => !$errors->has('documentation'),
-                            'border-red-500' => $errors->has('documentation'),
-                        ])
-                            accept=".pdf,.doc,.docx" required />
-                        @error('documentation')
-                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <button type="submit"
-                        class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors dark:bg-blue-500 dark:hover:bg-blue-600">
-                        Register Company
+        <!-- Bid Submission Modal -->
+        <div id="proposalModal"
+            class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-all duration-300 ease-in-out"
+            role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+            <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col transform scale-95 transition-transform duration-200 ease-out"
+                aria-modal="true">
+                <header
+                    class="px-4 py-3 flex justify-between items-center border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                    <h2 id="modalTitle" class="text-xl font-semibold text-gray-900 dark:text-white">Submit New Bid</h2>
+                    <button id="closeProposalModal"
+                        class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full w-8 h-8 flex items-center justify-center transition-colors duration-150"
+                        aria-label="Close modal">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <title>Close</title>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
                     </button>
+                </header>
+                <form id="bidForm" class="p-4 flex-1" method="POST" action="{{ route('proposals.store') }}"
+                    aria-label="Bid Submission Form">
+                    @csrf
+                    <div class="space-y-4">
+                        <!-- Vendor Details -->
+                        <div class="space-y-3">
+                            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                Vendor Details</h3>
+                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-3">
+                                <div>
+                                    <label for="vendor_name"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Vendor Name <span class="text-red-500 text-xs">*</span>
+                                    </label>
+                                    <input type="text" name="vendor_name" id="vendor_name"
+                                        value="{{ old('vendor_name') }}"
+                                        class="mt-1 block w-full rounded-md border py-2 px-3 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150"
+                                        placeholder="e.g., Acme Transport" required>
+                                    @error('vendor_name')
+                                        <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label for="email"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Email <span class="text-red-500 text-xs">*</span>
+                                    </label>
+                                    <input type="email" name="email" id="email"
+                                        value="{{ old('email', auth()->user()->email) }}"
+                                        class="mt-1 block w-full rounded-md border py-2 px-3 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150"
+                                        placeholder="e.g., user@domain.com" required>
+                                    @error('email')
+                                        <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bid Details -->
+                        <div class="space-y-3">
+                            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">Bid
+                                Details</h3>
+                            <div class="space-y-4">
+                                <!-- Row 1 -->
+                                <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-3">
+                                    <div>
+                                        <label for="proposal_title"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Bid Title <span class="text-red-500 text-xs">*</span>
+                                        </label>
+                                        <input type="text" name="proposal_title" id="proposal_title"
+                                            value="{{ old('proposal_title') }}"
+                                            class="mt-1 block w-full rounded-md border py-2 px-3 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150"
+                                            placeholder="e.g., Bus Transport Bid" required>
+                                        @error('proposal_title')
+                                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <div>
+                                        <label for="product_service_type"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Type
+                                        </label>
+                                        <select name="product_service_type" id="product_service_type"
+                                            class="mt-1 block w-full rounded-md border py-2 px-3 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150">
+                                            <option value="" disabled
+                                                {{ old('product_service_type') ? '' : 'selected' }}>Select type
+                                            </option>
+                                            <option value="service"
+                                                {{ old('product_service_type') === 'service' ? 'selected' : '' }}>
+                                                Service</option>
+                                            <option value="product"
+                                                {{ old('product_service_type') === 'product' ? 'selected' : '' }}>
+                                                Product</option>
+                                            <option value="both"
+                                                {{ old('product_service_type') === 'both' ? 'selected' : '' }}>Both
+                                            </option>
+                                        </select>
+                                        @error('product_service_type')
+                                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <div>
+                                        <label for="pricing"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Pricing (₱)
+                                        </label>
+                                        <div class="relative mt-1">
+                                            <span
+                                                class="absolute inset-y-0 left-0 pl-2 flex items-center text-gray-500 dark:text-gray-400 text-sm">₱</span>
+                                            <input type="number" name="pricing" id="pricing"
+                                                value="{{ old('pricing') }}" step="0.01" min="0"
+                                                class="mt-1 block w-full pl-6 rounded-md border py-2 px-3 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150"
+                                                placeholder="50000">
+                                        </div>
+                                        @error('pricing')
+                                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Row 2 -->
+                                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-3">
+                                    <div>
+                                        <label for="delivery_timeline"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Delivery Timeline
+                                        </label>
+                                        <input type="date" name="delivery_timeline" id="delivery_timeline"
+                                            value="{{ old('delivery_timeline') }}"
+                                            class="mt-1 block w-full rounded-md border py-2 px-3 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150"
+                                            min="{{ \Carbon\Carbon::today()->format('Y-m-d') }}">
+                                        @error('delivery_timeline')
+                                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <div>
+                                        <label for="valid_until"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Valid Until
+                                        </label>
+                                        <input type="date" name="valid_until" id="valid_until"
+                                            value="{{ old('valid_until') }}"
+                                            class="mt-1 block w-full rounded-md border py-2 px-3 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150"
+                                            min="{{ \Carbon\Carbon::today()->format('Y-m-d') }}">
+                                        @error('valid_until')
+                                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Row 3 (Description) -->
+                                <div>
+                                    <label for="description"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Description
+                                    </label>
+                                    <textarea name="description" id="description" rows="3"
+                                        class="mt-1 block w-full rounded-md border py-2 px-3 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150 resize-y"
+                                        placeholder="e.g., Daily bus transport with 40-seat buses, including maintenance and fuel costs.">{{ old('description') }}</textarea>
+                                    @error('description')
+                                        <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer
+                        class="px-4 py-3 bg-gray-50 dark:bg-gray-800 flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700">
+                        <button type="reset" id="cancelBtn"
+                            class="px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600 focus:ring-2 focus:ring-blue-500 transition-all duration-150">
+                            Cancel
+                        </button>
+                        <button type="submit" id="submitBtn"
+                            class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-all duration-150 flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span id="submitText">Submit Bid</span>
+                            <svg id="loadingSpinner" class="hidden w-4 h-4 ml-2 animate-spin" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <title>Loading</title>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 12a8 8 0 018-8v8h8a8 8 0 01-8 8v-8H4z" />
+                            </svg>
+                        </button>
+                    </footer>
                 </form>
             </div>
+        </div>
 
-            <!-- Proposal Submitted Section -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
-                <h2 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100">
-                    <p class="hover:underline">
-                        Proposal Submitted >
-                    </p>
-                </h2>
-                <div class="space-y-6">
-                    @forelse ($proposals as $proposal)
-                        <div
-                            class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-700">
-                            <div class="flex justify-between items-start">
-                                <h3 class="font-bold text-xl text-gray-800 dark:text-gray-100 mb-2">
-                                    {{ $proposal->user->name }}
-                                </h3>
-                                @php
-                                    $statusClasses =
-                                        $proposal->admin_status === 'approved'
-                                            ? 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300'
-                                            : ($proposal->admin_status === 'rejected'
-                                                ? 'bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300'
-                                                : 'bg-yellow-100 text-yellow-600 dark:bg-yellow-600 dark:text-yellow-200');
-                                    $statusText = ucfirst($proposal->admin_status ?? 'pending');
-                                @endphp
-                                <span class="px-3 py-1 {{ $statusClasses }} rounded-full text-sm font-medium">
-                                    {{ $statusText }}
-                                </span>
-                            </div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                                <p>Email: {{ $proposal->user->email }}</p>
-                                <p>Date: {{ $proposal->created_at->format('Y-m-d (l)') }}</p>
-                                <p>Time: {{ $proposal->created_at->format('H:i') }}</p>
-                                <p class="mt-2">Purpose: {{ $proposal->purpose }}</p>
-                                <p class="mt-2">
-                                    @if ($proposal->admin_status === 'approved')
-                                        Approved by: {{ $proposal->actioned_by ?? 'N/A' }}
-                                    @elseif ($proposal->status === 'rejected')
-                                        Rejected by: {{ $proposal->actioned_by ?? 'N/A' }}
-                                    @endif
-                                </p>
-                                <p class="mt-2">
-                                    <a href="{{ route('proposals.preview', $proposal->id) }}" target="_blank"
-                                        class="text-blue-600 hover:underline dark:text-blue-400">
-                                        View File
-                                    </a>
-                                </p>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="text-center text-gray-500 dark:text-gray-400 py-6">
-                            No proposals submitted yet.
-                        </div>
-                    @endforelse
+        <!-- Delete Confirmation Modal -->
+        <div id="delete-modal"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-96">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Confirm Deletion</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">Are you sure you want to delete this bid?</p>
+                <div class="flex justify-end gap-2">
+                    <button onclick="closeDeleteModal()"
+                        class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 rounded hover:bg-gray-400 dark:hover:bg-gray-500">Cancel</button>
+                    <form id="delete-form" method="POST" action="">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit"
+                            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
+                    </form>
                 </div>
-                <!-- Pagination -->
-                @if ($proposals->hasPages())
-                    <div class="mt-6 flex justify-between items-center">
-                        <div class="text-sm text-gray-600 dark:text-gray-400">
-                            Showing {{ $proposals->firstItem() }} to {{ $proposals->lastItem() }} of
-                            {{ $proposals->total() }} proposals
-                        </div>
-                        <div class="flex gap-2">
-                            {{ $proposals->links('pagination::tailwind') }}
-                        </div>
-                    </div>
-                @endif
             </div>
         </div>
     </div>
 
-    <!-- Alert Script -->
+    <!-- Scripts -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            function showAlert(type, message = null) {
-                const alerts = {
-                    success: document.getElementById('alert_box_success'),
-                    warning: document.getElementById('alert_box_warning'),
-                    error: document.getElementById('alert_box_error')
-                };
-                Object.values(alerts).forEach(alert => {
-                    alert.classList.add('hidden');
-                    alert.classList.remove('opacity-100', 'translate-y-0');
-                });
-                const targetAlert = alerts[type];
-                if (message && type === 'success') {
-                    document.getElementById('success_alert_message').textContent = message;
-                }
-                targetAlert.classList.remove('hidden');
-                targetAlert.classList.add('opacity-100', 'translate-y-0');
-                targetAlert.addEventListener('click', () => {
-                    targetAlert.classList.remove('opacity-100');
-                    targetAlert.classList.add('opacity-0', 'translate-y-4');
-                    setTimeout(() => targetAlert.classList.add('hidden'), 300);
-                }, {
-                    once: true
-                });
-                setTimeout(() => {
-                    targetAlert.classList.remove('opacity-100');
-                    targetAlert.classList.add('opacity-0', 'translate-y-4');
-                    setTimeout(() => targetAlert.classList.add('hidden'), 300);
-                }, 5000);
+            const proposalModal = document.getElementById('proposalModal');
+            const openModalBtn = document.getElementById('openProposalModal');
+            const closeModalBtn = document.getElementById('closeProposalModal');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const form = document.getElementById('bidForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+
+            // Open Proposal Modal
+            openModalBtn.addEventListener('click', () => {
+                proposalModal.classList.remove('opacity-0', 'pointer-events-none');
+                proposalModal.classList.add('opacity-100', 'pointer-events-auto');
+            });
+
+            // Close Proposal Modal
+            function closeProposalModal() {
+                proposalModal.classList.remove('opacity-100', 'pointer-events-auto');
+                proposalModal.classList.add('opacity-0', 'pointer-events-none');
             }
+            closeModalBtn.addEventListener('click', closeProposalModal);
+            cancelBtn.addEventListener('click', closeProposalModal);
+            proposalModal.addEventListener('click', (e) => {
+                if (e.target === proposalModal) closeProposalModal();
+            });
 
-            @if (session('message'))
-                setTimeout(() => showAlert('success', '{{ session('message') }}'), 100);
-            @endif
+            // Form Submission
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                submitBtn.disabled = true;
+                submitText.textContent = 'Submitting...';
+                loadingSpinner.classList.remove('hidden');
 
-            document.querySelectorAll('[role="alert"]').forEach(alert => {
-                alert.addEventListener('click', () => {
-                    alert.classList.remove('opacity-100');
-                    alert.classList.add('opacity-0', 'translate-y-4');
-                    setTimeout(() => alert.classList.add('hidden'), 300);
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form),
+                        headers: {
+                            'Accept': 'application/json'
+                        },
+                    });
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        closeProposalModal();
+                        setTimeout(() => location.reload(), 500);
+                        alert(result.message);
+                    } else {
+                        console.error('Submission failed:', result.error);
+                        alert('Error: ' + (result.error || 'Unknown server error'));
+                    }
+                } catch (error) {
+                    console.error('Network error:', error);
+                    alert('Network error: ' + error.message);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitText.textContent = 'Submit Bid';
+                    loadingSpinner.classList.add('hidden');
+                }
+            });
+
+            // Date Validation
+            const validUntilInput = document.getElementById('valid_until');
+            const today = new Date().toISOString().split('T')[0];
+            validUntilInput.setAttribute('min', today);
+            validUntilInput.addEventListener('change', function() {
+                if (this.value < today) {
+                    this.value = today;
+                    alert('Valid until date cannot be in the past.');
+                }
+            });
+
+            // Dropdown and Delete Modal Functions
+            window.toggleDropdown = function(id) {
+                const dropdowns = document.querySelectorAll('[id^="dropdown-"]');
+                dropdowns.forEach(dropdown => {
+                    if (dropdown.id !== `dropdown-${id}`) dropdown.classList.add('hidden');
                 });
+                document.getElementById(`dropdown-${id}`).classList.toggle('hidden');
+            };
+
+            window.openDeleteModal = function(id) {
+                const modal = document.getElementById('delete-modal');
+                const form = document.getElementById('delete-form');
+                form.action = `{{ url('proposals') }}/${id}`;
+                modal.classList.remove('hidden');
+            };
+
+            window.closeDeleteModal = function() {
+                document.getElementById('delete-modal').classList.add('hidden');
+            };
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', (e) => {
+                const dropdowns = document.querySelectorAll('[id^="dropdown-"]');
+                if (!e.target.closest('.relative')) {
+                    dropdowns.forEach(dropdown => dropdown.classList.add('hidden'));
+                }
             });
         });
     </script>
+
+    <!-- Custom Styles -->
+    <style>
+        tbody::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        tbody::-webkit-scrollbar-thumb {
+            background-color: #6b7280;
+            /* Gray-500 */
+            border-radius: 4px;
+        }
+
+        tbody::-webkit-scrollbar-track {
+            background-color: #e5e7eb;
+            /* Gray-200 */
+        }
+
+        .dark tbody::-webkit-scrollbar-thumb {
+            background-color: #9ca3af;
+            /* Gray-400 */
+        }
+
+        .dark tbody::-webkit-scrollbar-track {
+            background-color: #374151;
+            /* Gray-700 */
+        }
+    </style>
 </x-app-layout>
