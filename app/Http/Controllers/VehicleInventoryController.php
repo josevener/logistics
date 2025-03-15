@@ -5,15 +5,31 @@ namespace App\Http\Controllers;
 use App\Models\VehicleInventory;
 use App\Http\Requests\StoreVehicleInventoryRequest;
 use App\Http\Requests\UpdateVehicleInventoryRequest;
+use Illuminate\Http\Client\Request;
 
 class VehicleInventoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('shipments.index');
+        $filter = $request->query('filter', 'all');
+        $sort = $request->query('sort', 'created_at-desc');
+
+        [$sortField, $sortDirection] = explode('-', $sort);
+
+        $query = VehicleInventory::query();
+
+        if ($filter !== 'all') {
+            $query->where('status', $filter);
+        }
+
+        $query->orderBy($sortField, $sortDirection);
+
+        $vehicles = $query->paginate(12);
+
+        return view('vehicles.index', compact('vehicles'));
     }
 
     /**
@@ -35,9 +51,15 @@ class VehicleInventoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(VehicleInventory $vehicleInventory)
+    public function show($id)
     {
-        //
+        $vehicle = VehicleInventory::findOrFail($id);
+
+        return response()->json([
+            'available_parts' => $vehicle->available_parts,
+            'maintenance_record' => $vehicle->maintenance_record,
+            'fuel_consumption' => $vehicle->fuel_consumption,
+        ]);
     }
 
     /**

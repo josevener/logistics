@@ -191,8 +191,9 @@
 
                         <!-- Bid Details -->
                         <div class="space-y-3">
-                            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">Bid
-                                Details</h3>
+                            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                Bid Details
+                            </h3>
                             <div class="space-y-4">
                                 <!-- Row 1 -->
                                 <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-3">

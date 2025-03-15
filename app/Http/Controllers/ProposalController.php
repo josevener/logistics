@@ -56,24 +56,6 @@ class ProposalController extends Controller
 
         return view('proposals.admin', compact('proposals'));
     }
-
-    // public function index()
-    // {
-    //     $proposals = Proposal::with('user')->latest()->get();
-    //     $scoredProposals = $proposals->map(function ($proposal) {
-    //         $score = 0;
-    //         // Custom AI scoring logic (e.g., call an AI service)
-    //         if ($proposal->pricing) $score += (1000 - min(floatval(str_replace('$', '', $proposal->pricing)), 1000)) / 10;
-    //         if ($proposal->delivery_timeline) $score += (str_contains(strtolower($proposal->delivery_timeline), 'march') ? 30 : 20);
-    //         if ($proposal->valid_until && Carbon::parse($proposal->valid_until)->gt(now())) $score += 20;
-    //         $proposal->ai_score = min($score, 100);
-    //         return $proposal;
-    //     })->sortByDesc('ai_score')->values();
-
-    //     return view('proposals.index', ['proposals' => $scoredProposals->paginate(10)]);
-    // }
-
-
     public function store(Request $request)
     {
         try {

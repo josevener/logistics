@@ -22,7 +22,6 @@ class DatabaseSeeder extends Seeder
             'role' => 'Admin'
         ]);
 
-<<<<<<< HEAD
         User::factory()->create([
             'name' => 'Vendor User',
             'email' => 'vendor@gmail.com',
@@ -32,8 +31,6 @@ class DatabaseSeeder extends Seeder
         Vendor::factory()->create([
             'user_id' => '1',
         ]);
-=======
->>>>>>> 0ca7a94358051f75c385bfcff812fe7100791acf
         Vendor::factory()->create([
             'user_id' => '2',
         ]);

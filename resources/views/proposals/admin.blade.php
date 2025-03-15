@@ -8,6 +8,14 @@
                         <span class="text-blue-600 dark:text-blue-400">Proposals</span>
                     </h2>
 
+                    <!-- New Proposal Button -->
+                    <div class="mb-4">
+                        <button id="openProposalModal"
+                            class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">
+                            New Proposal
+                        </button>
+                    </div>
+
                     <!-- Search and Filter Form -->
                     <form method="GET" action="{{ route('proposals.index') }}"
                         class="mb-6 flex flex-col sm:flex-row gap-4">
@@ -47,35 +55,25 @@
                             <thead>
                                 <tr class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        Rank
-                                    </th>
+                                        Rank</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        Title
-                                    </th>
+                                        Title</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        Email
-                                    </th>
+                                        Email</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        Type
-                                    </th>
+                                        Type</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        Pricing
-                                    </th>
+                                        Pricing</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        Timeline
-                                    </th>
+                                        Timeline</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        Valid Until
-                                    </th>
+                                        Valid Until</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        AI Score
-                                    </th>
+                                        AI Score</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        Status
-                                    </th>
+                                        Status</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold border-b dark:border-gray-600">
-                                        Actions
-                                    </th>
+                                        Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -97,11 +95,9 @@
                                         <td class="px-4 py-3 text-sm">
                                             @php
                                                 $scoreClasses = match (true) {
-                                                    $proposal->ai_score >= 80
-                                                        => 'bg-green-200 text-green-800', // High Score
-                                                    $proposal->ai_score >= 50
-                                                        => 'bg-yellow-200 text-yellow-800', // Medium Score
-                                                    default => 'bg-red-200 text-red-800', // Low Score
+                                                    $proposal->ai_score >= 80 => 'bg-green-200 text-green-800',
+                                                    $proposal->ai_score >= 50 => 'bg-yellow-200 text-yellow-800',
+                                                    default => 'bg-red-200 text-red-800',
                                                 };
                                             @endphp
                                             <span
@@ -109,7 +105,6 @@
                                                 {{ $proposal->ai_score }}/100
                                             </span>
                                         </td>
-
                                         <td class="px-4 py-3 text-sm">
                                             @php
                                                 $adminStatusClasses = match ($proposal->admin_status ?? 'pending') {
@@ -133,7 +128,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="9"
+                                        <td colspan="10"
                                             class="px-4 py-3 text-center text-sm text-gray-500 dark:text-gray-400">
                                             No proposals found.
                                         </td>
@@ -178,93 +173,275 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- View Proposal Modal -->
-    <div id="viewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden">
-        <div class="flex items-center justify-center min-h-screen">
-            <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl relative">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-lg font-semibold text-gray-800">Proposal Details</h2>
-                    <div class="flex items-center gap-2">
-                        <button id="viewFileButton"
-                            class="bg-blue-600 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-700 transition">
-                            View File
+        <!-- Bid Submission Modal -->
+        <div id="proposalModal"
+            class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 opacity-0 pointer-events-none transition-all duration-300 ease-in-out"
+            role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+            <div class="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col transform scale-95 transition-transform duration-200 ease-out"
+                aria-modal="true">
+                <header
+                    class="px-4 py-3 flex justify-between items-center border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                    <h2 id="modalTitle" class="text-xl font-semibold text-gray-900 dark:text-white">Submit New Bid</h2>
+                    <button id="closeProposalModal"
+                        class="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full w-8 h-8 flex items-center justify-center transition-colors duration-150"
+                        aria-label="Close modal">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <title>Close</title>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </header>
+                <form id="bidForm" class="p-4 flex-1" method="POST" action="{{ route('proposals.store') }}"
+                    aria-label="Bid Submission Form">
+                    @csrf
+                    <div class="space-y-4">
+                        <!-- Vendor Details -->
+                        <div class="space-y-3">
+                            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                Vendor Details</h3>
+                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-3">
+                                <div>
+                                    <label for="vendor_name"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Vendor Name <span class="text-red-500 text-xs">*</span>
+                                    </label>
+                                    <input type="text" name="vendor_name" id="vendor_name"
+                                        value="{{ old('vendor_name') }}"
+                                        class="mt-1 block w-full rounded-md border py-2 px-3 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150"
+                                        placeholder="e.g., Acme Transport" required>
+                                    @error('vendor_name')
+                                        <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                <div>
+                                    <label for="email"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Email <span class="text-red-500 text-xs">*</span>
+                                    </label>
+                                    <input type="email" name="email" id="email"
+                                        value="{{ old('email', auth()->user()->email) }}"
+                                        class="mt-1 block w-full rounded-md border py-2 px-3 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150"
+                                        placeholder="e.g., user@domain.com" required>
+                                    @error('email')
+                                        <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bid Details -->
+                        <div class="space-y-3">
+                            <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                                Bid Details</h3>
+                            <div class="space-y-4">
+                                <!-- Row 1 -->
+                                <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-3">
+                                    <div>
+                                        <label for="proposal_title"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Bid Title <span class="text-red-500 text-xs">*</span>
+                                        </label>
+                                        <input type="text" name="proposal_title" id="proposal_title"
+                                            value="{{ old('proposal_title') }}"
+                                            class="mt-1 block w-full rounded-md border py-2 px-3 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150"
+                                            placeholder="e.g., Bus Transport Bid" required>
+                                        @error('proposal_title')
+                                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <div>
+                                        <label for="product_service_type"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Type
+                                        </label>
+                                        <select name="product_service_type" id="product_service_type"
+                                            class="mt-1 block w-full rounded-md border py-2 px-3 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150">
+                                            <option value="" disabled
+                                                {{ old('product_service_type') ? '' : 'selected' }}>Select type
+                                            </option>
+                                            <option value="service"
+                                                {{ old('product_service_type') === 'service' ? 'selected' : '' }}>
+                                                Service</option>
+                                            <option value="product"
+                                                {{ old('product_service_type') === 'product' ? 'selected' : '' }}>
+                                                Product</option>
+                                            <option value="both"
+                                                {{ old('product_service_type') === 'both' ? 'selected' : '' }}>Both
+                                            </option>
+                                        </select>
+                                        @error('product_service_type')
+                                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <div>
+                                        <label for="pricing"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Pricing (₱)
+                                        </label>
+                                        <div class="relative mt-1">
+                                            <span
+                                                class="absolute inset-y-0 left-0 pl-2 flex items-center text-gray-500 dark:text-gray-400 text-sm">₱</span>
+                                            <input type="number" name="pricing" id="pricing"
+                                                value="{{ old('pricing') }}" step="0.01" min="0"
+                                                class="mt-1 block w-full pl-6 rounded-md border py-2 px-3 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150"
+                                                placeholder="50000">
+                                        </div>
+                                        @error('pricing')
+                                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Row 2 -->
+                                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-3">
+                                    <div>
+                                        <label for="delivery_timeline"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Delivery Timeline
+                                        </label>
+                                        <input type="date" name="delivery_timeline" id="delivery_timeline"
+                                            value="{{ old('delivery_timeline') }}"
+                                            class="mt-1 block w-full rounded-md border py-2 px-3 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150"
+                                            min="{{ \Carbon\Carbon::today()->format('Y-m-d') }}">
+                                        @error('delivery_timeline')
+                                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <div>
+                                        <label for="valid_until"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                            Valid Until
+                                        </label>
+                                        <input type="date" name="valid_until" id="valid_until"
+                                            value="{{ old('valid_until') }}"
+                                            class="mt-1 block w-full rounded-md border py-2 px-3 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150"
+                                            min="{{ \Carbon\Carbon::today()->format('Y-m-d') }}">
+                                        @error('valid_until')
+                                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <!-- Row 3 (Description) -->
+                                <div>
+                                    <label for="description"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Description
+                                    </label>
+                                    <textarea name="description" id="description" rows="3"
+                                        class="mt-1 block w-full rounded-md border py-2 px-3 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150 resize-y"
+                                        placeholder="e.g., Daily bus transport with 40-seat buses, including maintenance and fuel costs.">{{ old('description') }}</textarea>
+                                    @error('description')
+                                        <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <footer
+                        class="px-4 py-3 bg-gray-50 dark:bg-gray-800 flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700">
+                        <button type="reset" id="cancelBtn"
+                            class="px-3 py-1.5 text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600 focus:ring-2 focus:ring-blue-500 transition-all duration-150">
+                            Cancel
                         </button>
+                        <button type="submit" id="submitBtn"
+                            class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-all duration-150 flex items-center disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span id="submitText">Submit Bid</span>
+                            <svg id="loadingSpinner" class="hidden w-4 h-4 ml-2 animate-spin" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <title>Loading</title>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 12a8 8 0 018-8v8h8a8 8 0 01-8 8v-8H4z" />
+                            </svg>
+                        </button>
+                    </footer>
+                </form>
+            </div>
+        </div>
+
+        <!-- View Proposal Modal -->
+        <div id="viewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden">
+            <div class="flex items-center justify-center min-h-screen">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl relative">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-lg font-semibold text-gray-800">Proposal Details</h2>
                         <button id="closeViewModal" class="text-gray-600 hover:text-gray-900 text-2xl">×</button>
                     </div>
-                </div>
-                <div id="proposalDetails" class="text-sm text-gray-700">
-                    <table class="w-full border-collapse">
-                        <tbody>
-                            <!-- Populated by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-end gap-4 mt-8">
-                    <button id="cancelView"
-                        class="bg-gray-200 text-gray-700 px-5 py-2 rounded-lg hover:bg-gray-300 transition focus:outline-none focus:ring-2 focus:ring-gray-400">
-                        Close
-                    </button>
-                    <button id="declineProposal"
-                        class="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-500 hidden">
-                        Decline Proposal
-                    </button>
-                    <button id="approveProposal"
-                        class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-500 hidden">
-                        Approve Proposal
-                    </button>
-                    <span id="statusIndicator" class="text-sm font-medium text-gray-600 hidden"></span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Approve Confirmation Modal -->
-    <div id="approveConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 hidden">
-        <div class="flex items-center justify-center min-h-screen">
-            <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-semibold text-gray-800">Confirm Proposal Approval</h2>
-                    <button id="closeApproveConfirm" class="text-gray-600 hover:text-gray-900 text-2xl">×</button>
-                </div>
-                <p class="text-sm text-gray-700 mb-4">Are you sure you want to approve this proposal?</p>
-                <textarea id="approveNotes" class="w-full border p-2 rounded mb-4" rows="3"
-                    placeholder="Enter approval notes (optional)"></textarea>
-                <div class="flex justify-end gap-3">
-                    <button id="cancelApproveConfirm"
-                        class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 transition">
-                        Cancel
-                    </button>
-                    <button id="confirmApprove"
-                        class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition">
-                        Approve Proposal
-                    </button>
+                    <div id="proposalDetails" class="text-sm text-gray-700">
+                        <table class="w-full border-collapse">
+                            <tbody>
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="flex justify-end gap-4 mt-8">
+                        <button id="cancelView"
+                            class="bg-gray-200 text-gray-700 px-5 py-2 rounded-lg hover:bg-gray-300 transition focus:outline-none focus:ring-2 focus:ring-gray-400">
+                            Close
+                        </button>
+                        <button id="declineProposal"
+                            class="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-500 hidden">
+                            Decline Proposal
+                        </button>
+                        <button id="approveProposal"
+                            class="bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-500 hidden">
+                            Approve Proposal
+                        </button>
+                        <span id="statusIndicator" class="text-sm font-medium text-gray-600 hidden"></span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Decline Confirmation Modal -->
-    <div id="declineConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 hidden">
-        <div class="flex items-center justify-center min-h-screen">
-            <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-semibold text-gray-800">Confirm Proposal Rejection</h2>
-                    <button id="closeDeclineConfirm" class="text-gray-600 hover:text-gray-900 text-2xl">×</button>
+        <!-- Approve Confirmation Modal -->
+        <div id="approveConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 hidden">
+            <div class="flex items-center justify-center min-h-screen">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-800">Confirm Proposal Approval</h2>
+                        <button id="closeApproveConfirm" class="text-gray-600 hover:text-gray-900 text-2xl">×</button>
+                    </div>
+                    <p class="text-sm text-gray-700 mb-4">Are you sure you want to approve this proposal?</p>
+                    <textarea id="approveNotes" class="w-full border p-2 rounded mb-4" rows="3"
+                        placeholder="Enter approval notes (optional)"></textarea>
+                    <div class="flex justify-end gap-3">
+                        <button id="cancelApproveConfirm"
+                            class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 transition">
+                            Cancel
+                        </button>
+                        <button id="confirmApprove"
+                            class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition">
+                            Approve Proposal
+                        </button>
+                    </div>
                 </div>
-                <p class="text-sm text-gray-700 mb-4">Are you sure you want to reject this proposal?</p>
-                <textarea id="declineNotes" class="w-full border p-2 rounded mb-4" rows="3"
-                    placeholder="Enter rejection reason (optional)"></textarea>
-                <div class="flex justify-end gap-3">
-                    <button id="cancelDeclineConfirm"
-                        class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 transition">
-                        Cancel
-                    </button>
-                    <button id="confirmDecline"
-                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition">
-                        Reject Proposal
-                    </button>
+            </div>
+        </div>
+
+        <!-- Decline Confirmation Modal -->
+        <div id="declineConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 hidden">
+            <div class="flex items-center justify-center min-h-screen">
+                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-800">Confirm Proposal Rejection</h2>
+                        <button id="closeDeclineConfirm" class="text-gray-600 hover:text-gray-900 text-2xl">×</button>
+                    </div>
+                    <p class="text-sm text-gray-700 mb-4">Are you sure you want to reject this proposal?</p>
+                    <textarea id="declineNotes" class="w-full border p-2 rounded mb-4" rows="3"
+                        placeholder="Enter rejection reason (optional)"></textarea>
+                    <div class="flex justify-end gap-3">
+                        <button id="cancelDeclineConfirm"
+                            class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 transition">
+                            Cancel
+                        </button>
+                        <button id="confirmDecline"
+                            class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition">
+                            Reject Proposal
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -273,20 +450,32 @@
     <!-- JavaScript for Modals -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // Bid Submission Modal
+            const proposalModal = document.getElementById("proposalModal");
+            const openProposalModal = document.getElementById("openProposalModal");
+            const closeProposalModal = document.getElementById("closeProposalModal");
+            const cancelBtn = document.getElementById("cancelBtn");
+            const bidForm = document.getElementById("bidForm");
+            const submitBtn = document.getElementById("submitBtn");
+            const submitText = document.getElementById("submitText");
+            const loadingSpinner = document.getElementById("loadingSpinner");
+
+            // View Modal
             const viewModal = document.getElementById("viewModal");
             const closeViewModal = document.getElementById("closeViewModal");
             const cancelView = document.getElementById("cancelView");
             const approveProposal = document.getElementById("approveProposal");
             const declineProposal = document.getElementById("declineProposal");
-            const viewFileButton = document.getElementById("viewFileButton");
             const proposalDetails = document.getElementById("proposalDetails").querySelector("tbody");
             const statusIndicator = document.getElementById("statusIndicator");
 
+            // Approve Confirmation Modal
             const approveConfirmModal = document.getElementById("approveConfirmModal");
             const closeApproveConfirm = document.getElementById("closeApproveConfirm");
             const cancelApproveConfirm = document.getElementById("cancelApproveConfirm");
             const confirmApprove = document.getElementById("confirmApprove");
 
+            // Decline Confirmation Modal
             const declineConfirmModal = document.getElementById("declineConfirmModal");
             const closeDeclineConfirm = document.getElementById("closeDeclineConfirm");
             const cancelDeclineConfirm = document.getElementById("cancelDeclineConfirm");
@@ -294,6 +483,70 @@
 
             let currentProposalId = null;
 
+            // Bid Modal Functions
+            function openBidModal() {
+                proposalModal.classList.remove("opacity-0", "pointer-events-none");
+                proposalModal.classList.add("opacity-100", "pointer-events-auto");
+            }
+
+            function closeBidModal() {
+                proposalModal.classList.remove("opacity-100", "pointer-events-auto");
+                proposalModal.classList.add("opacity-0", "pointer-events-none");
+                bidForm.reset();
+            }
+
+            openProposalModal.addEventListener("click", openBidModal);
+            closeProposalModal.addEventListener("click", closeBidModal);
+            cancelBtn.addEventListener("click", closeBidModal);
+
+            bidForm.addEventListener("submit", function(event) {
+                event.preventDefault();
+                submitBtn.disabled = true;
+                submitText.textContent = "Submitting...";
+                loadingSpinner.classList.remove("hidden");
+
+                const formData = new FormData(bidForm);
+
+                fetch(bidForm.action, {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            "Accept": "application/json",
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]')
+                                ?.content || "{{ csrf_token() }}"
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error(response.statusText);
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.message) {
+                            alert(data.message);
+                            closeBidModal();
+                            location.reload();
+                        } else {
+                            throw new Error("Unexpected response format");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Submission error:", error);
+                        alert("Failed to submit bid: " + error.message);
+                    })
+                    .finally(() => {
+                        submitBtn.disabled = false;
+                        submitText.textContent = "Submit Bid";
+                        loadingSpinner.classList.add("hidden");
+                    });
+            });
+
+            proposalModal.addEventListener("click", function(event) {
+                if (event.target === proposalModal) {
+                    closeBidModal();
+                }
+            });
+
+            // View Modal Functions
             document.querySelectorAll(".viewProposal").forEach(button => {
                 button.addEventListener("click", function() {
                     currentProposalId = this.getAttribute("data-id");
@@ -304,27 +557,35 @@
                         proposalDetails.innerHTML = `
                             <tr class="border-b border-gray-200">
                                 <td class="py-2 px-4 font-semibold">Vendor Name</td>
-                                <td class="py-2 px-4">${proposal.user.name}</td>
+                                <td class="py-2 px-4">${proposal.vendor_name || proposal.user.name}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="py-2 px-4 font-semibold">Email</td>
-                                <td class="py-2 px-4">${proposal.user.email}</td>
+                                <td class="py-2 px-4">${proposal.email || proposal.user.email}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="py-2 px-4 font-semibold">Date Created</td>
-                                <td class="py-2 px-4">${new Date(proposal.created_at).toLocaleDateString()}</td>
+                                <td class="py-2 px-4 font-semibold">Title</td>
+                                <td class="py-2 px-4">${proposal.proposal_title}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="py-2 px-4 font-semibold">Purpose</td>
-                                <td class="py-2 px-4">${proposal.purpose}</td>
+                                <td class="py-2 px-4 font-semibold">Type</td>
+                                <td class="py-2 px-4">${proposal.product_service_type || 'N/A'}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="py-2 px-4 font-semibold">Performed By</td>
-                                <td class="py-2 px-4">${proposal.actioned_by || 'N/A'}</td>
+                                <td class="py-2 px-4 font-semibold">Pricing</td>
+                                <td class="py-2 px-4">${proposal.pricing || 'N/A'}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
-                                <td class="py-2 px-4 font-semibold">AI Analysis</td>
-                                <td class="py-2 px-4">${(proposal.status || 'pending').charAt(0).toUpperCase() + (proposal.status || 'pending').slice(1)}</td>
+                                <td class="py-2 px-4 font-semibold">Delivery Timeline</td>
+                                <td class="py-2 px-4">${proposal.delivery_timeline || 'N/A'}</td>
+                            </tr>
+                            <tr class="border-b border-gray-200">
+                                <td class="py-2 px-4 font-semibold">Valid Until</td>
+                                <td class="py-2 px-4">${proposal.valid_until ? new Date(proposal.valid_until).toLocaleDateString() : 'N/A'}</td>
+                            </tr>
+                            <tr class="border-b border-gray-200">
+                                <td class="py-2 px-4 font-semibold">AI Score</td>
+                                <td class="py-2 px-4">${proposal.ai_score || 'N/A'}</td>
                             </tr>
                             <tr class="border-b border-gray-200">
                                 <td class="py-2 px-4 font-semibold">Admin Status</td>
@@ -365,16 +626,6 @@
                 });
             });
 
-            viewFileButton.addEventListener("click", () => {
-                if (currentProposalId) {
-                    const fileUrl = "{{ route('proposals.preview', ':id') }}".replace(':id',
-                        currentProposalId);
-                    window.open(fileUrl, '_blank');
-                } else {
-                    console.error("No proposal ID available for preview.");
-                }
-            });
-
             function closeViewModalFn() {
                 viewModal.classList.add("hidden");
                 currentProposalId = null;
@@ -388,6 +639,7 @@
                 }
             });
 
+            // Approve/Decline Modal Functions
             function closeApproveConfirmFn() {
                 approveConfirmModal.classList.add("hidden");
                 document.getElementById("approveNotes").value = "";

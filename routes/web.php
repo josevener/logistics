@@ -31,7 +31,8 @@ Route::middleware('auth')->group(function () {
 Route::resource('vendors', VendorController::class)->middleware('auth');
 
 Route::middleware('auth')->group(function () {
-    Route::get('shipments', [VehicleInventoryController::class, 'index'])->name('shipments.index');
+    Route::get('/vehicles', [VehicleInventoryController::class, 'index'])->name('vehicles.index');
+    Route::get('/vehicles/{id}', [VehicleInventoryController::class, 'show'])->name('vehicles.show');
 });
 
 Route::middleware('auth')->group(function () {

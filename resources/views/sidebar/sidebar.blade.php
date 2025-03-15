@@ -36,7 +36,7 @@
             </div>
         </a>
         @if (Auth::user()->role === 'Admin')
-            <a href="{{ route('shipments.index') }}">
+            <a href="{{ route('vehicles.index') }}">
                 <div
                     class="px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-blue-800 {{ Route::currentRouteName() === 'shipments.index' ? 'bg-blue-100 text-blue-800 hover:text-white' : '' }}">
                     <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
