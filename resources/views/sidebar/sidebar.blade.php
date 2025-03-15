@@ -38,7 +38,7 @@
         @if (Auth::user()->role === 'Admin')
             <a href="{{ route('vehicles.index') }}">
                 <div
-                    class="px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-blue-800 {{ Route::currentRouteName() === 'shipments.index' ? 'bg-blue-100 text-blue-800 hover:text-white' : '' }}">
+                    class="px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-blue-800 {{ Route::currentRouteName() === 'vehicles.index' ? 'bg-blue-100 text-blue-800 hover:text-white' : '' }}">
                     <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M3 7h18M3 12h18M3 17h18" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" />

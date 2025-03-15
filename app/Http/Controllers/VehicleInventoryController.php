@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\VehicleInventory;
 use App\Http\Requests\StoreVehicleInventoryRequest;
 use App\Http\Requests\UpdateVehicleInventoryRequest;
-use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request;
 
 class VehicleInventoryController extends Controller
 {
