@@ -9,15 +9,21 @@
                     <div class="flex gap-2">
                         <button
                             class="tab-button px-4 py-2 rounded-full text-sm font-medium text-gray-600 bg-transparent hover:bg-gray-100 transition {{ request('filter', 'all') === 'all' ? 'bg-blue-600 text-white' : '' }}"
-                            data-filter="all">All Vehicles ({{ $vehicles->total() }})</button>
+                            data-filter="all">
+                            All Vehicles ({{ $vehicles->total() }})
+                        </button>
                         <button
                             class="tab-button px-4 py-2 rounded-full text-sm font-medium text-gray-600 bg-transparent hover:bg-gray-100 transition {{ request('filter') === 'ready' ? 'bg-blue-600 text-white' : '' }}"
-                            data-filter="ready">Ready to Use
-                            ({{ $vehicles->where('status', 'ready')->count() }})</button>
+                            data-filter="ready">
+                            Ready to Use
+                            ({{ $vehicles->where('status', 'ready')->count() }})
+                        </button>
                         <button
                             class="tab-button px-4 py-2 rounded-full text-sm font-medium text-gray-600 bg-transparent hover:bg-gray-100 transition {{ request('filter') === 'maintenance' ? 'bg-blue-600 text-white' : '' }}"
-                            data-filter="maintenance">Under Maintenance
-                            ({{ $vehicles->where('status', 'maintenance')->count() }})</button>
+                            data-filter="maintenance">
+                            Under Maintenance
+                            ({{ $vehicles->where('status', 'maintenance')->count() }})
+                        </button>
                     </div>
                 </div>
                 <!-- Sort Dropdown -->

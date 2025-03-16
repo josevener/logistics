@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Process\Process;
 
 class ContractController extends Controller
 {
@@ -134,7 +135,11 @@ class ContractController extends Controller
                 'contract' => 'required|file|mimes:pdf,jpg,png|max:2048',
                 'purpose' => 'required|string|max:255',
             ]);
+
+            // Store the uploaded file
             $path = $request->file('contract')->store('contracts', 'public');
+            $filePath = storage_path('app/public/' . $path);
+
             $contract = Contract::create([
                 'vendor_id' => Auth::user()->id,
 
@@ -142,7 +147,47 @@ class ContractController extends Controller
                 'purpose' => $request->purpose,
             ]);
 
-            AnalyzeContract::dispatch($contract);
+            // AnalyzeContract::dispatch($contract);
+
+            // Run the Python script synchronously
+            $scriptPath = base_path('scripts/analyze_contract.py');
+            $command = ['python3', $scriptPath, $filePath]; // Use 'python3' for Linux compatibility
+
+            $process = new Process($command);
+            $process->run();
+
+            if (!$process->isSuccessful()) {
+                $errorOutput = $process->getErrorOutput();
+                $exitCode = $process->getExitCode();
+                flash()->error("Process failed. Exit Code: $exitCode, Error Output: $errorOutput, Output: " . $process->getOutput());
+
+                $contract->update([
+                    'status' => 'error',
+                    'fraud_notes' => 'Analysis failed: ' . ($errorOutput ?: 'Unknown error'),
+                ]);
+
+                return redirect()->route('contracts.index')->with('error', 'Failed to analyze contract');
+            }
+            $output = $process->getOutput();
+            flash()->info("Script Output: $output");
+
+            $result = json_decode($output, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                flash()->error('JSON Decode Error: ' . json_last_error_msg() . ', Raw Output: ' . $output);
+                $contract->update([
+                    'status' => 'error',
+                    'fraud_notes' => 'Invalid JSON output from script: ' . $output,
+                ]);
+                return redirect()->route('contracts.index')->with('error', 'Invalid analysis output');
+            }
+
+            // Update the contract with analysis results
+            $contract->update([
+                'status' => $result['is_fraud'] ? 'flagged' : 'approved',
+                'fraud_notes' => $result['notes'] ?? null,
+                // Add any additional fields from your analyze_contract.py output if needed
+            ]);
 
             flash()->success('Contract uploaded successfully');
 
