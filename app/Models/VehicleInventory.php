@@ -21,7 +21,8 @@ class VehicleInventory extends Model
         'last_updated',
         'available_parts',
         'maintenance_record',
-        'fuel_consumption'
+        'fuel_consumption',
+        'image'
     ];
 
     protected $casts = [
