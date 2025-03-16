@@ -22,7 +22,7 @@ class AnalyzeContract implements ShouldQueue
     {
         $filePath = storage_path('app/public/' . $this->contract->file_path);
         $scriptPath = base_path('scripts/analyze_contract.py');
-        $pythonPath = 'C:\Python312\python.exe'; // Local Windows path
+        $pythonPath = env('PYTHON_PATH', '/usr/bin/python3');
         $command = "\"{$pythonPath}\" \"{$scriptPath}\" \"{$filePath}\"";
         $result = Process::run($command);
 
