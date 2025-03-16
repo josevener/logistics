@@ -30,10 +30,7 @@ Route::middleware('auth')->group(function () {
 
 Route::resource('vendors', VendorController::class)->middleware('auth');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/vehicles', [VehicleInventoryController::class, 'index'])->name('vehicles.index');
-    Route::get('/vehicles/{id}', [VehicleInventoryController::class, 'show'])->name('vehicles.show');
-});
+Route::resource('vehicles', VehicleInventoryController::class)->middleware('auth');
 
 Route::middleware('auth')->group(function () {
     Route::get('maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');

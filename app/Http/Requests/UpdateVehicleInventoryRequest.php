@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateVehicleInventoryRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class UpdateVehicleInventoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::check() && Auth::user()->role === 'Admin';
     }
 
     /**
@@ -22,7 +23,13 @@ class UpdateVehicleInventoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'vehicle_number' => 'required|string|max:255',
+            'truck_type' => 'required|string|max:255',
+            'route_from' => 'required|string|max:255',
+            'route_to' => 'required|string|max:255',
+            'total_capacity' => 'required|numeric|min:1',
+            'available_capacity' => 'required|numeric|min:0|lte:total_capacity',
+            'status' => 'required|in:ready,maintenance',
         ];
     }
 }

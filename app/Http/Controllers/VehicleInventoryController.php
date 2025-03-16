@@ -37,7 +37,7 @@ class VehicleInventoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('vehicles.create');
     }
 
     /**
@@ -45,7 +45,9 @@ class VehicleInventoryController extends Controller
      */
     public function store(StoreVehicleInventoryRequest $request)
     {
-        //
+        $vehicle = VehicleInventory::create($request->validated());
+        flash()->success('Vehicle added successfully!');
+        return redirect()->route('vehicles.index');
     }
 
     /**
@@ -65,17 +67,21 @@ class VehicleInventoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(VehicleInventory $vehicleInventory)
+    public function edit($id)
     {
-        //
+        $vehicle = VehicleInventory::findOrFail($id);
+        return response()->json($vehicle);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateVehicleInventoryRequest $request, VehicleInventory $vehicleInventory)
+    public function update(UpdateVehicleInventoryRequest $request, $id)
     {
-        //
+        $vehicle = VehicleInventory::findOrFail($id);
+        $vehicle->update($request->validated());
+        flash()->success('Vehicle updated successfully!');
+        return redirect()->route('vehicles.index');
     }
 
     /**
