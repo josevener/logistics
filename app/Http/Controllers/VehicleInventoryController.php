@@ -9,9 +9,6 @@ use Illuminate\Http\Request;
 
 class VehicleInventoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $filter = $request->query('filter', 'all');
@@ -27,68 +24,69 @@ class VehicleInventoryController extends Controller
 
         $query->orderBy($sortField, $sortDirection);
 
-        $vehicles = $query->paginate(12);
+        $vehicles = $query->paginate(6);
 
         return view('vehicles.index', compact('vehicles'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('vehicles.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreVehicleInventoryRequest $request)
     {
         $vehicle = VehicleInventory::create($request->validated());
         flash()->success('Vehicle added successfully!');
-        return redirect()->route('vehicles.index');
+        return response()->json([
+            'redirect' => route('vehicles.index')
+        ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        $vehicle = VehicleInventory::findOrFail($id);
-
-        return response()->json([
-            'available_parts' => $vehicle->available_parts,
-            'maintenance_record' => $vehicle->maintenance_record,
-            'fuel_consumption' => $vehicle->fuel_consumption,
-        ]);
+        try {
+            $vehicle = VehicleInventory::findOrFail($id);
+            return response()->json([
+                'available_parts' => $vehicle->available_parts,
+                'maintenance_record' => $vehicle->maintenance_record,
+                'fuel_consumption' => $vehicle->fuel_consumption,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Vehicle not found'], 404);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
-        $vehicle = VehicleInventory::findOrFail($id);
-        return response()->json($vehicle);
+        try {
+            $vehicle = VehicleInventory::findOrFail($id);
+            return response()->json($vehicle);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Vehicle not found'], 404);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(UpdateVehicleInventoryRequest $request, $id)
     {
-        $vehicle = VehicleInventory::findOrFail($id);
-        $vehicle->update($request->validated());
-        flash()->success('Vehicle updated successfully!');
-        return redirect()->route('vehicles.index');
+        try {
+            $vehicle = VehicleInventory::findOrFail($id);
+            $vehicle->update($request->validated());
+            flash()->success('Vehicle updated successfully!');
+            return response()->json([
+                'redirect' => route('vehicles.index')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to update vehicle'], 400);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(VehicleInventory $vehicleInventory)
+    public function destroy(VehicleInventory $vehicle)
     {
-        //
+        $vehicle->delete();
+        flash()->success('Vehicle deleted successfully!');
+        return response()->json([
+            'redirect' => route('vehicles.index')
+        ]);
     }
 }

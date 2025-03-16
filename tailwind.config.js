@@ -17,6 +17,12 @@ export default {
             hidden: {
                 display: "flex", // This would be wrong and cause the issue
             },
+            colors: {
+                "stat-orange": "#FF6B6B",
+                "stat-green": "#4CAF50",
+                "stat-blue": "#2196F3",
+                "stat-pink": "#E91E63",
+            },
         },
     },
 
