@@ -29,6 +29,15 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Vendor::factory()->create([
+            'user_id' => 1,
+            'fname' => 'John',
+            'mname' => 'A.',  // Optional middle name
+            'lname' => 'Doe',
+            'email' => 'admin@gmail.com',
+            'address' => 'West',
+            'contact_info' => '09099876652',
+        ]);
+        Vendor::factory()->create([
             'user_id' => 2,
             'fname' => 'Juan',
             'mname' => '',  // Optional middle name
