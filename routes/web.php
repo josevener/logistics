@@ -21,12 +21,16 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/profile', [ProfileController::class, 'create'])->name('profile.create');
+    Route::get('/profile/create', [ProfileController::class, 'create'])->name('profile.create');
+
+
+
 });
+
 
 Route::resource('vendors', VendorController::class)->middleware('auth');
 
@@ -46,6 +50,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('reports/admin', [ReportController::class, 'index'])->name('reports.index');
     Route::get('reports/vendor', [ReportController::class, 'vendor'])->name('reports.vendor');
+    Route::post('reports/store', [ReportController::class, 'store'])->name('reports.store');
 });
 
 Route::middleware('auth')->group(function () {
@@ -81,6 +86,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('compliance', [ComplianceController::class, 'index'])->name('compliance.index');
 });
+
+
 
 
 require __DIR__ . '/auth.php';

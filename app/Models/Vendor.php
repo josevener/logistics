@@ -7,18 +7,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class Vendor extends Model
 {
-    /** @use HasFactory<\Database\Factories\VendorFactory> */
     use HasFactory;
 
-    protected $fillable = ['contact_info', 'user_id', 'rating'];
+    protected $fillable = [
+        'user_id',
+        'fname',
+        'mname',
+        'lname',
+        'email',
+        'address',
+        'contact_info',
+        'name',
+    ];
 
-    public function contracts()
+    /**
+     * Set the name attribute by concatenating first, middle, and last names.
+     */
+    public function setNameAttribute()
     {
-        return $this->hasMany(Contract::class);
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
+        $this->attributes['name'] = $this->fname . ' ' . ($this->mname ? $this->mname . ' ' : '') . $this->lname;
     }
 }

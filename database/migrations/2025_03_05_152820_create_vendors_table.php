@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,8 +13,13 @@ return new class extends Migration
         Schema::create('vendors', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('fname')->nullable();
+            $table->string('mname')->nullable(); // Optional middle name
+            $table->string('lname')->nullable();
+            $table->string('email')->nullable()->unique();
+            $table->text('address')->nullable();
             $table->string('contact_info')->nullable();
-            $table->float('rating')->default(0);
+            $table->string('name')->nullable(); // This will hold the full name
             $table->timestamps();
         });
     }

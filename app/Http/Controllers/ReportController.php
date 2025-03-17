@@ -17,7 +17,21 @@ class ReportController extends Controller
 
     public function index()
     {
-        return view('reports.index');
+        $reports = Report::paginate(3);
+
+        // Calculate average rating
+        $averageRating = Report::avg('rating');
+
+        // Get rating distribution
+        $ratingsCount = Report::selectRaw('rating, COUNT(*) as count')
+            ->groupBy('rating')
+            ->pluck('count', 'rating')
+            ->toArray();
+
+        // Total reviews count
+        $totalReviews = Report::count();
+
+        return view('reports.index', compact('reports', 'averageRating', 'ratingsCount', 'totalReviews'));
     }
 
     /**
@@ -33,7 +47,21 @@ class ReportController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string',
+            'follow_up' => 'required|in:yes,no', // Accepts "yes" or "no"
+        ]);
+
+        Report::create([
+            'rating' => $request->rating,
+            'comment' => $request->comment,
+            'follow_up' => $request->follow_up === 'yes' ? 1 : 0, // Convert to boolean
+            'report_by' => auth()->id(), // Store the ID of the logged-in user
+        ]);
+
+        return response()->json(['message' => 'Feedback submitted successfully!']);
+
     }
 
     /**
