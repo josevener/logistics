@@ -97,11 +97,19 @@
             </a>
             <a href="{{ route('reports.index') }}">
                 <div
+<<<<<<< HEAD
                     class="px-4 py-3 flex items-center gap-3 hover:bg-blue-800 {{ Route::currentRouteName() === 'reports.index' ? 'bg-blue-100 text-blue-800 hover:text-white' : '' }}">
                     <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+=======
+                    class="px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-blue-800 {{ Route::currentRouteName() === 'reports.index' ? 'bg-blue-100 text-blue-800 hover:text-white' : '' }}">
+                    <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3h18v18H3z" />
+                        <path d="M7 10h10M7 14h7M7 6h10" />
+>>>>>>> 85d74f093ebe507819e51f78d21083dbfacb0184
                     </svg>
                     <span class="text-base md:text-lg font-medium">Reports</span>
                 </div>
@@ -168,7 +176,30 @@
         <div class="mt-4 px-4 py-3 text-white text-base md:text-lg font-semibold">
             Notifications & Reminders
         </div>
+
+
+        <a href="{{ route('profile.edit') }}">
+            <div
+                class="px-3 sm:px-4 py-2 flex items-center gap-2 sm:gap-3 cursor-pointer hover:bg-blue-800 transition-colors
+            {{ Route::currentRouteName() === 'profile.edit' ? 'bg-blue-100 text-blue-800 hover:text-white' : '' }}">
+
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <path
+                        d="M21 12h-2m-2.64 5.36l-1.42-1.42M12 21v-2m-5.36-2.64l1.42-1.42M3 12h2m2.64-5.36l1.42 1.42M12 3v2m5.36 2.64l-1.42 1.42">
+                    </path>
+                </svg>
+
+                <span class="text-xs sm:text-sm md:text-base font-medium truncate">Profile Setting</span>
+            </div>
+
+        </a>
+
     </nav>
+
+
+
 
     <!-- Profile Section (Fixed at Bottom) -->
     @if ($isAdmin)
