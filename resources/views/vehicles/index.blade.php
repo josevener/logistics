@@ -401,6 +401,19 @@
                 previewImg.src = '#';
             });
         }
+
+
+        // Tab functionality
+        const tabButtons = document.querySelectorAll(".tab-button");
+        tabButtons.forEach((btn) => {
+            btn.addEventListener("click", function() {
+                const filter = this.getAttribute("data-filter");
+                const sort =
+                    document.getElementById("sortSelect")?.value ||
+                    "created_at-desc";
+                window.location.href = `/vehicles?filter=${filter}&sort=${sort}`;
+            });
+        });
     });
 </script>
 <script>
