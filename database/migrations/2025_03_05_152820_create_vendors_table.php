@@ -13,13 +13,11 @@ return new class extends Migration {
         Schema::create('vendors', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('fname')->nullable();
-            $table->string('mname')->nullable(); // Optional middle name
-            $table->string('lname')->nullable();
-            $table->string('email')->nullable()->unique();
+            $table->string('firstname');
+            $table->string('middlename')->nullable(); // Optional middle name
+            $table->string('lastname');
             $table->text('address')->nullable();
             $table->string('contact_info')->nullable();
-            $table->string('name')->nullable(); // This will hold the full name
             $table->string('profile_photo')->nullable();
             $table->timestamps();
         });

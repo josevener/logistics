@@ -11,13 +11,11 @@ class Vendor extends Model
 
     protected $fillable = [
         'user_id',
-        'fname',
-        'mname',
-        'lname',
-        'email',
+        'firstname',
+        'middlename',
+        'lastname',
         'address',
         'contact_info',
-        'name',
     ];
 
     /**

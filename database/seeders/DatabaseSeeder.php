@@ -30,22 +30,19 @@ class DatabaseSeeder extends Seeder
 
         Vendor::factory()->create([
             'user_id' => 1,
-            'fname' => 'John',
-            'mname' => 'A.',  // Optional middle name
-            'lname' => 'Doe',
-            'email' => 'admin@gmail.com',
+            'firstname' => 'John',
+            'middlename' => 'A.',  // Optional middle name
+            'lastname' => 'Doe',
             'address' => 'West',
             'contact_info' => '09099876652',
         ]);
         Vendor::factory()->create([
             'user_id' => 2,
-            'fname' => 'Juan',
-            'mname' => '',  // Optional middle name
-            'lname' => 'Tamad',
-            'email' => 'vendor@gmail.com',
+            'firstname' => 'Juan',
+            'middlename' => '',  // Optional middle name
+            'lastname' => 'Tamad',
             'address' => 'Taga Looban',
             'contact_info' => '09099876654',
         ]);
-
     }
 }
