@@ -13,7 +13,7 @@
 </head>
 
 <body class="bg-gray-50">
-    <div class="flex min-h-screen">
+    <div class="min-h-screen">
         <!-- Sidebar -->
         @include('sidebar.sidebar')
         <!-- End Sidebar -->
