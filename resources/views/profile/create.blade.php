@@ -31,7 +31,7 @@
                                 <div class="flex flex-col">
                                     <label class="text-sm font-medium text-gray-600">Full Name:</label>
                                     <p class="text-lg text-gray-900 font-semibold">
-                                        {{ Auth::user()->vendor->name }}
+                                        {{ Auth::user()->name }}
                                     </p>
                                 </div>
                                 <div class="flex flex-col">
