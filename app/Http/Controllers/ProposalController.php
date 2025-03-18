@@ -85,7 +85,7 @@ class ProposalController extends Controller
             $scriptPath = base_path('scripts/analyze_bid.py');
             $command = ['python', $scriptPath, $jsonBidData];
 
-            flash()->info('Executing command: ' . implode(' ', $command));
+            // flash()->info('Executing command: ' . implode(' ', $command));
 
             $process = new Process($command);
             $process->run();
@@ -100,7 +100,7 @@ class ProposalController extends Controller
             }
 
             $output = $process->getOutput();
-            flash()->info("Script Output: $output");
+            // flash()->info("Script Output: $output");
 
             $result = json_decode($output, true);
 
@@ -130,6 +130,8 @@ class ProposalController extends Controller
                 'is_fraud' => $result['is_fraud'],
                 'notes' => json_encode($result['notes']),
             ]);
+
+            flash()->success('Bid submitted successfully');
 
             return response()->json([
                 'message' => 'Bid submitted successfully!',

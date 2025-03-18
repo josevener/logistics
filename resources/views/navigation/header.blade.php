@@ -115,19 +115,21 @@
             <div id="profileBtn"
                 class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-900 rounded-full flex items-center justify-center text-white text-sm sm:text-base font-medium cursor-pointer hover:opacity-90 transition-opacity"
                 title="User Profile">
-                JD
+                {{ substr(Auth::user()->vendor->firstname, 0, 1) . substr(Auth::user()->vendor->lastname, 0, 1) }}
             </div>
             <div id="profileDropdown"
                 class="absolute right-0 mt-2 w-48 sm:w-56 bg-white rounded-lg shadow-lg z-10 hidden">
                 <div class="p-3 sm:p-4 border-b border-gray-200 bg-gray-50">
                     <div class="flex items-center gap-2 sm:gap-3">
                         <div
-                            class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-900 rounded-full flex items-center justify-center text-white text-sm sm:text-base font-medium">
-                            JD</div>
+                            class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-900 rounded-full flex items-center
+                            justify-center text-white text-sm sm:text-base font-medium">
+                            {{ substr(Auth::user()->vendor->firstname, 0, 1) . substr(Auth::user()->vendor->lastname, 0, 1) }}
+                        </div>
                         <div>
-                            <p class="text-xs sm:text-sm md:text-base font-semibold text-gray-900">John Doe
-                            </p>
-                            <p class="text-xs text-gray-500 truncate">vendor@example.com</p>
+                            <p class="text-xs sm:text-sm md:text-base font-semibold text-gray-900">
+                                {{ Auth::user()->name }}</p>
+                            <p class="text-xs text-gray-500 truncate">{{ Auth::user()->email }}</p>
                         </div>
                     </div>
                 </div>

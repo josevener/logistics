@@ -11,7 +11,8 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, Notifiable;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -27,8 +28,7 @@ class User extends Authenticatable
 
     public function vendor()
     {
-
-        return $this->hasOne(Vendor::class, 'user_id');
+        return $this->hasOne(Vendor::class);
     }
 
     public function proposal()

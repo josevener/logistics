@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
+use App\Models\Vendor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,12 +20,18 @@ class ProfileController extends Controller
 
     public function create()
     {
-        return view('profile.create');
+        $vendor = Vendor::with('user')
+            ->where('user_id', Auth::id())
+            ->whereNull('deleted_at')
+            ->get();
+
+        return view('profile.create', compact('vendor'));
     }
     public function show($id): View
     {
-        $user = User::findOrFail($id);
-        return view('profile.show', compact('user'));
+        $vendor = Vendor::findOrFail($id);
+
+        return view('profile.show', compact('vendor'));
     }
 
     /**
@@ -42,57 +49,43 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $user = $request->user();
+        try {
+            $validated = $request->validated();
 
-        // Fill the validated data, including the new fields
-        $user->fill($request->validated());
+            /** @var User $user */
+            $user = Auth::user();
 
-        // Handle the vendor profile (assuming $user has a related 'vendor' model)
-        $vendor = $user->vendor;
+            $vendor = Auth::user()->vendor;
+            if (!$vendor) {
+                throw new \Exception('Vendor record not found for this user.');
+            }
 
-        // Update vendor-specific fields
-        $vendor->fname = $request->input('fname');
-        $vendor->mname = $request->input('mname');
-        $vendor->lname = $request->input('lname');
-        $vendor->contact_info = $request->input('contact_info');
-        $vendor->address = $request->input('address');
+            // Update vendor details
+            $vendor->update([
+                'firstname' => $validated['firstname'],
+                'middlename' => $validated['middlename'] ?? null,
+                'lastname' => $validated['lastname'],
+                'contact_info' => $validated['contact_info'],
+                'address' => $validated['address'],
+            ]);
 
-        // Concatenate the name (First Name, Middle Name, Last Name)
-        $vendor->name = $this->concatenateName($vendor->fname, $vendor->mname, $vendor->lname);
+            // Reset email verification if email changed
+            if ($user->email !== $validated['email']) {
+                $user->email_verified_at = null;
+            }
+            // Update user details
+            $user->update([
+                'name' => trim("{$validated['firstname']} {$validated['middlename']} {$validated['lastname']}"),
+                'email' => $validated['email'],
+                // 'role' => $validated['role'],
+            ]);
 
-        // Save the vendor profile
-        $vendor->save();
-
-        // Reset email verification if email is changed
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
+            flash()->success('Profile updated successfully.');
+            return redirect()->route('profile.show', Auth::user()->vendor)->with('tab', 'account');
+        } catch (\Exception $e) {
+            flash()->error('Error updating profile: ' . $e->getMessage());
+            return redirect()->back();
         }
-
-        // Save the user profile
-        $user->save();
-
-        return back()->with('status', 'Profile updated successfully.');
-    }
-
-    /**
-     * Concatenate first name, middle name, and last name into a full name.
-     *
-     * @param  string $fname
-     * @param  string $mname
-     * @param  string $lname
-     * @return string
-     */
-    protected function concatenateName(string $fname, ?string $mname, string $lname): string
-    {
-        $fullName = $fname;
-
-        if (!empty($mname)) {
-            $fullName .= ' ' . strtoupper(substr($mname, 0, 1)) . '.'; // Middle name initial
-        }
-
-        $fullName .= ' ' . $lname;
-
-        return $fullName;
     }
 
     /**
@@ -117,7 +110,7 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        Log::info('User account deleted: ' . $user->id);
+        flash()->info('User account deleted: ' . $user->id);
 
         return Redirect::to('/')->with('status', 'Your account has been deleted.');
     }

@@ -18,14 +18,6 @@ class Vendor extends Model
         'contact_info',
     ];
 
-    /**
-     * Set the name attribute by concatenating first, middle, and last names.
-     */
-    public function setNameAttribute()
-    {
-        $this->attributes['name'] = $this->fname . ' ' . ($this->mname ? $this->mname . ' ' : '') . $this->lname;
-    }
-
     public function user()
     {
         return $this->belongsTo(User::class);
