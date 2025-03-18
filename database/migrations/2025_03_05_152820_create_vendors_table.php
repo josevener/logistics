@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->text('address')->nullable();
             $table->string('contact_info')->nullable();
             $table->string('name')->nullable(); // This will hold the full name
+            $table->string('profile_photo')->nullable();
             $table->timestamps();
         });
     }

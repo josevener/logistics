@@ -49,7 +49,7 @@
         <div class="w-full md:w-2/3">
             <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Customer Feedback</h2>
             <div class="space-y-6">
-                @foreach ($reports as $feedback)
+                @forelse ($reports as $feedback)
                     <div
                         class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
                         <div class="flex justify-between items-start mb-4">
@@ -83,7 +83,12 @@
                         </div>
                         <p class="text-gray-700 leading-relaxed">{{ $feedback->comment }}</p>
                     </div>
-                @endforeach
+                @empty
+                    <div class="text-center py-10">
+                        <p class="text-gray-500 text-lg">No feedback found.</p>
+                    </div>
+                @endforelse
+
             </div>
             <div class="mt-6">
                 {{ $reports->links() }} <!-- Laravel pagination links -->
