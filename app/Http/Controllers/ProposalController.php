@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\AnalyzeProposal;
 use App\Models\Proposal;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use PDF;
 use Symfony\Component\Process\Process;
 
 class ProposalController extends Controller
@@ -55,6 +52,11 @@ class ProposalController extends Controller
         $proposals = $query->paginate(10);
 
         return view('proposals.admin', compact('proposals'));
+    }
+    public function show($id)
+    {
+        $proposal = Proposal::with('user')->findOrFail($id);
+        return response()->json($proposal);
     }
     public function store(Request $request)
     {

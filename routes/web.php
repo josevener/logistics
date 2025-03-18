@@ -26,11 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/profile/create', [ProfileController::class, 'create'])->name('profile.create');
-
-
-
 });
-
 
 Route::resource('vendors', VendorController::class)->middleware('auth');
 
@@ -70,6 +66,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/proposals', [ProposalController::class, 'index'])->name('proposals.index');
     Route::get('/proposals/admin', [ProposalController::class, 'admin'])->name('proposals.admin');
     Route::delete('/proposals/{id}/edit', [ProposalController::class, 'edit'])->name('proposals.edit');
+    Route::get('/proposals/{id}', [ProposalController::class, 'show'])->name('proposals.show');
     Route::post('/proposals', [ProposalController::class, 'store'])->name('proposals.store');
     Route::delete('/proposals/{id}', [ProposalController::class, 'destroy'])->name('proposals.destroy');
     Route::get('/proposals/approved', [ProposalController::class, 'approved'])->name('proposals.approved');

@@ -27,4 +27,9 @@ class Vendor extends Model
     {
         $this->attributes['name'] = $this->fname . ' ' . ($this->mname ? $this->mname . ' ' : '') . $this->lname;
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

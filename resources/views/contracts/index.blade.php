@@ -65,19 +65,19 @@
                                     <tr class="hover:bg-gray-50 transition-colors dark:hover:bg-gray-700">
                                         <td
                                             class="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-900 dark:text-gray-100">
-                                            {{ $contract->vendor->user->name }}
+                                            {{ $contract->vendor->user->name ?? '' }}
                                         </td>
                                         <td
                                             class="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-700 dark:text-gray-300">
-                                            {{ $contract->vendor->user->email }}
+                                            {{ $contract->vendor->user->email ?? '' }}
                                         </td>
                                         <td
                                             class="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-700 dark:text-gray-300">
-                                            {{ $contract->created_at->format('Y-m-d') }}
+                                            {{ $contract->created_at->format('Y-m-d') ?? '' }}
                                         </td>
                                         <td
                                             class="px-4 sm:px-6 py-4 text-xs sm:text-sm text-gray-700 dark:text-gray-300">
-                                            {{ $contract->purpose }}
+                                            {{ $contract->purpose ?? '' }}
                                         </td>
                                         <td class="px-4 sm:px-6 py-4 text-xs sm:text-sm">
                                             @php

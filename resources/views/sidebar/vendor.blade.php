@@ -1,4 +1,4 @@
-<div id="sidebar"
+{{-- <div id="sidebar"
     class="fixed inset-y-0 left-0 w-20 sm:w-64 md:w-72 lg:w-80 bg-white border-r shadow-md transition-all duration-300 z-20">
     <!-- Toggle Button -->
     <button onclick="toggleSidebar()"
@@ -123,4 +123,4 @@
             toggleIcon.classList.remove('rotate-180');
         }
     }
-</script>
+</script> --}}

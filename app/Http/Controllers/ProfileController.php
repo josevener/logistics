@@ -15,6 +15,11 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
+
+    public function create()
+    {
+        return view('profile.create');
+    }
     public function show(): View
     {
         return view('profile.show');
@@ -87,7 +92,6 @@ class ProfileController extends Controller
 
         return $fullName;
     }
-
 
     /**
      * Delete the user's account.

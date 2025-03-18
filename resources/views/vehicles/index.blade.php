@@ -8,17 +8,17 @@
                     <!-- Tabs -->
                     <div class="flex gap-3">
                         <button
-                            class="tab-button px-4 py-2 rounded-full text-sm font-semibold text-gray-700 bg-white shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 {{ request('filter', 'all') === 'all' ? 'bg-gray-600 text-white hover:bg-blue-700 hover:text-white' : '' }}"
+                            class="tab-button px-4 py-2 rounded-full text-sm font-semibold text-gray-700 bg-white shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 {{ request('filter', 'all') === 'all' ? 'bg-blue-600 text-white hover:bg-blue-700 hover:text-white' : '' }}"
                             data-filter="all">
                             All Vehicles ({{ $vehicles->total() }})
                         </button>
                         <button
-                            class="tab-button px-4 py-2 rounded-full text-sm font-semibold text-gray-700 bg-white shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 {{ request('filter') === 'ready' ? 'bg-gray-600 text-white hover:bg-blue-700 hover:text-white' : '' }}"
+                            class="tab-button px-4 py-2 rounded-full text-sm font-semibold text-gray-700 bg-white shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 {{ request('filter') === 'ready' ? 'bg-blue-600 text-white hover:bg-blue-700 hover:text-white' : '' }}"
                             data-filter="ready">
                             Ready to Use ({{ $vehicles->where('status', 'ready')->count() }})
                         </button>
                         <button
-                            class="tab-button px-4 py-2 rounded-full text-sm font-semibold text-gray-700 bg-white shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 {{ request('filter') === 'maintenance' ? 'bg-gray-600 text-white hover:bg-blue-700 hover:text-white' : '' }}"
+                            class="tab-button px-4 py-2 rounded-full text-sm font-semibold text-gray-700 bg-white shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 {{ request('filter') === 'maintenance' ? 'bg-blue-600 text-white hover:bg-blue-700 hover:text-white' : '' }}"
                             data-filter="maintenance">
                             Under Maintenance ({{ $vehicles->where('status', 'maintenance')->count() }})
                         </button>
