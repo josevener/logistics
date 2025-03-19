@@ -46,14 +46,17 @@
                 <div class="mb-6">
                     <p class="text-gray-700 mb-2">May we follow up on your feedback?</p>
                     <div class="flex gap-4">
-                        <label class="flex items-center cursor-pointer">
-                            <input type="radio" name="follow_up" value="yes" class="mr-2"> Yes
+                        <label class="flex items-center cursor-pointer space-x-2">
+                            <input type="radio" name="follow_up" value="yes" checked>
+                            <span>Yes</span>
                         </label>
-                        <label class="flex items-center cursor-pointer">
-                            <input type="radio" name="follow_up" value="no" class="mr-2"> No
+                        <label class="flex items-center cursor-pointer space-x-2">
+                            <input type="radio" name="follow_up" value="no">
+                            <span>No</span>
                         </label>
                     </div>
                 </div>
+
 
                 <!-- Action Buttons -->
                 <div class="flex gap-3">

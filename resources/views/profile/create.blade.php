@@ -1,166 +1,127 @@
-<style>
-    .bg-gradient {
-        background: linear-gradient(135deg, #6a85e3 0%, #4466f2 100%);
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .tab-button {
-        transition: all 0.3s ease;
-        padding-bottom: 8px;
-    }
-
-    .tab-button:hover {
-        color: #4466f2;
-    }
-
-    .tab-button.active {
-        color: #4466f2;
-        border-bottom: 2px solid #4466f2;
-    }
-
-    .tab-content {
-        display: none;
-    }
-
-    .tab-content.active {
-        display: block;
-        animation: fadeIn 0.3s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .file-input {
-        background-color: #f8f9fc;
-        border: 1px solid #d1d5db;
-        transition: all 0.3s ease;
-    }
-
-    .file-input:hover {
-        background-color: #edf2f7;
-    }
-
-    .profile-card {
-        background: white;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        padding: 1.5rem;
-        border-radius: 12px;
-        text-align: center;
-    }
-</style>
-
 <x-app-layout>
-    <div class="flex-1 min-h-screen bg-gray-100">
-        <!-- Header -->
-        <div class="bg-gradient h-20 sm:h-28 md:h-52 relative"></div>
 
-        <!-- Main Card -->
-        <div class="max-w-6xl mx-auto -mt-16 sm:-mt-20 md:-mt-24 px-4 sm:px-6 lg:px-8">
-            <div class="bg-white rounded-xl shadow-lg flex flex-col md:flex-row gap-6 sm:gap-8 p-6 sm:p-8">
-                <!-- Left Content: Account Settings Form -->
-                <div class="flex-1 w-full">
-                    <!-- Tabs -->
-                    <div class="border-b flex flex-wrap gap-4 sm:gap-6 lg:gap-8 mb-4 sm:mb-6">
-                        <button class="tab-button active px-3 py-2 text-sm sm:text-base font-medium focus:outline-none"
-                            data-tab="account">
-                            Account Settings
-                        </button>
-                        <button
-                            class="tab-button px-3 py-2 text-sm sm:text-base font-medium text-gray-500 focus:outline-none"
-                            data-tab="company">
-                            Company Settings
-                        </button>
-                        <button
-                            class="tab-button px-3 py-2 text-sm sm:text-base font-medium text-gray-500 focus:outline-none"
-                            data-tab="documents">
-                            Documents
-                        </button>
-                        <button
-                            class="tab-button px-3 py-2 text-sm sm:text-base font-medium text-gray-500 focus:outline-none"
-                            data-tab="billing">
-                            Billing
-                        </button>
-                        <button
-                            class="tab-button px-3 py-2 text-sm sm:text-base font-medium text-gray-500 focus:outline-none"
-                            data-tab="notifications">
-                            Notifications
-                        </button>
-                    </div>
 
-                    <!-- Tab Contents -->
-                    <div class="tab-content active" id="account">
-                        <h2 class="text-2xl sm:text-3xl font-semibold mb-6 text-gray-800">Register Your Company</h2>
-                        <form class="space-y-6" action="" method="post">
-                            <div>
-                                <label for="company_info" class="block text-base font-medium text-gray-700 mb-2">Company
-                                    Information</label>
-                                <input
-                                    class="block w-full bg-gray-100 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 text-base focus:outline-none focus:bg-white focus:border-blue-500 transition-colors"
-                                    id="company_info" type="text" placeholder="Company Name" required />
+    <div class="flex-1 p-4 sm:p-6 md:p-8 lg:p-10 bg-gray-100 min-h-screen">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            @include('navigation.header')
+
+            <!-- Main Grid Content -->
+            <div class="grid grid-cols-1 gap-4 sm:gap-6">
+
+
+                <!-- Main Card -->
+                <div class="max-w-6xl mx-auto pt-24 sm:pt-28 md:pt-32 px-4 sm:px-6 lg:px-8">
+                    <div class="bg-white rounded-xl shadow-lg flex flex-col md:flex-row gap-6 sm:gap-8 p-6 sm:p-8">
+                        <!-- Left Content: Account Settings Form -->
+                        <div class="flex-1 w-full">
+                            <!-- Tabs -->
+                            <div class="border-b flex flex-wrap gap-4 sm:gap-6 lg:gap-8 mb-4 sm:mb-6">
+                                <button
+                                    class="tab-button active px-3 py-2 text-sm sm:text-base font-medium focus:outline-none"
+                                    data-tab="account">
+                                    Account Settings
+                                </button>
+                                <button
+                                    class="tab-button px-3 py-2 text-sm sm:text-base font-medium text-gray-500 focus:outline-none"
+                                    data-tab="company">
+                                    Company Settings
+                                </button>
+                                <button
+                                    class="tab-button px-3 py-2 text-sm sm:text-base font-medium text-gray-500 focus:outline-none"
+                                    data-tab="documents">
+                                    Documents
+                                </button>
                             </div>
-                            <div>
-                                <label for="contact_details"
-                                    class="block text-base font-medium text-gray-700 mb-2">Contact Details</label>
-                                <input
-                                    class="block w-full bg-gray-100 text-gray-700 border border-gray-300 rounded-lg py-3 px-4 text-base focus:outline-none focus:bg-white focus:border-blue-500 transition-colors"
-                                    id="contact_details" type="text" placeholder="e.g., email@example.com"
-                                    required />
+
+                            <!-- Profile Tab Contents -->
+                            <div class="tab-content active bg-white p-1 shadow rounded-lg" id="account">
+
+
+                                <!-- Profile Information (Default View) -->
+                                <div id="profile-info">
+                                    <div class="space-y-4">
+                                        <div class="flex flex-col">
+                                            <label class="text-sm font-medium text-gray-600">Full Name:</label>
+                                            <p class="text-lg text-gray-900 font-semibold">
+                                                {{ Auth::user()->vendor->fname }}
+                                                {{ Auth::user()->vendor->mname }}
+                                                {{ Auth::user()->vendor->lname }}
+                                            </p>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <label class="text-sm font-medium text-gray-600">Address:</label>
+                                            <p class="text-lg text-gray-900 font-semibold">
+                                                {{ Auth::user()->vendor->address }}
+                                            </p>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div class="flex flex-col">
+                                                <label class="text-sm font-medium text-gray-600">Email:</label>
+                                                <p class="text-lg text-gray-900 font-semibold">
+                                                    {{ Auth::user()->email }}
+                                                </p>
+                                            </div>
+                                            <div class="flex flex-col">
+                                                <label class="text-sm font-medium text-gray-600">Contact Number:</label>
+                                                <p class="text-lg text-gray-900 font-semibold">
+                                                    {{ Auth::user()->vendor->contact_info }}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Profile Update Form (Hidden by Default) -->
+                                <div id="profile-update-form" class="hidden mt-0">
+                                    @include('profile.partials.update-profile-information-form', [
+                                        'user' => Auth::user(),
+                                    ])
+
+                                </div>
                             </div>
-                            <div>
-                                <label for="documentation"
-                                    class="block text-base font-medium text-gray-700 mb-2">Documentation</label>
-                                <input type="file" id="documentation" name="documentation"
-                                    class="file-input block w-full text-gray-500 py-2 px-3 text-base rounded-lg cursor-pointer"
-                                    required />
-                            </div>
-                            <button type="submit"
-                                class="w-full px-4 py-3 bg-blue-600 text-white rounded-lg text-base font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
-                                Register Company
-                            </button>
-                        </form>
-                    </div>
 
-                    <div class="tab-content" id="company">
-                        <h2 class="text-2xl font-semibold mb-6 text-gray-800">Company Settings</h2>
-                        <p>Settings related to your company details will be here.</p>
-                    </div>
 
-                    <div class="tab-content" id="documents">
-                        <h2 class="text-2xl font-semibold mb-6 text-gray-800">Documents</h2>
-                        <p>Manage company documents here.</p>
-                    </div>
-
-                    <div class="tab-content" id="billing">
-                        <h2 class="text-2xl font-semibold mb-6 text-gray-800">Billing</h2>
-                        <p>View and manage billing details here.</p>
-                    </div>
-
-                    <div class="tab-content" id="notifications">
-                        <h2 class="text-2xl font-semibold mb-6 text-gray-800">Notifications</h2>
-                        <p>Manage notifications and alerts.</p>
-                    </div>
-                </div>
-
-                <!-- Right Content: Profile Card -->
-                <div class="w-full md:w-64 lg:w-72 flex flex-col items-center md:border-l md:pl-6 lg:pl-8">
-                    <div class="profile-card">
-                        <div class="relative">
-                            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-DdqTN0X4rJ55yMBHnX70tuun4EN5TY.png"
-                                alt="Profile" class="w-24 h-24 rounded-full object-cover shadow-md" />
                         </div>
-                        <h2 class="mt-4 text-xl font-semibold text-gray-800">Sample User</h2>
-                        <p class="text-sm text-gray-500">Bus Terminal Owner</p>
+                        <!-- Right Content: Profile Card -->
+                        <div class="w-full md:w-64 lg:w-72 flex flex-col md:border-l md:pl-6 lg:pl-8">
+                            <div class="profile-card flex flex-col items-center h-full">
+                                <div class="relative flex justify-center">
+                                    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-DdqTN0X4rJ55yMBHnX70tuun4EN5TY.png"
+                                        alt="Profile" class="w-24 h-24 rounded-full object-cover shadow-md" />
+                                </div>
+                                <h2 class="mt-4 text-xl font-semibold text-gray-800 text-center">Sample User</h2>
+                                <p class="text-sm text-gray-500 text-center">Bus Terminal Owner</p>
+
+                                <!-- Push Delete Account Section to Bottom -->
+                                <div class="flex-grow"></div>
+
+                                <!-- Delete Account Section -->
+                                <div class="w-full px-4">
+                                    @include('profile.partials.delete-user-form')
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Confirmation Modal (Hidden by Default) -->
+    <div id="cancel-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+            <h2 class="text-lg font-semibold text-gray-800">Cancel Update?</h2>
+            <p class="text-sm text-gray-600 mt-2">Any unsaved changes will be lost. Are you sure you want to cancel?</p>
+
+            <div class="mt-4 flex justify-end gap-3">
+                <button id="keep-editing" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                    No, Keep Editing
+                </button>
+                <button id="confirm-cancel" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
+                    Yes, Cancel
+                </button>
             </div>
         </div>
     </div>
@@ -180,4 +141,47 @@
             });
         });
     </script>
+
+    <script>
+        document.getElementById('toggle-profile-update').addEventListener('click', function() {
+            let profileInfo = document.getElementById('profile-info');
+            let profileForm = document.getElementById('profile-update-form');
+            let updateButton = document.getElementById('toggle-profile-update');
+            let cancelModal = document.getElementById('cancel-modal');
+
+            if (!profileForm.classList.contains('hidden')) {
+                // Show modal instead of instant cancel
+                cancelModal.classList.remove('hidden');
+            } else {
+                profileForm.classList.remove('hidden');
+                profileInfo.classList.add('hidden');
+                updateButton.textContent = 'Cancel Update';
+                updateButton.classList.remove('bg-blue-500', 'text-white');
+                updateButton.classList.add('border', 'border-red-500', 'text-red-500', 'bg-transparent',
+                    'hover:bg-red-500', 'hover:text-white');
+            }
+        });
+
+        document.getElementById('keep-editing').addEventListener('click', function() {
+            document.getElementById('cancel-modal').classList.add('hidden');
+        });
+
+        document.getElementById('confirm-cancel').addEventListener('click', function() {
+            let profileInfo = document.getElementById('profile-info');
+            let profileForm = document.getElementById('profile-update-form');
+            let updateButton = document.getElementById('toggle-profile-update');
+
+            profileForm.classList.add('hidden');
+            profileInfo.classList.remove('hidden');
+            updateButton.textContent = 'Update Profile';
+            updateButton.classList.remove('border', 'border-red-500', 'text-red-500', 'bg-transparent',
+                'hover:bg-red-500', 'hover:text-white');
+            updateButton.classList.add('bg-blue-500', 'text-white');
+
+            document.getElementById('cancel-modal').classList.add('hidden');
+        });
+    </script>
+
+
+
 </x-app-layout>

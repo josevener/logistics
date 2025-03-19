@@ -19,7 +19,7 @@
         <!-- End Sidebar -->
 
         <!-- Main Content -->
-        <div class="flex-1 md:ml-64 lg:ml-80">
+        <div class="flex-1 md:ml-64" style="padding-left: 20px">
             {{ $slot }}
         </div>
         <!-- End Main Content Area -->
