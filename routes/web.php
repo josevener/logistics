@@ -5,6 +5,7 @@ use App\Http\Controllers\ComplianceController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\ReportController;
@@ -32,6 +33,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::resource('vendors', VendorController::class)->middleware('auth');
 
 Route::resource('vehicles', VehicleInventoryController::class)->middleware('auth');
+
+Route::resource('notifications', NotificationController::class)
+    ->except(['edit', 'create'])
+    ->middleware('auth');
 
 Route::middleware('auth')->group(function () {
     Route::get('maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');

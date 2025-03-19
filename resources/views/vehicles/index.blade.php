@@ -1,50 +1,54 @@
 <x-app-layout>
     <main class="flex-1 p-6 md:p-12 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto">
+
+            @include('navigation.header')
+
             <!-- Header -->
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-                    <h4 class="text-xl md:text-2xl font-bold text-gray-900">Vehicle Inventory</h4>
+            <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <!-- Left Section: Title and Tabs -->
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                    <h4 class="text-lg font-bold text-gray-900 md:text-xl">Vehicle Inventory</h4>
                     <!-- Tabs -->
-                    <div class="flex gap-3">
+                    <div class="flex gap-2">
                         <button
-                            class="tab-button px-4 py-2 rounded-full text-sm font-semibold text-gray-700 bg-white shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 {{ request('filter', 'all') === 'all' ? 'bg-blue-600 text-white hover:bg-blue-700 hover:text-white' : '' }}"
+                            class="tab-button px-3 py-1 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition {{ request('filter', 'all') === 'all' ? 'bg-gray-600 text-white hover:bg-blue-700 hover:text-white' : '' }}"
                             data-filter="all">
-                            All Vehicles ({{ $vehicles->total() }})
+                            All ({{ $vehicles->total() }})
                         </button>
                         <button
-                            class="tab-button px-4 py-2 rounded-full text-sm font-semibold text-gray-700 bg-white shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 {{ request('filter') === 'ready' ? 'bg-blue-600 text-white hover:bg-blue-700 hover:text-white' : '' }}"
+                            class="tab-button px-3 py-1 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition {{ request('filter') === 'ready' ? 'bg-gray-600 text-white hover:bg-blue-700 hover:text-white' : '' }}"
                             data-filter="ready">
-                            Ready to Use ({{ $vehicles->where('status', 'ready')->count() }})
+                            Ready ({{ $vehicles->where('status', 'ready')->count() }})
                         </button>
                         <button
-                            class="tab-button px-4 py-2 rounded-full text-sm font-semibold text-gray-700 bg-white shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 {{ request('filter') === 'maintenance' ? 'bg-blue-600 text-white hover:bg-blue-700 hover:text-white' : '' }}"
+                            class="tab-button px-3 py-1 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition {{ request('filter') === 'maintenance' ? 'bg-gray-600 text-white hover:bg-blue-700 hover:text-white' : '' }}"
                             data-filter="maintenance">
-                            Under Maintenance ({{ $vehicles->where('status', 'maintenance')->count() }})
+                            Maintenance ({{ $vehicles->where('status', 'maintenance')->count() }})
                         </button>
                     </div>
                 </div>
-                <div class="flex items-center gap-4">
+
+                <!-- Right Section: Sort and Button -->
+                <div class="flex items-center gap-3">
                     <!-- Sort Dropdown -->
-                    <div class="flex items-center gap-2 text-sm text-gray-600">
-                        <span class="font-medium">Sort by:</span>
-                        <select id="sortSelect" name="sort"
-                            class="px-3 py-1 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="created_at-desc"
-                                {{ request('sort', 'created_at-desc') === 'created_at-desc' ? 'selected' : '' }}>Time
-                                (Newest)</option>
-                            <option value="created_at-asc" {{ request('sort') === 'created_at-asc' ? 'selected' : '' }}>
-                                Time (Oldest)</option>
-                            <option value="capacity-desc" {{ request('sort') === 'capacity-desc' ? 'selected' : '' }}>
-                                Capacity (High to Low)</option>
-                            <option value="capacity-asc" {{ request('sort') === 'capacity-asc' ? 'selected' : '' }}>
-                                Capacity (Low to High)</option>
-                        </select>
-                    </div>
+                    <select id="sortSelect" name="sort"
+                        class="px-2 py-1 text-sm text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="created_at-desc"
+                            {{ request('sort', 'created_at-desc') === 'created_at-desc' ? 'selected' : '' }}>Newest
+                        </option>
+                        <option value="created_at-asc" {{ request('sort') === 'created_at-asc' ? 'selected' : '' }}>
+                            Oldest</option>
+                        <option value="capacity-desc" {{ request('sort') === 'capacity-desc' ? 'selected' : '' }}>
+                            Capacity ↓</option>
+                        <option value="capacity-asc" {{ request('sort') === 'capacity-asc' ? 'selected' : '' }}>Capacity
+                            ↑</option>
+                    </select>
                     <!-- Create Vehicle Button -->
                     <button id="createVehicleBtn"
-                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition shadow-sm">Add
-                        New Vehicle</button>
+                        class="px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+                        + New Vehicle
+                    </button>
                 </div>
             </div>
 

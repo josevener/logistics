@@ -89,9 +89,10 @@
         <div class="mt-4 px-4 py-3 text-white font-semibold text-sm md:text-base">
             Notifications & Reminders
         </div>
-        <x-nav-item href="{{ route('profile.edit') }}" active="{{ Route::currentRouteName() === 'profile.edit' }}"
+        <x-nav-item href="{{ route('notifications.index') }}"
+            active="{{ Route::currentRouteName() === 'notifications.index' }}"
             icon="M21 12h-2m-2.64 5.36l-1.42-1.42M12 21v-2m-5.36-2.64l1.42-1.42M3 12h2m2.64-5.36l1.42 1.42M12 3v2m5.36 2.64l-1.42 1.42 M12 12m-4 0a4 4 0 018 0">
-            Profile Setting
+            Notifications
         </x-nav-item>
     </nav>
 

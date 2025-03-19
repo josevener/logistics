@@ -1,7 +1,6 @@
 <x-app-layout>
-    <div
-        class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 min-h-screen flex flex-col">
-        <!-- Header -->
+    <!-- Header -->
+    <main class="flex-1 p-6 md:p-12 bg-gray-50 min-h-screen">
         @include('navigation.header')
 
         <!-- Main Content -->
@@ -331,142 +330,144 @@
                 </div>
             </div>
         </div>
-    </div>
+        </div>
 
-    <!-- Scripts -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            console.log("DOM fully loaded");
-            const proposalModal = document.getElementById('proposalModal');
-            const openModalBtn = document.getElementById('openProposalModal');
-            const closeModalBtn = document.getElementById('closeProposalModal');
-            const cancelBtn = document.getElementById('cancelBtn');
-            const form = document.getElementById('bidForm');
-            const submitBtn = document.getElementById('submitBtn');
-            const submitText = document.getElementById('submitText');
-            const loadingSpinner = document.getElementById('loadingSpinner');
+        <!-- Scripts -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                console.log("DOM fully loaded");
+                const proposalModal = document.getElementById('proposalModal');
+                const openModalBtn = document.getElementById('openProposalModal');
+                const closeModalBtn = document.getElementById('closeProposalModal');
+                const cancelBtn = document.getElementById('cancelBtn');
+                const form = document.getElementById('bidForm');
+                const submitBtn = document.getElementById('submitBtn');
+                const submitText = document.getElementById('submitText');
+                const loadingSpinner = document.getElementById('loadingSpinner');
 
-            console.log("Open Modal Button:", openModalBtn);
+                console.log("Open Modal Button:", openModalBtn);
 
-            if (openModalBtn) {
-                openModalBtn.addEventListener('click', () => {
-                    console.log("Add Bid button clicked");
-                    proposalModal.classList.remove('hidden');
-                    proposalModal.classList.remove('opacity-0', 'pointer-events-none');
-                    proposalModal.classList.add('opacity-100', 'pointer-events-auto');
-                });
-            } else {
-                console.error("Add Bid button not found in DOM");
-            }
-
-            function closeProposalModal() {
-                proposalModal.classList.remove('opacity-100', 'pointer-events-auto');
-                proposalModal.classList.add('opacity-0', 'pointer-events-none');
-                setTimeout(() => proposalModal.classList.add('hidden'), 300);
-            }
-            closeModalBtn.addEventListener('click', closeProposalModal);
-            cancelBtn.addEventListener('click', closeProposalModal);
-            proposalModal.addEventListener('click', (e) => {
-                if (e.target === proposalModal) closeProposalModal();
-            });
-
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                submitBtn.disabled = true;
-                submitText.textContent = 'Submitting...';
-                loadingSpinner.classList.remove('hidden');
-
-                try {
-                    const response = await fetch(form.action, {
-                        method: 'POST',
-                        body: new FormData(form),
-                        headers: {
-                            'Accept': 'application/json'
-                        },
+                if (openModalBtn) {
+                    openModalBtn.addEventListener('click', () => {
+                        console.log("Add Bid button clicked");
+                        proposalModal.classList.remove('hidden');
+                        proposalModal.classList.remove('opacity-0', 'pointer-events-none');
+                        proposalModal.classList.add('opacity-100', 'pointer-events-auto');
                     });
-                    const result = await response.json();
-
-                    if (response.ok) {
-                        closeProposalModal();
-                        setTimeout(() => location.reload(), 500);
-                        alert(result.message);
-                    } else {
-                        console.error('Submission failed:', result.error);
-                        alert('Error: ' + (result.error || 'Unknown server error'));
-                    }
-                } catch (error) {
-                    console.error('Network error:', error);
-                    alert('Network error: ' + error.message);
-                } finally {
-                    submitBtn.disabled = false;
-                    submitText.textContent = 'Submit Bid';
-                    loadingSpinner.classList.add('hidden');
+                } else {
+                    console.error("Add Bid button not found in DOM");
                 }
-            });
 
-            const validUntilInput = document.getElementById('valid_until');
-            const today = new Date().toISOString().split('T')[0];
-            validUntilInput.setAttribute('min', today);
-            validUntilInput.addEventListener('change', function() {
-                if (this.value < today) {
-                    this.value = today;
-                    alert('Valid until date cannot be in the past.');
+                function closeProposalModal() {
+                    proposalModal.classList.remove('opacity-100', 'pointer-events-auto');
+                    proposalModal.classList.add('opacity-0', 'pointer-events-none');
+                    setTimeout(() => proposalModal.classList.add('hidden'), 300);
                 }
-            });
-
-            window.toggleDropdown = function(id) {
-                const dropdowns = document.querySelectorAll('[id^="dropdown-"]');
-                dropdowns.forEach(dropdown => {
-                    if (dropdown.id !== `dropdown-${id}`) dropdown.classList.add('hidden');
+                closeModalBtn.addEventListener('click', closeProposalModal);
+                cancelBtn.addEventListener('click', closeProposalModal);
+                proposalModal.addEventListener('click', (e) => {
+                    if (e.target === proposalModal) closeProposalModal();
                 });
-                document.getElementById(`dropdown-${id}`).classList.toggle('hidden');
-            };
 
-            window.openDeleteModal = function(id) {
-                const modal = document.getElementById('delete-modal');
-                const form = document.getElementById('delete-form');
-                form.action = `{{ url('proposals') }}/${id}`;
-                modal.classList.remove('hidden');
-            };
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    submitBtn.disabled = true;
+                    submitText.textContent = 'Submitting...';
+                    loadingSpinner.classList.remove('hidden');
 
-            window.closeDeleteModal = function() {
-                document.getElementById('delete-modal').classList.add('hidden');
-            };
+                    try {
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            body: new FormData(form),
+                            headers: {
+                                'Accept': 'application/json'
+                            },
+                        });
+                        const result = await response.json();
 
-            document.addEventListener('click', (e) => {
-                const dropdowns = document.querySelectorAll('[id^="dropdown-"]');
-                if (!e.target.closest('.relative')) {
-                    dropdowns.forEach(dropdown => dropdown.classList.add('hidden'));
-                }
+                        if (response.ok) {
+                            closeProposalModal();
+                            setTimeout(() => location.reload(), 500);
+                            alert(result.message);
+                        } else {
+                            console.error('Submission failed:', result.error);
+                            alert('Error: ' + (result.error || 'Unknown server error'));
+                        }
+                    } catch (error) {
+                        console.error('Network error:', error);
+                        alert('Network error: ' + error.message);
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitText.textContent = 'Submit Bid';
+                        loadingSpinner.classList.add('hidden');
+                    }
+                });
+
+                const validUntilInput = document.getElementById('valid_until');
+                const today = new Date().toISOString().split('T')[0];
+                validUntilInput.setAttribute('min', today);
+                validUntilInput.addEventListener('change', function() {
+                    if (this.value < today) {
+                        this.value = today;
+                        alert('Valid until date cannot be in the past.');
+                    }
+                });
+
+                window.toggleDropdown = function(id) {
+                    const dropdowns = document.querySelectorAll('[id^="dropdown-"]');
+                    dropdowns.forEach(dropdown => {
+                        if (dropdown.id !== `dropdown-${id}`) dropdown.classList.add('hidden');
+                    });
+                    document.getElementById(`dropdown-${id}`).classList.toggle('hidden');
+                };
+
+                window.openDeleteModal = function(id) {
+                    const modal = document.getElementById('delete-modal');
+                    const form = document.getElementById('delete-form');
+                    form.action = `{{ url('proposals') }}/${id}`;
+                    modal.classList.remove('hidden');
+                };
+
+                window.closeDeleteModal = function() {
+                    document.getElementById('delete-modal').classList.add('hidden');
+                };
+
+                document.addEventListener('click', (e) => {
+                    const dropdowns = document.querySelectorAll('[id^="dropdown-"]');
+                    if (!e.target.closest('.relative')) {
+                        dropdowns.forEach(dropdown => dropdown.classList.add('hidden'));
+                    }
+                });
             });
-        });
-    </script>
+        </script>
 
-    <!-- Custom Styles (for scrollbars) -->
-    <style>
-        tbody::-webkit-scrollbar {
-            width: 8px;
-        }
+        <!-- Custom Styles (for scrollbars) -->
+        <style>
+            tbody::-webkit-scrollbar {
+                width: 8px;
+            }
 
-        tbody::-webkit-scrollbar-thumb {
-            background-color: #6b7280;
-            /* Gray-500 */
-            border-radius: 4px;
-        }
+            tbody::-webkit-scrollbar-thumb {
+                background-color: #6b7280;
+                /* Gray-500 */
+                border-radius: 4px;
+            }
 
-        tbody::-webkit-scrollbar-track {
-            background-color: #e5e7eb;
-            /* Gray-200 */
-        }
+            tbody::-webkit-scrollbar-track {
+                background-color: #e5e7eb;
+                /* Gray-200 */
+            }
 
-        .dark tbody::-webkit-scrollbar-thumb {
-            background-color: #9ca3af;
-            /* Gray-400 */
-        }
+            .dark tbody::-webkit-scrollbar-thumb {
+                background-color: #9ca3af;
+                /* Gray-400 */
+            }
 
-        .dark tbody::-webkit-scrollbar-track {
-            background-color: #374151;
-            /* Gray-700 */
-        }
-    </style>
+            .dark tbody::-webkit-scrollbar-track {
+                background-color: #374151;
+                /* Gray-700 */
+            }
+        </style>
+
+    </main>
 </x-app-layout>
