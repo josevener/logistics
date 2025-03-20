@@ -64,9 +64,12 @@ Route::prefix('marketplace')->group(function () {
     // Customer (Admin) Routes
     Route::get('/admin/store', [MarketPlaceAdminController::class, 'store'])->name('marketplace.admin.store');
     Route::get('/admin/cart', [MarketplaceAdminController::class, 'cart'])->name('marketplace.admin.cart');
+    Route::post('/admin/cart/buy', [MarketPlaceAdminController::class, 'buyNow'])->name('marketplace.admin.cart.buy');
     Route::post('/admin/cart/add', [MarketplaceAdminController::class, 'addToCart'])->name('marketplace.admin.cart.add');
     Route::post('/admin/cart/remove', [MarketplaceAdminController::class, 'removeFromCart'])->name('marketplace.admin.cart.remove');
     Route::post('/admin/cart/checkout', [MarketplaceAdminController::class, 'checkout'])->name('marketplace.admin.cart.checkout')->middleware('auth');
+    Route::post('/admin/cart/remove-selected', [MarketPlaceAdminController::class, 'removeSelected'])->name('marketplace.admin.cart.remove-selected');
+    Route::post('/admin/cart/update', [MarketPlaceAdminController::class, 'updateQuantity'])->name('marketplace.admin.cart.update');
 
     // Vendor Routes
     Route::get('/vendor', [MarketPlaceVendorController::class, 'index'])->name('marketplace.vendor.index');
