@@ -3,7 +3,7 @@
         <div class="max-w-7xl mx-auto">
             <h1 class="text-2xl font-semibold mb-6 dark:text-white">Your Cart</h1>
 
-            @if (session('cart') && count(session('cart')) > 0)
+            @if ($cartItems->isNotEmpty())
                 <table class="w-full text-sm text-left border border-gray-200 dark:border-gray-700 rounded-lg">
                     <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
@@ -20,18 +20,18 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @foreach (session('cart') as $id => $item)
+                        @foreach ($cartItems as $item)
                             <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
-                                <td class="px-4 py-4 text-gray-900 dark:text-gray-100">{{ $item['name'] }}</td>
+                                <td class="px-4 py-4 text-gray-900 dark:text-gray-100">{{ $item->product->name }}</td>
                                 <td class="px-4 py-4 text-gray-700 dark:text-gray-300">
-                                    ₱{{ number_format($item['price'], 2) }}</td>
-                                <td class="px-4 py-4 text-gray-700 dark:text-gray-300">{{ $item['quantity'] }}</td>
+                                    ₱{{ number_format($item->product->price, 2) }}</td>
+                                <td class="px-4 py-4 text-gray-700 dark:text-gray-300">{{ $item->quantity }}</td>
                                 <td class="px-4 py-4 text-gray-700 dark:text-gray-300">
-                                    ₱{{ number_format($item['price'] * $item['quantity'], 2) }}</td>
+                                    ₱{{ number_format($item->product->price * $item->quantity, 2) }}</td>
                                 <td class="px-4 py-4">
                                     <form action="{{ route('marketplace.admin.cart.remove') }}" method="POST">
                                         @csrf
-                                        <input type="hidden" name="product_id" value="{{ $id }}">
+                                        <input type="hidden" name="product_id" value="{{ $item->product_id }}">
                                         <button type="submit" class="text-red-500 hover:text-red-700">Remove</button>
                                     </form>
                                 </td>
@@ -40,8 +40,9 @@
                     </tbody>
                 </table>
                 <div class="mt-6 flex justify-between items-center">
-                    <p class="text-lg font-semibold text-gray-900 dark:text-white">Total:
-                        ₱{{ number_format(array_sum(array_map(fn($item) => $item['price'] * $item['quantity'], session('cart'))), 2) }}
+                    <p class="text-lg font-semibold text-gray-900 dark:text-white">
+                        Total:
+                        ₱{{ number_format($cartItems->sum(fn($item) => $item->product->price * $item->quantity), 2) }}
                     </p>
                     <form action="{{ route('marketplace.admin.cart.checkout') }}" method="POST">
                         @csrf

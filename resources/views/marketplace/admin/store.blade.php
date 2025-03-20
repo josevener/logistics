@@ -6,7 +6,7 @@
                 <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Marketplace Store</h1>
                 <div class="mt-4 sm:mt-0 flex items-center gap-4">
                     <p class="text-gray-700 dark:text-gray-300">Items in Cart: <span
-                            class="font-semibold">{{ count(session('cart', [])) }}</span></p>
+                            class="font-semibold">{{ $cartItems->count() }}</span></p>
                     <a href="{{ route('marketplace.admin.cart') }}"
                         class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600">
                         View Cart
@@ -18,7 +18,7 @@
             <div class="mb-6 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
                 <div class="flex flex-col sm:flex-row gap-4">
                     <div class="flex-1">
-                        <input type="text" id="search" placeholder="Search products, and services..."
+                        <input type="text" id="search" placeholder="Search products..."
                             class="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div class="flex gap-2">

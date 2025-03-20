@@ -26,6 +26,10 @@ class User extends Authenticatable
         'profile_photo',
     ];
 
+    public function cartItems()
+    {
+        return $this->hasMany(Cart::class);
+    }
 
     public function vendor()
     {

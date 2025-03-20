@@ -29,7 +29,6 @@ class MarketPlaceVendorController extends Controller
         if ($validated['type'] === 'service') {
             $validated['stock'] = null; // Ensure stock is null for services
         }
-        dd($validated);
         Product::create($validated);
 
         flash()->success('Product/Service added!');
