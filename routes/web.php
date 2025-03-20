@@ -27,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile/create', [ProfileController::class, 'create'])->name('profile.create');
     Route::get('/profile/{profile}', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/photo', [ProfileController::class, 'update_profile'])->name('profile.update_profile');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
@@ -40,6 +41,7 @@ Route::resource('notifications', NotificationController::class)
 
 Route::middleware('auth')->group(function () {
     Route::get('maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');
+    Route::post('maintenance/store', [MaintenanceController::class, 'store'])->name('maintenance.store');
 });
 
 Route::middleware('auth')->group(function () {
