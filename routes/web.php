@@ -1,16 +1,22 @@
 <?php
 
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ComplianceController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\MarketPlaceAdminController;
+use App\Http\Controllers\MarketPlaceVendorController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\StoreController;
 use App\Http\Controllers\VehicleInventoryController;
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\VendorProductController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +36,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// PURCHASE ORDER MANAGEMENT
+// Admin
+Route::get('/purchase-orders', [PurchaseOrderController::class, 'index'])->name('purchase_orders.index');
+Route::get('/purchase-orders/create', [PurchaseOrderController::class, 'create'])->name('purchase_orders.create');
+Route::post('/purchase-orders', [PurchaseOrderController::class, 'store'])->name('purchase_orders.store');
+Route::put('/purchase-orders/{purchaseOrder}/update-status', [PurchaseOrderController::class, 'updateStatus'])->name('purchase_orders.updateStatus');
+
+// Vendor
+Route::get('/vendor/purchase-orders', [PurchaseOrderController::class, 'vendorIndex'])->name('purchase_orders.vendor.index');
+Route::get('/vendor/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'show'])->name('purchase_orders.vendor.show');
+Route::put('/vendor/purchase-orders/{purchaseOrder}/status', [PurchaseOrderController::class, 'updateStatus'])->name('purchase_orders.vendor.updateStatus');
+
 Route::resource('vendors', VendorController::class)->middleware('auth');
 
 Route::resource('vehicles', VehicleInventoryController::class)->middleware('auth');
@@ -37,6 +55,24 @@ Route::resource('vehicles', VehicleInventoryController::class)->middleware('auth
 Route::resource('notifications', NotificationController::class)
     ->except(['edit', 'create'])
     ->middleware('auth');
+
+
+
+// MARKETPLACE Management
+Route::prefix('marketplace')->group(function () {
+    // Customer (Admin) Routes
+    Route::get('/admin/store', [MarketPlaceAdminController::class, 'store'])->name('marketplace.admin.store');
+    Route::get('/admin/cart', [MarketplaceAdminController::class, 'cart'])->name('marketplace.admin.cart');
+    Route::post('/admin/cart/add', [MarketplaceAdminController::class, 'addToCart'])->name('marketplace.admin.cart.add');
+    Route::post('/admin/cart/remove', [MarketplaceAdminController::class, 'removeFromCart'])->name('marketplace.admin.cart.remove');
+    Route::post('/admin/cart/checkout', [MarketplaceAdminController::class, 'checkout'])->name('marketplace.admin.cart.checkout')->middleware('auth');
+
+    // Vendor Routes
+    Route::get('/vendor', [MarketPlaceVendorController::class, 'index'])->name('marketplace.vendor.index');
+    Route::post('/vendor/products', [MarketplaceVendorController::class, 'store'])->name('marketplace.vendor.products.store');
+    Route::put('/vendor/products/{product}', [MarketplaceVendorController::class, 'update'])->name('marketplace.vendor.products.update');
+    Route::delete('/vendor/products/{product}', [MarketplaceVendorController::class, 'destroy'])->name('marketplace.vendor.products.destroy');
+})->middleware('auth');
 
 Route::middleware('auth')->group(function () {
     Route::get('maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');

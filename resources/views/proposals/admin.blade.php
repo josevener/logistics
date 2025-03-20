@@ -661,9 +661,7 @@
             closeDeclineConfirm.addEventListener("click", closeDeclineConfirmFn);
             cancelDeclineConfirm.addEventListener("click", closeDeclineConfirmFn);
             declineConfirmModal.addEventListener("click", (e) => {
-                if (e.target === declineConfirmModal) {
-                    closeDeclineConfirmFn();
-                }
+                if (e.target === declineConfirmModal) {}
             });
 
             approveProposal.addEventListener("click", () => {

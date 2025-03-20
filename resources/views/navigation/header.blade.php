@@ -115,7 +115,16 @@
             <div id="profileBtn"
                 class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-900 rounded-full flex items-center justify-center text-white text-sm sm:text-base font-medium cursor-pointer hover:opacity-90 transition-opacity"
                 title="User Profile">
-                {{ substr(Auth::user()->vendor->firstname, 0, 1) . substr(Auth::user()->vendor->lastname, 0, 1) }}
+                @if (Auth::check() && Auth::user()->role === 'Admin')
+                    @php
+                        $nameParts = explode(' ', trim(Auth::user()->name ?? ''));
+                        $first = $nameParts[0] ?? '';
+                        $last = count($nameParts) > 1 ? $nameParts[count($nameParts) - 1] : '';
+                    @endphp
+                    {{ substr($first, 0, 1) . substr($last, 0, 1) }}
+                @else
+                    {{ Auth::user()->vendor ? substr(Auth::user()->vendor->firstname ?? '', 0, 1) . substr(Auth::user()->vendor->lastname ?? '', 0, 1) : '' }}
+                @endif
             </div>
             <div id="profileDropdown"
                 class="absolute right-0 mt-2 w-48 sm:w-56 bg-white rounded-lg shadow-lg z-10 hidden">
@@ -124,7 +133,16 @@
                         <div
                             class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-900 rounded-full flex items-center
                             justify-center text-white text-sm sm:text-base font-medium">
-                            {{ substr(Auth::user()->vendor->firstname, 0, 1) . substr(Auth::user()->vendor->lastname, 0, 1) }}
+                            @if (Auth::check() && Auth::user()->role === 'Admin')
+                                @php
+                                    $nameParts = explode(' ', trim(Auth::user()->name ?? ''));
+                                    $first = $nameParts[0] ?? '';
+                                    $last = count($nameParts) > 1 ? $nameParts[count($nameParts) - 1] : '';
+                                @endphp
+                                {{ substr($first, 0, 1) . substr($last, 0, 1) }}
+                            @else
+                                {{ Auth::user()->vendor ? substr(Auth::user()->vendor->firstname ?? '', 0, 1) . substr(Auth::user()->vendor->lastname ?? '', 0, 1) : '' }}
+                            @endif
                         </div>
                         <div>
                             <p class="text-xs sm:text-sm md:text-base font-semibold text-gray-900">
