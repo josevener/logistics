@@ -42,7 +42,7 @@ class MarketPlaceVendorController extends Controller
             'name' => 'required|string|max:255',
             'type' => 'required|in:service,items',
             'price' => 'required|numeric|min:0',
-            'stock' => 'required_if:type,items|integer|min:0',
+            'stock' => 'required_if:type,items|integer|min:0|nullable', // Allow null for services
             'description' => 'required|string',
         ]);
         $product->update($validated);
