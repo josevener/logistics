@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
+
+
+
 
 class ProfileController extends Controller
 {
@@ -86,6 +90,39 @@ class ProfileController extends Controller
             flash()->error('Error updating profile: ' . $e->getMessage());
             return redirect()->back();
         }
+    }
+
+
+    public function update_profile(Request $request)
+    {
+        $request->validate([
+            'profile_photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // Get the vendor record instead of user
+        $vendor = Vendor::where('user_id', Auth::id())->first();
+
+        if (!$vendor) {
+            return redirect()->back()->withErrors(['error' => 'Vendor profile not found.']);
+        }
+
+        // Delete the old profile photo if it exists
+        if ($vendor->profile_photo) {
+            Storage::delete('public/uploads/' . $vendor->profile_photo);
+        }
+
+        // Store the new profile photo
+        $file = $request->file('profile_photo');
+        $filename = time() . '_' . $file->getClientOriginalName();
+
+        // Save in storage/uploads/
+        $file->storeAs('uploads', $filename, 'public');
+
+        // Update vendor profile photo
+        $vendor->profile_photo = $filename;
+        $vendor->save();
+
+        return redirect()->back()->with('success', 'Profile photo updated successfully!');
     }
 
     /**

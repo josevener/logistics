@@ -9,21 +9,24 @@
         </p>
     </header> --}}
 
-    <div class="flex gap-3">
-        {{-- <x-primary-button id="toggle-profile-update" class="text-sm px-4 py-2">
-            {{ __('Update Profile') }}
-        </x-primary-button> --}}
-
-        <x-primary-button id="toggle-profile-update" class="text-sm px-4 py-2">
+    <div class="flex flex-col gap-2" style="margin-top: 20px">
+        <x-primary-button id="toggle-profile-update" class="text-sm px-4 py-2 w-full flex items-center justify-center">
             {{ __('Update Profile') }}
         </x-primary-button>
 
+        <x-secondary-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'update-password')"
+            class="text-sm px-4 py-2 w-full flex items-center justify-center">
+            {{ __('Update Password') }}
+        </x-secondary-button>
+
         <!-- Delete Account Button -->
         <x-danger-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
-            class="text-sm px-4 py-2">
+            class="text-sm px-4 py-2 w-full flex items-center justify-center">
             {{ __('Delete Account') }}
         </x-danger-button>
     </div>
+
+
 
     <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
         <form method="post" action="{{ route('profile.destroy') }}" class="p-6">
@@ -58,6 +61,67 @@
             </div>
         </form>
     </x-modal>
+
+
+    <x-modal name="update-password" :show="$errors->updatePassword->isNotEmpty()" focusable>
+        <form method="post" action="{{ route('password.update') }}" class="p-6 space-y-6">
+            @csrf
+            @method('put')
+
+            <!-- Modal Header -->
+            <header class="mb-4">
+                <h2 class="text-lg font-medium text-gray-900">
+                    {{ __('Update Password') }}
+                </h2>
+                <p class="mt-1 text-sm text-gray-600">
+                    {{ __('Ensure your account is using a long, random password to stay secure.') }}
+                </p>
+            </header>
+
+            <!-- Current Password -->
+            <div>
+                <x-input-label for="update_password_current_password" :value="__('Current Password')" />
+                <x-text-input id="update_password_current_password" name="current_password" type="password"
+                    class="mt-1 block w-full" autocomplete="current-password" />
+                <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
+            </div>
+
+            <!-- New Password -->
+            <div>
+                <x-input-label for="update_password_password" :value="__('New Password')" />
+                <x-text-input id="update_password_password" name="password" type="password" class="mt-1 block w-full"
+                    autocomplete="new-password" />
+                <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
+            </div>
+
+            <!-- Confirm New Password -->
+            <div>
+                <x-input-label for="update_password_password_confirmation" :value="__('Confirm Password')" />
+                <x-text-input id="update_password_password_confirmation" name="password_confirmation" type="password"
+                    class="mt-1 block w-full" autocomplete="new-password" />
+                <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end gap-3">
+                <x-secondary-button x-on:click="$dispatch('close')">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+                <x-primary-button>
+                    {{ __('Save') }}
+                </x-primary-button>
+            </div>
+
+            <!-- Success Message -->
+            @if (session('status') === 'password-updated')
+                <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)"
+                    class="text-sm text-gray-600 text-right mt-2">
+                    {{ __('Saved.') }}
+                </p>
+            @endif
+        </form>
+    </x-modal>
+
 
 
 </section>

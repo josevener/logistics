@@ -50,5 +50,16 @@ class DatabaseSeeder extends Seeder
             'address' => 'Taga Looban',
             'contact_info' => '09099876654',
         ]);
+
+
+        $this->call([
+            MaintenanceSeeder::class,
+        ]);
+        $this->call([
+            VehicleSeeder::class,
+        ]);
+        $this->call([
+            VehicleInventorySeeder::class,
+        ]);
     }
 }

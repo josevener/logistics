@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class VehicleSeeder extends Seeder
+class VehicleInventorySeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,7 +14,7 @@ class VehicleSeeder extends Seeder
     public function run(): void
     {
         // Sample vehicle records
-        $vehicles = [
+        $vehicleInventory = [
             [
                 'vehicle_number' => 'TRK-001',
                 'truck_type' => 'Cargo Truck',
@@ -63,8 +63,9 @@ class VehicleSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
+
         ];
 
-        DB::table('vehicles')->insert($vehicles);
+        DB::table('vehicle_inventories')->insert($vehicleInventory);
     }
 }

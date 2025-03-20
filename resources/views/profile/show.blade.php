@@ -80,10 +80,54 @@
 
                 <div class="w-full md:w-64 lg:w-72 flex flex-col md:border-l md:pl-6 lg:pl-8">
                     <div class="profile-card flex flex-col items-center h-full">
-                        <div class="relative flex justify-center">
-                            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-DdqTN0X4rJ55yMBHnX70tuun4EN5TY.png"
-                                alt="Profile" class="w-24 h-24 rounded-full object-cover shadow-md" />
+                        <div class="relative flex flex-col items-center">
+                            <form action="{{ route('profile.update_profile') }}" method="POST"
+                                enctype="multipart/form-data">
+                                @csrf
+                                @method('PUT')
+                                <!-- Hidden File Input -->
+                                <input type="file" id="profile-image-input" name="profile_photo" accept="image/*"
+                                    class="hidden" onchange="previewProfileImage(event)">
+
+
+                                <!-- Profile Image (Click to Upload) -->
+                                <label for="profile-image-input" class="cursor-pointer relative group">
+                                    <img id="profile-image-preview"
+                                        src="{{ asset('storage/uploads/' . Auth::user()->vendor->profile_photo ?? 'default-avatar.png') }}"
+                                        alt="Profile"
+                                        class="w-24 h-24 rounded-full object-cover shadow-md border-2 border-gray-300 group-hover:border-indigo-500 transition-all">
+
+                                    <!-- Overlay Effect -->
+                                    <div
+                                        class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <span class="text-white text-xs font-semibold">Click to Upload</span>
+                                    </div>
+                                </label>
+
+                                <!-- Upload Button -->
+                                <button id="upload-button" type="SVGNumberList"
+                                    class="mt-3 px-4 py-2 bg-indigo-600 text-white text-sm rounded-md shadow-md hover:bg-indigo-700 transition hidden"
+                                    onclick="uploadProfileImage()">
+                                    Upload Image
+                                </button>
+                            </form>
                         </div>
+
+                        <!-- JavaScript for Preview & Upload -->
+                        <script>
+                            function previewProfileImage(event) {
+                                const file = event.target.files[0];
+                                if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = function(e) {
+                                        document.getElementById('profile-image-preview').src = e.target.result;
+                                        document.getElementById('upload-button').classList.remove('hidden'); // Show Upload Button
+                                    };
+                                    reader.readAsDataURL(file);
+                                }
+                            }
+                        </script>
+
                         <h2 class="mt-4 text-xl font-semibold text-gray-800 text-center">{{ Auth::user()->name }}</h2>
                         <p class="text-sm text-gray-500 text-center">Bus Terminal Owner</p>
                         <div class="flex-grow"></div>
