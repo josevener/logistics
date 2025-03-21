@@ -14,13 +14,10 @@ return new class extends Migration
         Schema::create('vendor_compliance', function (Blueprint $table) {
             $table->id();
             $table->foreignId('vendor_id')->constrained()->onDelete('cascade');
-            $table->string('requirement'); // e.g., License, Certification
-            $table->string('document_path')->nullable(); // Path to uploaded document
-            $table->date('expiry_date')->nullable();
+            $table->string('requirement');
             $table->enum('status', ['pending', 'approved', 'expired'])->default('pending');
-            $table->foreignId('assigned_tech')->nullable()->constrained('users')->onDelete('set null'); // Assigned technician
-            $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
-            $table->text('notes')->nullable(); // Additional notes
+            $table->date('expiry_date')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

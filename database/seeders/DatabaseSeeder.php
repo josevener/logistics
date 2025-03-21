@@ -53,13 +53,14 @@ class DatabaseSeeder extends Seeder
 
 
         $this->call([
-            MaintenanceSeeder::class,
-        ]);
-        $this->call([
             VehicleSeeder::class,
         ]);
         $this->call([
             VehicleInventorySeeder::class,
+        ]);
+
+        $this->call([
+            MaintenanceSeeder::class,
         ]);
     }
 }

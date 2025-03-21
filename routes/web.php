@@ -126,6 +126,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('compliance', [ComplianceController::class, 'index'])->name('compliance.index');
+    Route::post('/upload_file', [ComplianceController::class, 'upload'])->name('vendor_compliance.upload');
+    Route::get('/submissions', [ComplianceController::class, 'list'])->name('vendor_compliance.list');
+    Route::get('/vendor_compliance/list', [ComplianceController::class, 'list'])->name('vendor_compliance.list');
 });
 
 
