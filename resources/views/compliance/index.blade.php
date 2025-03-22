@@ -31,8 +31,9 @@
                                 multiple />
                         </label>
                         <div class="mt-4">
-                            <button type="submit"
-                                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">Upload</button>
+                            <button type="submit" id="upload-button"
+                                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition disabled:opacity-50"
+                                disabled>Upload</button>
                         </div>
                     </form>
                 </div>
@@ -103,22 +104,14 @@
             </div>
         </div>
         <!-- Success Modal -->
-        <div id="success-modal"
-            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-            <div class="bg-white rounded-lg p-6 shadow-lg max-w-sm w-full">
-                <div class="flex items-center gap-3">
-                    <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                    </svg>
-                    <h3 class="text-lg font-semibold text-gray-800">Upload Successful!</h3>
-                </div>
-                <p class="mt-2 text-sm text-gray-600">Your files have been uploaded successfully.</p>
-                <div class="mt-4 flex justify-end">
-                    <button id="close-success-btn"
-                        class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
-                        OK
-                    </button>
+        <div id="success-modal" class="hidden fixed inset-0 z-50 w-full h-full bg-black bg-opacity-50">
+            <div class="flex justify-center items-center min-h-screen p-4">
+                <div class="relative w-full max-w-md mx-4">
+                    <div class="relative bg-white rounded-lg shadow-md">
+                        <div class="p-4 sm:p-6 space-y-3 sm:space-y-4 text-center">
+                            <p class="text-gray-700 text-sm sm:text-base">Files Uploaded Successfully!</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -132,6 +125,7 @@
                 fileInput: document.getElementById('file-upload'),
                 dropText: document.getElementById('drop-text'),
                 uploadForm: document.getElementById('uploadForm'),
+                uploadButton: document.getElementById('upload-button'),
                 submissionList: document.getElementById('submission-list'),
                 modal: document.getElementById('cardModal'),
                 modalTitle: document.getElementById('modal-title'),
@@ -171,8 +165,12 @@
                 elements.dropArea.addEventListener('drop', (e) => {
                     elements.fileInput.files = e.dataTransfer.files;
                     updateDropText(elements.fileInput.files);
+                    updateButtonState(); // Update button state on drop
                 });
-                elements.fileInput.addEventListener('change', () => updateDropText(elements.fileInput.files));
+                elements.fileInput.addEventListener('change', () => {
+                    updateDropText(elements.fileInput.files);
+                    updateButtonState(); // Update button state on file input change
+                });
             }
 
             function preventDefaults(e) {
@@ -185,7 +183,11 @@
                     `<p class="text-sm text-gray-600">Selected: ${files.length} file(s)</p>` : "";
             }
 
-            // File Upload Handling
+            function updateButtonState() {
+                elements.uploadButton.disabled = elements.fileInput.files.length === 0;
+            }
+
+            // Inside initFileUpload function, update the success block
             function initFileUpload() {
                 elements.uploadForm.addEventListener('submit', (e) => {
                     e.preventDefault();
@@ -202,16 +204,21 @@
                         .then(data => {
                             elements.loaderModal.classList.add('hidden'); // Hide loader
                             if (data.success) {
-                                fetchSubmissions();
-                                alert('Upload Complete!');
+                                // Show success modal
+                                const successModal = document.getElementById('success-modal');
+                                successModal.classList.remove('hidden');
+
+                                // Close modal and refresh page after 3 seconds
+                                setTimeout(() => {
+                                    successModal.classList.add('hidden');
+                                    window.location.reload(); // Refresh the page
+                                }, 1000); // 3000ms = 3 seconds
                             } else {
-                                alert('Upload Failed! ' + (data.error || 'Unknown error'));
                                 console.error("Upload Error:", data.error);
                             }
                         })
                         .catch(error => {
                             elements.loaderModal.classList.add('hidden'); // Hide loader on error
-                            alert('Upload Failed!');
                             console.error("Fetch Error:", error);
                         });
                 });

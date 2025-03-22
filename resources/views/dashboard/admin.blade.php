@@ -13,8 +13,12 @@
                     <div>
                         <p class="text-gray-600 text-sm sm:text-base font-medium">Registered Vendors</p>
                         <div class="flex items-center gap-2 sm:gap-3">
-                            <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">1,245</h3>
-                            <span class="text-green-500 text-xs sm:text-sm font-semibold">↑ 12</span>
+                            <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
+                                {{ $registeredVendorsCount }}</h3>
+                            <span
+                                class="{{ $vendorChange >= 0 ? 'text-green-500' : 'text-red-500' }} text-xs sm:text-sm font-semibold">
+                                {{ $vendorChange >= 0 ? '↑' : '↓' }} {{ abs($vendorChange) }}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -27,8 +31,9 @@
                     <div>
                         <p class="text-gray-600 text-sm sm:text-base font-medium">Active RFPs</p>
                         <div class="flex items-center gap-2 sm:gap-3">
-                            <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">12</h3>
-                            <span class="text-green-500 text-xs sm:text-sm font-semibold">2 New</span>
+                            <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">{{ $activeRfpsCount }}
+                            </h3>
+                            <span class="text-green-500 text-xs sm:text-sm font-semibold">{{ $newRfpsCount }} New</span>
                         </div>
                     </div>
                 </div>
@@ -244,4 +249,5 @@
             </div>
         </div>
     </main>
+
 </x-app-layout>

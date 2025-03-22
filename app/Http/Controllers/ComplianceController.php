@@ -59,7 +59,7 @@ class ComplianceController extends Controller
             ]);
         } catch (\Exception $e) {
             // Optionally log the error for debugging
-            \Log::error('Upload failed: ' . $e->getMessage());
+            // \Log::error('Upload failed: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,

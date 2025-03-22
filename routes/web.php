@@ -24,9 +24,12 @@ Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
+
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -131,8 +134,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/submissions', [ComplianceController::class, 'list'])->name('vendor_compliance.list');
     Route::get('/vendor_compliance/list', [ComplianceController::class, 'list'])->name('vendor_compliance.list');
 });
-
-
-
 
 require __DIR__ . '/auth.php';
