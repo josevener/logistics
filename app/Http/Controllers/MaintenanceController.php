@@ -18,28 +18,52 @@ class MaintenanceController extends Controller
      */
     public function index()
     {
-        $maintenances = Maintenance::with('vehicle', 'createdBy')->where('status', 'pending')->orderBy('maintenance_date', 'asc')->get();
+        $maintenances = Maintenance::with('vehicle', 'createdBy')
+            ->where('status', 'pending')
+            ->orderBy('maintenance_date', 'asc')
+            ->paginate(3);
 
+        $overdueTasks = Maintenance::with('vehicle', 'createdBy')
+            ->where('maintenance_date', '<', now())
+            ->where('status', '!=', 'completed')
+            ->get();
 
-        // Fetch Maintenance Alerts (Overdue & Due Soon)
-        $overdueTasks = Maintenance::where('maintenance_date', '<', now())->where('status', '!=', 'completed')->get();
-        $dueSoonTasks = Maintenance::whereBetween('maintenance_date', [now(), now()->addDays(3)])->where('status', '!=', 'completed')->get();
+        $dueSoonTasks = Maintenance::with('vehicle', 'createdBy')
+            ->whereBetween('maintenance_date', [now(), now()->addDays(3)])
+            ->where('status', '!=', 'completed')
+            ->get();
 
-        // Quick Stats
-        $pendingTasks = Maintenance::where('status', 'pending')->count();
-        $completedThisMonth = Maintenance::where('status', 'completed')->whereMonth('maintenance_date', now()->month)->count();
-        $activeVehicles = VehicleInventory::where('status', 'ready')->count();
+        $pendingTasksList = Maintenance::with('vehicle')
+            ->where('status', 'pending')
+            ->get();
+        $pendingTasksCount = $pendingTasksList->count();
+
+        $completedThisMonthList = Maintenance::with('vehicle')
+            ->where('status', 'completed')
+            ->whereMonth('maintenance_date', now()->month)
+            ->get();
+        $completedThisMonthCount = $completedThisMonthList->count();
+
+        $activeVehiclesList = VehicleInventory::where('status', 'ready')
+            ->get();
+        $activeVehiclesCount = $activeVehiclesList->count();
+
 
         $vendorsOptions = Vendor::all();
+        $vehicles = VehicleInventory::all();
 
         return view('maintenance.index', compact(
             'maintenances',
             'overdueTasks',
             'dueSoonTasks',
-            'pendingTasks',
-            'completedThisMonth',
-            'activeVehicles',
-            'vendorsOptions'
+            'pendingTasksList',
+            'pendingTasksCount',
+            'completedThisMonthList',
+            'completedThisMonthCount',
+            'activeVehiclesList',
+            'activeVehiclesCount',
+            'vendorsOptions',
+            'vehicles'
         ));
     }
 
@@ -58,31 +82,36 @@ class MaintenanceController extends Controller
      */
     public function store(Request $request)
     {
-        $maintenance = Maintenance::create([
-            'vehicle_id' => $request->vehicle_id,
-            'description' => $request->task_desc,
-            'maintenance_date' => $request->task_date,
-            'cost' => $request->estimated_cost,
-            'priority' => $request->priority,
-            'assigned_tech' => $request->assigned_tech,
-            'notes' => $request->notes,
-            'created_by' => Auth::user()->id,
-        ]);
+        try {
+            $maintenance = Maintenance::create([
+                'vehicle_id' => $request->vehicle_id,
+                'description' => $request->task_desc,
+                'maintenance_date' => $request->task_date,
+                'cost' => $request->estimated_cost,
+                'isPriority' => $request->priority ?? 0,
+                'assigned_tech' => $request->assigned_tech,
+                'notes' => $request->notes,
+                'created_by' => Auth::user()->id,
+            ]);
 
-        return response()->json([
-            'message' => 'Maintenance task created successfully',
-            'maintenance' => $maintenance
-        ], 201);
+            // Check if it's a priority task and customize the message
+            $message = $maintenance->isPriority
+                ? 'Priority maintenance task created successfully!'
+                : 'Maintenance task created successfully!';
+
+            return redirect()->route('maintenance.index')
+                ->with('success', $message);
+        } catch (\Exception $e) {
+            return redirect()->route('maintenance.index')
+                ->with('error', 'Failed to create maintenance task: ' . $e->getMessage());
+        }
     }
-
-
-
     /**
      * Display the specified resource.
      */
     public function show(Maintenance $maintenance)
     {
-        //
+        return response()->json($maintenance->load('vehicle', 'createdBy'));
     }
 
     /**

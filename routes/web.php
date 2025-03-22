@@ -81,6 +81,7 @@ Route::prefix('marketplace')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');
     Route::post('maintenance/store', [MaintenanceController::class, 'store'])->name('maintenance.store');
+    Route::get('/maintenance/{maintenance}', [MaintenanceController::class, 'show'])->name('maintenance.show');
 });
 
 Route::middleware('auth')->group(function () {
