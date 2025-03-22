@@ -87,6 +87,7 @@ Route::prefix('marketplace')->middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');
     Route::post('maintenance/store', [MaintenanceController::class, 'store'])->name('maintenance.store');
+    Route::get('/maintenance/{maintenance}', [MaintenanceController::class, 'show'])->name('maintenance.show');
 });
 
 // Billing Routes
@@ -135,6 +136,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Compliance Routes
 Route::middleware('auth')->group(function () {
     Route::get('compliance', [ComplianceController::class, 'index'])->name('compliance.index');
+    Route::post('/upload_file', [ComplianceController::class, 'upload'])->name('vendor_compliance.upload');
+    Route::get('/submissions', [ComplianceController::class, 'list'])->name('vendor_compliance.list');
+    Route::get('/vendor_compliance/list', [ComplianceController::class, 'list'])->name('vendor_compliance.list');
 });
 
 require __DIR__ . '/auth.php';

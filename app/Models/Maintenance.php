@@ -18,7 +18,7 @@ class Maintenance extends Model
         'maintenance_type',
         'cost',
         'status',
-        'priority',
+        'isPriority',
         'assigned_tech',
         'notes',
 
