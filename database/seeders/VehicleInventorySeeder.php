@@ -13,57 +13,47 @@ class VehicleInventorySeeder extends Seeder
      */
     public function run(): void
     {
-        // Sample vehicle records
+        // Sample bus records
         $vehicleInventory = [
             [
-                'vehicle_number' => 'TRK-001',
-                'truck_type' => 'Cargo Truck',
+                'vehicle_number' => 'BUS-001',
+                'driver_name' => 'Juan Dela Cruz',
                 'route_from' => 'Manila',
                 'route_to' => 'Cebu',
-                'total_capacity' => 10000,
-                'available_capacity' => 8000,
+                'total_capacity' => 50, // Seats
+                'available_capacity' => 40,
                 'status' => 'ready',
                 'last_updated' => Carbon::now(),
-                'available_parts' => 'Brake pads, Oil filter',
-                'maintenance_record' => 'Oil changed on 2025-03-10',
-                'fuel_consumption' => '15 km/l',
-                'isDeleted' => 0,
+                'image' => 'vehicles/bus-001.jpg', // Example image path
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'vehicle_number' => 'TRK-002',
-                'truck_type' => 'Refrigerated Truck',
+                'vehicle_number' => 'BUS-002',
+                'driver_name' => 'Maria Santos',
                 'route_from' => 'Cebu',
                 'route_to' => 'Davao',
-                'total_capacity' => 8000,
-                'available_capacity' => 5000,
+                'total_capacity' => 45,
+                'available_capacity' => 20,
                 'status' => 'maintenance',
                 'last_updated' => Carbon::now(),
-                'available_parts' => 'Coolant, Tires',
-                'maintenance_record' => 'Brake check on 2025-03-15',
-                'fuel_consumption' => '12 km/l',
-                'isDeleted' => 0,
+                'image' => 'vehicles/bus-002.jpg',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
-                'vehicle_number' => 'TRK-003',
-                'truck_type' => 'Tanker Truck',
+                'vehicle_number' => 'BUS-003',
+                'driver_name' => 'Pedro Reyes',
                 'route_from' => 'Davao',
                 'route_to' => 'Baguio',
-                'total_capacity' => 12000,
-                'available_capacity' => 10000,
+                'total_capacity' => 60,
+                'available_capacity' => 55,
                 'status' => 'ready',
                 'last_updated' => Carbon::now(),
-                'available_parts' => 'Fuel pump, Radiator',
-                'maintenance_record' => 'Tire replacement on 2025-03-18',
-                'fuel_consumption' => '10 km/l',
-                'isDeleted' => 0,
+                'image' => 'vehicles/bus-003.jpg',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-
         ];
 
         DB::table('vehicle_inventories')->insert($vehicleInventory);

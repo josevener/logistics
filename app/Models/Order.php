@@ -21,4 +21,8 @@ class Order extends Model
     {
         return $this->belongsToMany(Product::class)->withPivot('quantity', 'price');
     }
+    public function purchaseOrders()
+    {
+        return $this->hasMany(PurchaseOrder::class, 'order_id');
+    }
 }

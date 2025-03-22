@@ -3,67 +3,78 @@
         <div class="max-w-7xl mx-auto">
             @include('navigation.header')
 
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Vendor Dashboard</h1>
-                <button id="open-product-modal"
-                    class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600">
-                    Add New Product/Service
-                </button>
+            <!-- Header -->
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Vendor Marketplace</h1>
+                <div class="mt-4 sm:mt-0 flex gap-4">
+                    <a href="{{ route('marketplace.vendor.orders') }}"
+                        class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-green-500 dark:hover:bg-green-600 flex items-center">
+                        <i class="fas fa-shopping-bag mr-2"></i> My Orders
+                    </a>
+                    <button id="open-product-modal"
+                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600">
+                        Add New Product/Service
+                    </button>
+                </div>
             </div>
 
             <!-- Vendor Product Table -->
-            <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 shadow-md">
-                <table class="w-full text-sm text-left divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
-                        <tr>
-                            <th class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
-                                Name</th>
-                            <th
-                                class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
-                                Type</th>
-                            <th
-                                class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
-                                Price</th>
-                            <th
-                                class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
-                                Stock</th>
-                            <th
-                                class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
-                                Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                        @forelse ($vendorProducts as $product)
-                            <tr class="hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-150">
-                                <td class="px-4 py-4 sm:px-6 text-gray-900 dark:text-gray-100 truncate max-w-xs">
-                                    {{ $product->name }}</td>
-                                <td class="px-4 py-4 sm:px-6 text-gray-700 dark:text-gray-300">
-                                    {{ ucfirst($product->type) }}</td>
-                                <td class="px-4 py-4 sm:px-6 text-gray-700 dark:text-gray-300">
-                                    ₱{{ number_format($product->price, 2) }}</td>
-                                <td class="px-4 py-4 sm:px-6 text-gray-700 dark:text-gray-300">
-                                    {{ $product->type === 'items' ? $product->stock : 'N/A' }}</td>
-                                <td class="px-4 py-4 sm:px-6 flex gap-2">
-                                    <button id="edit-product-{{ $product->id }}"
-                                        class="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600">Edit</button>
-                                    <form action="{{ route('marketplace.vendor.products.destroy', $product->id) }}"
-                                        method="POST"
-                                        onsubmit="return confirm('Are you sure you want to delete this product?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-600">Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
+            <div class="mb-10">
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">My Products</h2>
+                <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 shadow-md">
+                    <table class="w-full text-sm text-left divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
-                                <td colspan="5" class="px-4 py-12 text-center text-gray-500 dark:text-gray-400">No
-                                    products/services found.</td>
+                                <th
+                                    class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
+                                    Name</th>
+                                <th
+                                    class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
+                                    Type</th>
+                                <th
+                                    class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
+                                    Price</th>
+                                <th
+                                    class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
+                                    Stock</th>
+                                <th
+                                    class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
+                                    Actions</th>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            @forelse ($vendorProducts as $product)
+                                <tr class="hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-150">
+                                    <td class="px-4 py-4 sm:px-6 text-gray-900 dark:text-gray-100 truncate max-w-xs">
+                                        {{ $product->name }}</td>
+                                    <td class="px-4 py-4 sm:px-6 text-gray-700 dark:text-gray-300">
+                                        {{ ucfirst($product->type) }}</td>
+                                    <td class="px-4 py-4 sm:px-6 text-gray-700 dark:text-gray-300">
+                                        ₱{{ number_format($product->price, 2) }}</td>
+                                    <td class="px-4 py-4 sm:px-6 text-gray-700 dark:text-gray-300">
+                                        {{ $product->type === 'items' ? $product->stock : 'N/A' }}</td>
+                                    <td class="px-4 py-4 sm:px-6 flex gap-2">
+                                        <button id="edit-product-{{ $product->id }}"
+                                            class="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600">Edit</button>
+                                        <form action="{{ route('marketplace.vendor.products.destroy', $product->id) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-600">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
+                                        No products/services found.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- Product Create Modal -->
@@ -201,6 +212,9 @@
         </div>
     </div>
 
+    <!-- Include Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Product Create Modal
@@ -219,12 +233,14 @@
             const typeSelect = document.getElementById('type');
             const stockField = document.getElementById('stock-field');
             const stockInput = document.getElementById('stock');
-            typeSelect.addEventListener('change', function() {
-                stockField.classList.toggle('hidden', this.value === 'service');
-                stockInput.required = this.value === 'items';
-                stockInput.value = this.value === 'service' ? '' : stockInput
-                    .value; // Clear stock for services
-            });
+            if (typeSelect && stockField && stockInput) {
+                typeSelect.addEventListener('change', function() {
+                    stockField.classList.toggle('hidden', this.value === 'service');
+                    stockInput.required = this.value === 'items';
+                    stockInput.value = this.value === 'service' ? '' : stockInput
+                        .value; // Clear stock for services
+                });
+            }
 
             // Product Edit Modals
             @foreach ($vendorProducts as $product)
@@ -244,12 +260,16 @@
                 const stockFieldEdit{{ $product->id }} = document.getElementById(
                     'stock-field-{{ $product->id }}');
                 const stockInputEdit{{ $product->id }} = document.getElementById('stock-{{ $product->id }}');
-                typeEdit{{ $product->id }}.addEventListener('change', function() {
-                    stockFieldEdit{{ $product->id }}.classList.toggle('hidden', this.value === 'service');
-                    stockInputEdit{{ $product->id }}.required = this.value === 'items';
-                    stockInputEdit{{ $product->id }}.value = this.value === 'service' ? '' :
-                        stockInputEdit{{ $product->id }}.value; // Clear stock for services
-                });
+                if (typeEdit{{ $product->id }} && stockFieldEdit{{ $product->id }} &&
+                    stockInputEdit{{ $product->id }}) {
+                    typeEdit{{ $product->id }}.addEventListener('change', function() {
+                        stockFieldEdit{{ $product->id }}.classList.toggle('hidden', this.value ===
+                            'service');
+                        stockInputEdit{{ $product->id }}.required = this.value === 'items';
+                        stockInputEdit{{ $product->id }}.value = this.value === 'service' ? '' :
+                            stockInputEdit{{ $product->id }}.value;
+                    });
+                }
             @endforeach
         });
     </script>

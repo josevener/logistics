@@ -71,12 +71,18 @@ Route::prefix('marketplace')->group(function () {
     Route::post('/admin/cart/checkout', [MarketplaceAdminController::class, 'checkout'])->name('marketplace.admin.cart.checkout')->middleware('auth');
     Route::post('/admin/cart/remove-selected', [MarketPlaceAdminController::class, 'removeSelected'])->name('marketplace.admin.cart.remove-selected');
     Route::post('/admin/cart/update', [MarketPlaceAdminController::class, 'updateQuantity'])->name('marketplace.admin.cart.update');
+    Route::get('/admin/orders', [MarketPlaceAdminController::class, 'orders'])->name('marketplace.admin.orders');
+    Route::post('/admin/orders/{order}/cancel', [MarketPlaceAdminController::class, 'cancelOrder'])->name('marketplace.admin.orders.cancel');
 
     // Vendor Routes
     Route::get('/vendor', [MarketPlaceVendorController::class, 'index'])->name('marketplace.vendor.index');
     Route::post('/vendor/products', [MarketplaceVendorController::class, 'store'])->name('marketplace.vendor.products.store');
     Route::put('/vendor/products/{product}', [MarketplaceVendorController::class, 'update'])->name('marketplace.vendor.products.update');
     Route::delete('/vendor/products/{product}', [MarketplaceVendorController::class, 'destroy'])->name('marketplace.vendor.products.destroy');
+    Route::get('/vendor/orders', [MarketPlaceVendorController::class, 'vendorOrders'])->name('marketplace.vendor.orders');
+    Route::post('/vendor/orders/{purchaseOrder}/approve', [MarketPlaceVendorController::class, 'approveOrder'])->name('marketplace.vendor.orders.approve');
+    Route::post('/vendor/orders/{purchaseOrder}/reject', [MarketPlaceVendorController::class, 'rejectOrder'])->name('marketplace.vendor.orders.reject');
+    Route::post('/vendor/orders/{purchaseOrder}/update-status', [MarketPlaceVendorController::class, 'updateOrderStatus'])->name('marketplace.vendor.orders.update-status');
 })->middleware('auth');
 
 Route::middleware('auth')->group(function () {

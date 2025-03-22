@@ -14,17 +14,15 @@ return new class extends Migration
         Schema::create('vehicle_inventories', function (Blueprint $table) {
             $table->id();
             $table->string('vehicle_number')->unique();
-            $table->string('truck_type');
+            $table->string('driver_name');
             $table->string('route_from');
             $table->string('route_to');
             $table->integer('total_capacity');
             $table->integer('available_capacity');
             $table->enum('status', ['ready', 'maintenance'])->default('ready');
             $table->timestamp('last_updated')->nullable();
-            $table->text('available_parts')->nullable();
-            $table->text('maintenance_record')->nullable();
-            $table->text('fuel_consumption')->nullable();
-            $table->tinyInteger('isDeleted')->default(0);
+            $table->string('image')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

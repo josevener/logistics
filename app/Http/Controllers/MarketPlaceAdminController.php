@@ -17,7 +17,42 @@ class MarketPlaceAdminController extends Controller
         $cartItems = Auth::check() ? Cart::where('user_id', Auth::id())->with('product')->get() : collect();
         return view('marketplace.admin.store', compact('products', 'cartItems'));
     }
+    public function orders()
+    {
+        $orders = Order::where('user_id', Auth::id())
+            ->with('products.vendor.user') // Eager load products and their vendors
+            ->orderBy('created_at', 'desc')
+            ->get();
 
+        return view('marketplace.admin.orders', compact('orders'));
+    }
+    public function cancelOrder(Request $request, $orderId)
+    {
+        $order = Order::where('user_id', Auth::id())->findOrFail($orderId);
+
+        if ($order->status !== 'Pending') {
+            flash()->error('Only pending orders can be canceled.');
+            return redirect()->route('marketplace.admin.orders');
+        }
+
+        // Restore stock for items
+        foreach ($order->products as $product) {
+            if ($product->type === 'items') {
+                $product->increment('stock', $product->pivot->quantity);
+            }
+        }
+
+        // Update related purchase orders to "Canceled"
+        PurchaseOrder::whereIn('description', $order->products->map(fn($p) => "Order for {$p->name} (Qty: {$p->pivot->quantity})"))
+            ->where('status', 'Pending')
+            ->update(['status' => 'Canceled']);
+
+        // Update order status
+        $order->update(['status' => 'Canceled']);
+
+        flash()->success("Order #{$order->id} has been canceled.");
+        return redirect()->route('marketplace.admin.orders');
+    }
     public function cart()
     {
         $cartItems = Cart::where('user_id', Auth::id())->with('product.vendor.user')->get();
@@ -122,48 +157,49 @@ class MarketPlaceAdminController extends Controller
 
     public function checkout(Request $request)
     {
-        $selectedItems = $request->input('selected_items', []);
-        if (empty($selectedItems)) {
-            flash()->error('No items selected for checkout.');
+        $selectedIds = $request->input('selected', []);
+        if (empty($selectedIds)) {
+            flash()->error('Please select at least one item to checkout.');
             return redirect()->route('marketplace.admin.cart');
         }
 
-        $cartItems = Cart::where('user_id', Auth::id())->whereIn('id', $selectedItems)->with('product')->get();
+        $cartItems = Cart::where('user_id', Auth::id())->whereIn('id', $selectedIds)->get();
         if ($cartItems->isEmpty()) {
             flash()->error('No valid items selected for checkout.');
             return redirect()->route('marketplace.admin.cart');
         }
 
-        $total = $cartItems->sum(function ($item) {
-            return $item->product->price * $item->quantity;
-        });
-
         $order = Order::create([
             'user_id' => Auth::id(),
-            'total' => $total,
+            'total' => $cartItems->sum(fn($item) => $item->product->price * $item->quantity),
             'status' => 'Pending',
         ]);
 
-        foreach ($cartItems as $item) {
-            $order->products()->attach($item->product_id, [
-                'quantity' => $item->quantity,
-                'price' => $item->product->price,
-            ]);
+        foreach ($cartItems->groupBy('product.vendor_id') as $vendorId => $items) {
+            $vendorTotal = $items->sum(fn($item) => $item->product->price * $item->quantity);
+            $poNumber = 'PO-' . strtoupper(uniqid());
+            $description = $items->map(fn($item) => "Order for {$item->product->name} (Qty: {$item->quantity})")->implode(', ');
 
             PurchaseOrder::create([
-                'po_number' => 'PO' . now()->format('YmdHis') . rand(100, 999),
-                'vendor_id' => $item->product->vendor_id,
-                'type' => $item->product->type,
-                'description' => "Order for {$item->product->name} (Qty: {$item->quantity})",
-                'amount' => $item->product->price * $item->quantity,
+                'order_id' => $order->id, // Link to the order
+                'vendor_id' => $vendorId,
+                'po_number' => $poNumber,
+                'description' => $description,
+                'amount' => $vendorTotal,
                 'status' => 'Pending',
             ]);
-
-            $item->delete(); // Remove checked out items from cart
         }
 
-        flash()->success('Checkout completed for selected items!');
-        return redirect()->route('marketplace.admin.store');
+        $order->products()->attach(
+            $cartItems->mapWithKeys(fn($item) => [
+                $item->product_id => ['quantity' => $item->quantity, 'price' => $item->product->price]
+            ])->toArray()
+        );
+
+        Cart::whereIn('id', $selectedIds)->delete();
+
+        flash()->success('Checkout successful! Your order has been placed.');
+        return redirect()->route('marketplace.admin.orders');
     }
 
     public function buyNow(Request $request)

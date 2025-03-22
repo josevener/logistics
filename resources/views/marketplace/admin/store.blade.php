@@ -7,13 +7,14 @@
             <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
                 <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Marketplace Store</h1>
                 <div class="mt-4 sm:mt-0 flex items-center gap-4">
-                    <p class="text-gray-700 dark:text-gray-300 flex items-center">
-                        <i class="fas fa-shopping-cart mr-2 text-gray-500 dark:text-gray-400"></i>
-                        Items in Cart: <span class="font-semibold ml-1">{{ $cartItems->count() }}</span>
-                    </p>
+                    <a href="{{ route('marketplace.admin.orders') }}"
+                        class="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition duration-200 flex items-center">
+                        <i class="fas fa-list mr-2"></i> My Orders
+                    </a>
                     <a href="{{ route('marketplace.admin.cart') }}"
-                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center">
-                        <i class="fas fa-eye mr-2"></i> View Cart
+                        class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center">
+                        <i class="fas fa-shopping-cart mr-2 text-white dark:text-gray-400"></i>
+                        {{ $cartItems->count() }}
                     </a>
                 </div>
             </div>

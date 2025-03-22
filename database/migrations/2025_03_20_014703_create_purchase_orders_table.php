@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('po_number')->unique();
             $table->text('description');
             $table->decimal('amount', 10, 2);
-            $table->enum('status', ['Pending', 'Approved', 'Rejected', 'Completed'])->default('Pending');
+            $table->enum('status', ['Pending', 'Approved', 'Rejected', 'Completed', 'Canceled'])->default('Pending');
             $table->timestamps();
         });
     }

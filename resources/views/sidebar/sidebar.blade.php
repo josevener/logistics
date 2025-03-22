@@ -56,15 +56,10 @@
                 icon="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z">
                 Maintenance Management
             </x-nav-item>
-            <x-nav-item href="{{ route('billings.index') }}"
-                active="{{ Route::currentRouteName() === 'billings.index' }}"
-                icon="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                Billing and Invoicing
-            </x-nav-item>
             <x-nav-item href="{{ route('reports.index') }}"
                 active="{{ Route::currentRouteName() === 'reports.index' }}"
                 icon="M3 3h18v18H3z M7 10h10M7 14h7M7 6h10">
-                Reports
+                Feedbacks
             </x-nav-item>
             <!-- Vendor Routes -->
         @elseif (Auth::user()->role === 'Vendor')
@@ -107,7 +102,10 @@
                 Profile Information
             </x-nav-item>
         @endif
-
+        <x-nav-item href="{{ route('billings.index') }}" active="{{ Route::currentRouteName() === 'billings.index' }}"
+            icon="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+            Billing and Invoicing
+        </x-nav-item>
         <!-- Notifications Section -->
         <div class="mt-4 px-4 py-3 text-white font-semibold text-sm md:text-base">
             Notifications & Reminders

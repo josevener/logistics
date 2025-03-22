@@ -18,7 +18,7 @@
 
             <!-- Header -->
             <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Your Cart</h1>
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">My Cart</h1>
                 <div class="mt-4 sm:mt-0 flex items-center gap-4">
                     <a href="{{ route('marketplace.admin.store') }}"
                         class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition duration-200">

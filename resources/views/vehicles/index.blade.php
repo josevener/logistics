@@ -1,37 +1,31 @@
 <x-app-layout>
     <main class="flex-1 p-6 md:p-12 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto">
-
             @include('navigation.header')
 
             <!-- Header -->
             <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <!-- Left Section: Title and Tabs -->
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                    <h4 class="text-lg font-bold text-gray-900 md:text-xl">Vehicle Inventory</h4>
-                    <!-- Tabs -->
+                    <h4 class="text-lg font-bold text-gray-900 md:text-xl">Bus Inventory</h4>
                     <div class="flex gap-2">
                         <button
-                            class="tab-button px-3 py-1 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition {{ request('filter', 'all') === 'all' ? 'bg-gray-400 text-white hover:bg-blue-700 hover:text-white' : '' }}"
+                            class="tab-button px-3 py-1 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition {{ request('filter', 'all') === 'all' ? 'bg-gray-400 text-yellow-500 hover:bg-blue-700 hover:text-white' : '' }}"
                             data-filter="all">
                             All ({{ $vehicles->total() }})
                         </button>
                         <button
-                            class="tab-button px-3 py-1 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition {{ request('filter') === 'ready' ? 'bg-gray-400 text-white hover:bg-blue-700 hover:text-white' : '' }}"
+                            class="tab-button px-3 py-1 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition {{ request('filter') === 'ready' ? 'bg-gray-400 text-yellow-500 hover:bg-blue-700 hover:text-white' : '' }}"
                             data-filter="ready">
                             Ready ({{ $vehicles->where('status', 'ready')->count() }})
                         </button>
                         <button
-                            class="tab-button px-3 py-1 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition {{ request('filter') === 'maintenance' ? 'bg-gray-400 text-white hover:bg-blue-700 hover:text-white' : '' }}"
+                            class="tab-button px-3 py-1 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition {{ request('filter') === 'maintenance' ? 'bg-gray-400 text-yellow-500 hover:bg-blue-700 hover:text-white' : '' }}"
                             data-filter="maintenance">
                             Maintenance ({{ $vehicles->where('status', 'maintenance')->count() }})
                         </button>
                     </div>
                 </div>
-
-                <!-- Right Section: Sort and Button -->
                 <div class="flex items-center gap-3">
-                    <!-- Sort Dropdown -->
                     <select id="sortSelect" name="sort"
                         class="px-2 py-1 text-sm text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="created_at-desc"
@@ -44,15 +38,14 @@
                         <option value="capacity-asc" {{ request('sort') === 'capacity-asc' ? 'selected' : '' }}>Capacity
                             ↑</option>
                     </select>
-                    <!-- Create Vehicle Button -->
                     <button id="createVehicleBtn"
                         class="px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
-                        + New Vehicle
+                        + New Bus
                     </button>
                 </div>
             </div>
 
-            <!-- Vehicle Cards Grid -->
+            <!-- Bus Cards Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse ($vehicles as $vehicle)
                     <div class="bg-white rounded-xl p-6 shadow-md hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer shipment-card"
@@ -73,28 +66,28 @@
                         <div class="grid grid-cols-2 gap-6">
                             <div class="space-y-4">
                                 <div>
-                                    <p class="text-sm text-gray-500 mb-1">Available (kg)</p>
+                                    <p class="text-sm text-gray-500 mb-1">Available (seats)</p>
                                     <p class="font-medium text-gray-800">{{ $vehicle->available_capacity }}<span
                                             class="text-gray-400">/{{ $vehicle->total_capacity }}</span></p>
                                 </div>
                                 <div>
-                                    <p class="text-sm text-gray-500 mb-1">Vehicle Number</p>
+                                    <p class="text-sm text-gray-500 mb-1">Bus Number</p>
                                     <p class="font-medium text-gray-800">{{ $vehicle->vehicle_number }}</p>
                                 </div>
                                 <div>
-                                    <p class="text-sm text-gray-500 mb-1">Vehicle Type</p>
-                                    <p class="font-medium text-gray-800">{{ $vehicle->truck_type }}</p>
+                                    <p class="text-sm text-gray-500 mb-1">Driver</p>
+                                    <p class="font-medium text-gray-800">{{ $vehicle->driver_name }}</p>
                                 </div>
                             </div>
                             <div class="relative">
-                                <img src="{{ $vehicle->image ? Storage::url($vehicle->image) : asset('assets/images/truck1.png') }}"
-                                    alt="Vehicle image" class="w-full h-auto object-cover rounded-md" />
+                                <img src="{{ asset($vehicle->image_url) }}" alt="Bus image"
+                                    class="w-full h-auto object-cover rounded-md" />
                             </div>
                         </div>
                     </div>
                 @empty
                     <div class="col-span-full text-center text-gray-500 py-6">
-                        No vehicles found.
+                        No buses found.
                     </div>
                 @endforelse
             </div>
@@ -107,7 +100,6 @@
     </main>
 
     <!-- Create/Edit Modal -->
-
     <div id="vehicle-modal" tabindex="-1" aria-hidden="true"
         class="hidden fixed inset-0 z-50 w-full h-full bg-black bg-opacity-60">
         <div class="flex justify-center items-center min-h-screen p-4 sm:p-6">
@@ -117,10 +109,8 @@
                     enctype="multipart/form-data">
                     @csrf
                     <div class="flex flex-col">
-                        <!-- Modal header -->
                         <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 bg-gray-50">
-                            <h3 id="modalTitle" class="text-xl sm:text-2xl font-semibold text-gray-900">Add New Vehicle
-                            </h3>
+                            <h3 id="modalTitle" class="text-xl sm:text-2xl font-semibold text-gray-900">Add New Bus</h3>
                             <button type="button" id="closeVehicleModal"
                                 class="text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-full text-sm w-8 h-8 inline-flex justify-center items-center transition-colors"
                                 aria-label="Close modal">
@@ -131,28 +121,25 @@
                                 </svg>
                             </button>
                         </div>
-                        <!-- Modal body -->
                         <div class="p-4 sm:p-6 space-y-6">
-                            <!-- Vehicle Number and Type -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
-                                    <label for="vehicle_number"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Vehicle Number</label>
+                                    <label for="vehicle_number" class="block text-sm font-medium text-gray-700 mb-1">Bus
+                                        Number</label>
                                     <input type="text" name="vehicle_number" id="vehicle_number"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                         required>
                                 </div>
                                 <div>
-                                    <label for="truck_type" class="block text-sm font-medium text-gray-700 mb-1">Vehicle
-                                        Type</label>
-                                    <input type="text" name="truck_type" id="truck_type"
+                                    <label for="driver_name" class="block text-sm font-medium text-gray-700 mb-1">Driver
+                                        Name</label>
+                                    <input type="text" name="driver_name" id="driver_name"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                         required>
                                 </div>
                             </div>
-                            <!-- Image Upload -->
                             <div>
-                                <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Vehicle
+                                <label for="image" class="block text-sm font-medium text-gray-700 mb-1">Bus
                                     Image</label>
                                 <input type="file" name="image" id="image" accept="image/*"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
@@ -164,7 +151,6 @@
                                         Image</button>
                                 </div>
                             </div>
-                            <!-- Route From and To -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label for="route_from" class="block text-sm font-medium text-gray-700 mb-1">Route
@@ -181,26 +167,22 @@
                                         required>
                                 </div>
                             </div>
-                            <!-- Capacities -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label for="total_capacity"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Total Capacity
-                                        (kg)</label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">Total Seats</label>
                                     <input type="number" name="total_capacity" id="total_capacity"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                         required>
                                 </div>
                                 <div>
                                     <label for="available_capacity"
-                                        class="block text-sm font-medium text-gray-700 mb-1">Available Capacity
-                                        (kg)</label>
+                                        class="block text-sm font-medium text-gray-700 mb-1">Available Seats</label>
                                     <input type="number" name="available_capacity" id="available_capacity"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                         required>
                                 </div>
                             </div>
-                            <!-- Status -->
                             <div>
                                 <label for="status"
                                     class="block text-sm font-medium text-gray-700 mb-1">Status</label>
@@ -211,34 +193,12 @@
                                     <option value="maintenance">Maintenance</option>
                                 </select>
                             </div>
-                            <!-- Additional Fields -->
-                            {{-- <div>
-                                <label for="available_parts"
-                                    class="block text-sm font-medium text-gray-700 mb-1">Available Parts</label>
-                                <textarea name="available_parts" id="available_parts"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                    rows="3"></textarea>
-                            </div>
-                            <div>
-                                <label for="maintenance_record"
-                                    class="block text-sm font-medium text-gray-700 mb-1">Maintenance Record</label>
-                                <textarea name="maintenance_record" id="maintenance_record"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                    rows="3"></textarea>
-                            </div>
-                            <div>
-                                <label for="fuel_consumption"
-                                    class="block text-sm font-medium text-gray-700 mb-1">Fuel Consumption</label>
-                                <input type="text" name="fuel_consumption" id="fuel_consumption"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                            </div> --}}
                         </div>
-                        <!-- Modal footer -->
                         <div
                             class="flex items-center justify-end p-4 sm:p-6 border-t border-gray-200 bg-gray-50 gap-3">
                             <button type="submit"
                                 class="bg-blue-600 text-white px-5 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors shadow-sm">
-                                Save Vehicle
+                                Save Bus
                             </button>
                             <button type="button" id="cancelVehicleModal"
                                 class="text-gray-600 px-5 py-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2 transition-colors">
@@ -251,16 +211,15 @@
         </div>
     </div>
 
-    <!-- Vehicle Details Modal -->
+    <!-- Bus Details Modal -->
     <div id="default-modal" tabindex="-1" aria-hidden="true"
         class="hidden fixed inset-0 z-50 w-full h-full bg-black bg-opacity-60">
         <div class="flex justify-center items-center min-h-screen p-4 sm:p-6">
             <div
                 class="relative w-full max-w-4xl mx-auto my-4 max-h-[90vh] overflow-y-auto rounded-xl shadow-xl bg-white">
                 <div class="flex flex-col">
-                    <!-- Modal header -->
                     <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 bg-gray-50">
-                        <h3 class="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900">Vehicle Details</h3>
+                        <h3 class="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900">Bus Details</h3>
                         <button type="button"
                             class="text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 sm:w-10 sm:h-10 inline-flex justify-center items-center transition-colors"
                             id="closeModal" aria-label="Close modal">
@@ -271,7 +230,6 @@
                             </svg>
                         </button>
                     </div>
-                    <!-- Modal body -->
                     <div class="p-4 sm:p-6 md:p-8 space-y-8 sm:space-y-10">
                         <section>
                             <h4 class="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6">Trip Information
@@ -286,39 +244,36 @@
                                 </div>
                                 <div>
                                     <label for="modal_datetime"
-                                        class="block text-sm sm:text-base font-medium text-gray-700 mb-2">Date &
-                                        Time</label>
+                                        class="block text-sm sm:text-base font-medium text-gray-700 mb-2">Last
+                                        Updated</label>
                                     <input type="text" id="modal_datetime" name="modal_datetime"
                                         class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-md bg-gray-50 text-gray-700 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
                                         readonly />
                                 </div>
                             </div>
                         </section>
-                        {{-- <section>
-                            <h4 class="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 mb-4 sm:mb-6">Vehicle
-                                Profiles</h4>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-                                <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                                    <h5 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Available Parts
-                                    </h5>
-                                    <p id="modal_parts" class="text-gray-600 text-sm sm:text-base leading-relaxed">
-                                    </p>
+                        <section>
+                            <h4 class="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6">Bus Details</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                <div>
+                                    <label for="modal_vehicle_number"
+                                        class="block text-sm sm:text-base font-medium text-gray-700 mb-2">Bus
+                                        Number</label>
+                                    <input type="text" id="modal_vehicle_number" name="modal_vehicle_number"
+                                        class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-md bg-gray-50 text-gray-700 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                                        readonly />
                                 </div>
-                                <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                                    <h5 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Maintenance
-                                        Record</h5>
-                                    <p id="modal_maintenance"
-                                        class="text-gray-600 text-sm sm:text-base leading-relaxed"></p>
-                                </div>
-                                <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                                    <h5 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Fuel Consumption
-                                    </h5>
-                                    <p id="modal_fuel" class="text-gray-600 text-sm sm:text-base leading-relaxed"></p>
+                                <div>
+                                    <label for="modal_driver_name"
+                                        class="block text-sm sm:text-base font-medium text-gray-700 mb-2">Driver
+                                        Name</label>
+                                    <input type="text" id="modal_driver_name" name="modal_driver_name"
+                                        class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-md bg-gray-50 text-gray-700 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                                        readonly />
                                 </div>
                             </div>
-                        </section> --}}
+                        </section>
                     </div>
-                    <!-- Modal footer with Edit and Delete buttons -->
                     <div class="flex items-center justify-end p-4 sm:p-6 border-t border-gray-200 bg-gray-50 gap-2">
                         <button id="editVehicleBtn"
                             class="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600 transition">Edit</button>
@@ -341,7 +296,6 @@
         <div class="flex justify-center items-center min-h-screen p-4 sm:p-6">
             <div class="relative w-full max-w-md mx-auto my-4 rounded-xl shadow-xl bg-white">
                 <div class="flex flex-col">
-                    <!-- Modal header -->
                     <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 bg-gray-50">
                         <h3 class="text-xl sm:text-2xl font-semibold text-gray-900">Confirm Deletion</h3>
                         <button type="button" id="closeDeleteModal"
@@ -354,12 +308,10 @@
                             </svg>
                         </button>
                     </div>
-                    <!-- Modal body -->
                     <div class="p-4 sm:p-6">
-                        <p class="text-gray-700 text-sm sm:text-base">Are you sure you want to delete this vehicle?
-                            This action cannot be undone.</p>
+                        <p class="text-gray-700 text-sm sm:text-base">Are you sure you want to delete this bus? This
+                            action cannot be undone.</p>
                     </div>
-                    <!-- Modal footer -->
                     <div class="flex items-center justify-end p-4 sm:p-6 border-t border-gray-200 bg-gray-50 gap-2">
                         <form id="deleteVehicleForm" method="POST" action="">
                             @csrf
@@ -383,7 +335,30 @@
         const imagePreview = document.getElementById('image-preview');
         const previewImg = document.getElementById('preview-img');
         const removeImageBtn = document.getElementById('remove-image');
+        const vehicleForm = document.getElementById('vehicleForm');
+        const createVehicleBtn = document.getElementById('createVehicleBtn');
+        const closeVehicleModal = document.getElementById('closeVehicleModal');
+        const cancelVehicleModal = document.getElementById('cancelVehicleModal');
 
+        // Show create modal
+        createVehicleBtn.addEventListener('click', () => {
+            vehicleForm.action = "{{ route('vehicles.store') }}";
+            vehicleForm.method = 'POST';
+            vehicleForm.querySelector('input[name="_method"]')?.remove();
+            document.getElementById('modalTitle').textContent = 'Add New Bus';
+            vehicleForm.reset();
+            imagePreview.classList.add('hidden');
+            document.getElementById('vehicle-modal').classList.remove('hidden');
+        });
+
+        // Close create/edit modal
+        [closeVehicleModal, cancelVehicleModal].forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.getElementById('vehicle-modal').classList.add('hidden');
+            });
+        });
+
+        // Image preview
         if (imageInput) {
             imageInput.addEventListener('change', function() {
                 const file = this.files[0];
@@ -405,100 +380,100 @@
                 previewImg.src = '#';
             });
         }
-
 
         // Tab functionality
         const tabButtons = document.querySelectorAll(".tab-button");
         tabButtons.forEach((btn) => {
             btn.addEventListener("click", function() {
                 const filter = this.getAttribute("data-filter");
-                const sort =
-                    document.getElementById("sortSelect")?.value ||
-                    "created_at-desc";
+                const sort = document.getElementById("sortSelect")?.value || "created_at-desc";
                 window.location.href = `/vehicles?filter=${filter}&sort=${sort}`;
             });
         });
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const imageInput = document.getElementById('image');
-        const imagePreview = document.getElementById('image-preview');
-        const previewImg = document.getElementById('preview-img');
-        const removeImageBtn = document.getElementById('remove-image');
-        const vehicleForm = document.getElementById('vehicleForm');
 
-        // Image preview on file selection
-        if (imageInput) {
-            imageInput.addEventListener('change', function() {
-                const file = this.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        previewImg.src = e.target.result;
-                        imagePreview.classList.remove('hidden');
-                    };
-                    reader.readAsDataURL(file);
-                }
+        // Show details modal
+        document.querySelectorAll('.shipment-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const id = card.dataset.id;
+                fetch(`/vehicles/${id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('modal_route').value =
+                            `${data.route_from} — ${data.route_to}`;
+                        document.getElementById('modal_datetime').value = data.last_updated;
+                        document.getElementById('modal_vehicle_number').value = data
+                            .vehicle_number;
+                        document.getElementById('modal_driver_name').value = data
+                            .driver_name;
+                        document.getElementById('default-modal').classList.remove('hidden');
+                    });
             });
-        }
+        });
 
-        // Remove image preview
-        if (removeImageBtn) {
-            removeImageBtn.addEventListener('click', function() {
-                imageInput.value = '';
-                imagePreview.classList.add('hidden');
-                previewImg.src = '#';
-            });
-        }
+        // Close details modal
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('default-modal').classList.add('hidden');
+        });
+        document.getElementById('modalCloseBtn').addEventListener('click', () => {
+            document.getElementById('default-modal').classList.add('hidden');
+        });
 
-        // Populate form for editing
-        const editVehicleBtn = document.getElementById('editVehicleBtn');
-        if (editVehicleBtn) {
-            editVehicleBtn.addEventListener('click', function() {
-                const vehicleId = document.querySelector('.shipment-card:hover')?.dataset.id;
-                if (vehicleId) {
-                    fetch(`/vehicles/${vehicleId}/edit`)
-                        .then(response => response.json())
-                        .then(data => {
-                            vehicleForm.action = `/vehicles/${vehicleId}`;
-                            vehicleForm.method = 'POST';
-                            if (!vehicleForm.querySelector('input[name="_method"]')) {
-                                const input = document.createElement('input');
-                                input.type = 'hidden';
-                                input.name = '_method';
-                                input.value = 'PUT';
-                                vehicleForm.appendChild(input);
-                            }
-                            document.getElementById('modalTitle').textContent = 'Edit Vehicle';
-                            document.getElementById('vehicle_number').value = data.vehicle_number ||
-                                '';
-                            document.getElementById('truck_type').value = data.truck_type || '';
-                            document.getElementById('route_from').value = data.route_from || '';
-                            document.getElementById('route_to').value = data.route_to || '';
-                            document.getElementById('total_capacity').value = data.total_capacity ||
-                                '';
-                            document.getElementById('available_capacity').value = data
-                                .available_capacity || '';
-                            document.getElementById('status').value = data.status || 'ready';
-                            document.getElementById('available_parts').value = data
-                                .available_parts || '';
-                            document.getElementById('maintenance_record').value = data
-                                .maintenance_record || '';
-                            document.getElementById('fuel_consumption').value = data
-                                .fuel_consumption || '';
-                            if (data.image) {
-                                previewImg.src = '{{ env('APP_URL') }}/storage/' + data.image;
-                                imagePreview.classList.remove('hidden');
-                            } else {
-                                imagePreview.classList.add('hidden');
-                            }
-                            document.getElementById('vehicle-modal').classList.remove('hidden');
-                            document.getElementById('default-modal').classList.add('hidden');
-                        })
-                        .catch(error => console.error('Error fetching vehicle:', error));
-                }
-            });
-        }
+        // Edit button in details modal
+        document.getElementById('editVehicleBtn').addEventListener('click', () => {
+            const vehicleId = document.querySelector('.shipment-card:hover')?.dataset.id || document
+                .querySelector('.shipment-card[data-id="' + document.querySelector(
+                    '#default-modal:not(.hidden)')?.dataset?.id + '"]')?.dataset.id;
+            if (vehicleId) {
+                fetch(`/vehicles/${vehicleId}/edit`)
+                    .then(response => response.json())
+                    .then(data => {
+                        vehicleForm.action = `/vehicles/${vehicleId}`;
+                        vehicleForm.method = 'POST';
+                        if (!vehicleForm.querySelector('input[name="_method"]')) {
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = '_method';
+                            input.value = 'PUT';
+                            vehicleForm.appendChild(input);
+                        }
+                        document.getElementById('modalTitle').textContent = 'Edit Bus';
+                        document.getElementById('vehicle_number').value = data.vehicle_number || '';
+                        document.getElementById('driver_name').value = data.driver_name || '';
+                        document.getElementById('route_from').value = data.route_from || '';
+                        document.getElementById('route_to').value = data.route_to || '';
+                        document.getElementById('total_capacity').value = data.total_capacity || '';
+                        document.getElementById('available_capacity').value = data
+                            .available_capacity || '';
+                        document.getElementById('status').value = data.status || 'ready';
+                        if (data.image) {
+                            previewImg.src = '{{ env('APP_URL') }}/storage/' + data.image;
+                            imagePreview.classList.remove('hidden');
+                        } else {
+                            imagePreview.classList.add('hidden');
+                        }
+                        document.getElementById('vehicle-modal').classList.remove('hidden');
+                        document.getElementById('default-modal').classList.add('hidden');
+                    });
+            }
+        });
+
+        // Delete button in details modal
+        document.getElementById('deleteVehicleBtn').addEventListener('click', () => {
+            const vehicleId = document.querySelector('.shipment-card:hover')?.dataset.id || document
+                .querySelector('.shipment-card[data-id="' + document.querySelector(
+                    '#default-modal:not(.hidden)')?.dataset?.id + '"]')?.dataset.id;
+            if (vehicleId) {
+                document.getElementById('deleteVehicleForm').action = `/vehicles/${vehicleId}`;
+                document.getElementById('delete-confirmation-modal').classList.remove('hidden');
+            }
+        });
+
+        // Close delete modal
+        document.getElementById('closeDeleteModal').addEventListener('click', () => {
+            document.getElementById('delete-confirmation-modal').classList.add('hidden');
+        });
+        document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
+            document.getElementById('delete-confirmation-modal').classList.add('hidden');
+        });
     });
 </script>

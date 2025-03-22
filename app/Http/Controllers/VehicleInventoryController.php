@@ -6,6 +6,7 @@ use App\Models\VehicleInventory;
 use App\Http\Requests\StoreVehicleInventoryRequest;
 use App\Http\Requests\UpdateVehicleInventoryRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class VehicleInventoryController extends Controller
 {
@@ -29,18 +30,18 @@ class VehicleInventoryController extends Controller
         return view('vehicles.index', compact('vehicles'));
     }
 
-    public function create()
-    {
-        return view('vehicles.create');
-    }
-
     public function store(StoreVehicleInventoryRequest $request)
     {
-        $vehicle = VehicleInventory::create($request->validated());
-        flash()->success('Vehicle added successfully!');
-        return response()->json([
-            'redirect' => route('vehicles.index')
-        ], 201);
+        $data = $request->validated();
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('vehicles', 'public');
+        }
+
+        $vehicle = VehicleInventory::create($data);
+        flash()->success('Bus added successfully!');
+        return response()->json(['redirect' => route('vehicles.index')], 201);
     }
 
     public function show($id)
@@ -48,12 +49,18 @@ class VehicleInventoryController extends Controller
         try {
             $vehicle = VehicleInventory::findOrFail($id);
             return response()->json([
-                'available_parts' => $vehicle->available_parts,
-                'maintenance_record' => $vehicle->maintenance_record,
-                'fuel_consumption' => $vehicle->fuel_consumption,
+                'vehicle_number' => $vehicle->vehicle_number,
+                'driver_name' => $vehicle->driver_name,
+                'route_from' => $vehicle->route_from,
+                'route_to' => $vehicle->route_to,
+                'total_capacity' => $vehicle->total_capacity,
+                'available_capacity' => $vehicle->available_capacity,
+                'status' => $vehicle->status,
+                'last_updated' => $vehicle->last_updated,
+                'image' => $vehicle->image_url,
             ]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Vehicle not found'], 404);
+            return response()->json(['error' => 'Bus not found'], 404);
         }
     }
 
@@ -61,9 +68,18 @@ class VehicleInventoryController extends Controller
     {
         try {
             $vehicle = VehicleInventory::findOrFail($id);
-            return response()->json($vehicle);
+            return response()->json([
+                'vehicle_number' => $vehicle->vehicle_number,
+                'driver_name' => $vehicle->driver_name,
+                'route_from' => $vehicle->route_from,
+                'route_to' => $vehicle->route_to,
+                'total_capacity' => $vehicle->total_capacity,
+                'available_capacity' => $vehicle->available_capacity,
+                'status' => $vehicle->status,
+                'image' => $vehicle->image,
+            ]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Vehicle not found'], 404);
+            return response()->json(['error' => 'Bus not found'], 404);
         }
     }
 
@@ -71,22 +87,31 @@ class VehicleInventoryController extends Controller
     {
         try {
             $vehicle = VehicleInventory::findOrFail($id);
-            $vehicle->update($request->validated());
-            flash()->success('Vehicle updated successfully!');
-            return response()->json([
-                'redirect' => route('vehicles.index')
-            ]);
+            $data = $request->validated();
+
+            // Handle image update
+            if ($request->hasFile('image')) {
+                if ($vehicle->image) {
+                    Storage::disk('public')->delete($vehicle->image);
+                }
+                $data['image'] = $request->file('image')->store('vehicles', 'public');
+            }
+
+            $vehicle->update($data);
+            flash()->success('Bus updated successfully!');
+            return response()->json(['redirect' => route('vehicles.index')]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to update vehicle'], 400);
+            return response()->json(['error' => 'Failed to update bus'], 400);
         }
     }
 
     public function destroy(VehicleInventory $vehicle)
     {
+        if ($vehicle->image) {
+            Storage::disk('public')->delete($vehicle->image);
+        }
         $vehicle->delete();
-        flash()->success('Vehicle deleted successfully!');
-        return response()->json([
-            'redirect' => route('vehicles.index')
-        ]);
+        flash()->success('Bus deleted successfully!');
+        return response()->json(['redirect' => route('vehicles.index')]);
     }
 }
