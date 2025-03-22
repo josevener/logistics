@@ -51,11 +51,11 @@
                 icon="M7 21h10a2 2 0 002-2V9l-5-5H7a2 2 0 00-2 2v13a2 2 0 002 2zM13 4v5h5">
                 Proposal Management
             </x-nav-item>
-            <x-nav-item href="{{ route('maintenance.index') }}"
+            {{-- <x-nav-item href="{{ route('maintenance.index') }}"
                 active="{{ Route::currentRouteName() === 'maintenance.index' }}"
                 icon="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z">
                 Maintenance Management
-            </x-nav-item>
+            </x-nav-item> --}}
             <x-nav-item href="{{ route('reports.index') }}"
                 active="{{ Route::currentRouteName() === 'reports.index' }}"
                 icon="M3 3h18v18H3z M7 10h10M7 14h7M7 6h10">
@@ -107,14 +107,14 @@
             Billing and Invoicing
         </x-nav-item>
         <!-- Notifications Section -->
-        <div class="mt-4 px-4 py-3 text-white font-semibold text-sm md:text-base">
+        {{-- <div class="mt-4 px-4 py-3 text-white font-semibold text-sm md:text-base">
             Notifications & Reminders
         </div>
         <x-nav-item href="{{ route('notifications.index') }}"
             active="{{ Route::currentRouteName() === 'notifications.index' }}"
             icon="M21 12h-2m-2.64 5.36l-1.42-1.42M12 21v-2m-5.36-2.64l1.42-1.42M3 12h2m2.64-5.36l1.42 1.42M12 3v2m5.36 2.64l-1.42 1.42 M12 12m-4 0a4 4 0 018 0">
             Notifications
-        </x-nav-item>
+        </x-nav-item> --}}
     </nav>
 
     <!-- Profile Section (Admin Only) -->

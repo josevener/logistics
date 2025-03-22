@@ -80,7 +80,7 @@
                                 </div>
                             </div>
                             <div class="relative">
-                                <img src="{{ asset($vehicle->image_url) }}" alt="Bus image"
+                                <img src="{{ $vehicle->image_url }}" alt="Bus image"
                                     class="w-full h-auto object-cover rounded-md" />
                             </div>
                         </div>
@@ -122,6 +122,15 @@
                             </button>
                         </div>
                         <div class="p-4 sm:p-6 space-y-6">
+                            @if ($errors->any())
+                                <div class="text-red-600 text-sm mb-4">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label for="vehicle_number" class="block text-sm font-medium text-gray-700 mb-1">Bus
@@ -189,7 +198,7 @@
                                 <select name="status" id="status"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                                     required>
-                                    <option value="ready" selected>Ready</option>
+                                    <option value="ready">Ready</option>
                                     <option value="maintenance">Maintenance</option>
                                 </select>
                             </div>
@@ -213,7 +222,7 @@
 
     <!-- Bus Details Modal -->
     <div id="default-modal" tabindex="-1" aria-hidden="true"
-        class="hidden fixed inset-0 z-50 w-full h-full bg-black bg-opacity-60">
+        class="hidden fixed inset-0 z-50 w-full h-full bg-black bg-opacity-60" data-vehicle-id="">
         <div class="flex justify-center items-center min-h-screen p-4 sm:p-6">
             <div
                 class="relative w-full max-w-4xl mx-auto my-4 max-h-[90vh] overflow-y-auto rounded-xl shadow-xl bg-white">
@@ -339,6 +348,7 @@
         const createVehicleBtn = document.getElementById('createVehicleBtn');
         const closeVehicleModal = document.getElementById('closeVehicleModal');
         const cancelVehicleModal = document.getElementById('cancelVehicleModal');
+        const defaultModal = document.getElementById('default-modal');
 
         // Show create modal
         createVehicleBtn.addEventListener('click', () => {
@@ -391,7 +401,7 @@
             });
         });
 
-        // Show details modal
+        // Show details modal and store vehicle ID
         document.querySelectorAll('.shipment-card').forEach(card => {
             card.addEventListener('click', () => {
                 const id = card.dataset.id;
@@ -405,24 +415,26 @@
                             .vehicle_number;
                         document.getElementById('modal_driver_name').value = data
                             .driver_name;
-                        document.getElementById('default-modal').classList.remove('hidden');
-                    });
+                        defaultModal.dataset.vehicleId = id; // Store the ID in the modal
+                        defaultModal.classList.remove('hidden');
+                    })
+                    .catch(error => console.error('Error fetching vehicle:', error));
             });
         });
 
         // Close details modal
         document.getElementById('closeModal').addEventListener('click', () => {
-            document.getElementById('default-modal').classList.add('hidden');
+            defaultModal.classList.add('hidden');
+            defaultModal.dataset.vehicleId = ''; // Clear the ID
         });
         document.getElementById('modalCloseBtn').addEventListener('click', () => {
-            document.getElementById('default-modal').classList.add('hidden');
+            defaultModal.classList.add('hidden');
+            defaultModal.dataset.vehicleId = ''; // Clear the ID
         });
 
         // Edit button in details modal
         document.getElementById('editVehicleBtn').addEventListener('click', () => {
-            const vehicleId = document.querySelector('.shipment-card:hover')?.dataset.id || document
-                .querySelector('.shipment-card[data-id="' + document.querySelector(
-                    '#default-modal:not(.hidden)')?.dataset?.id + '"]')?.dataset.id;
+            const vehicleId = defaultModal.dataset.vehicleId;
             if (vehicleId) {
                 fetch(`/vehicles/${vehicleId}/edit`)
                     .then(response => response.json())
@@ -452,16 +464,17 @@
                             imagePreview.classList.add('hidden');
                         }
                         document.getElementById('vehicle-modal').classList.remove('hidden');
-                        document.getElementById('default-modal').classList.add('hidden');
-                    });
+                        defaultModal.classList.add('hidden');
+                    })
+                    .catch(error => console.error('Error fetching vehicle for edit:', error));
+            } else {
+                console.error('No vehicle ID found for editing');
             }
         });
 
         // Delete button in details modal
         document.getElementById('deleteVehicleBtn').addEventListener('click', () => {
-            const vehicleId = document.querySelector('.shipment-card:hover')?.dataset.id || document
-                .querySelector('.shipment-card[data-id="' + document.querySelector(
-                    '#default-modal:not(.hidden)')?.dataset?.id + '"]')?.dataset.id;
+            const vehicleId = defaultModal.dataset.vehicleId;
             if (vehicleId) {
                 document.getElementById('deleteVehicleForm').action = `/vehicles/${vehicleId}`;
                 document.getElementById('delete-confirmation-modal').classList.remove('hidden');

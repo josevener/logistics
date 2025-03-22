@@ -21,8 +21,6 @@ class Maintenance extends Model
         'isPriority',
         'assigned_tech',
         'notes',
-
-
     ];
 
     // Define relationship with Vehicle
@@ -30,7 +28,6 @@ class Maintenance extends Model
     {
         return $this->belongsTo(VehicleInventory::class);
     }
-
 
     public function createdBy()
     {
