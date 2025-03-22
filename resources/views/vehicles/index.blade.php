@@ -12,17 +12,17 @@
                     <!-- Tabs -->
                     <div class="flex gap-2">
                         <button
-                            class="tab-button px-3 py-1 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition {{ request('filter', 'all') === 'all' ? 'bg-gray-600 text-white hover:bg-blue-700 hover:text-white' : '' }}"
+                            class="tab-button px-3 py-1 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition {{ request('filter', 'all') === 'all' ? 'bg-gray-400 text-white hover:bg-blue-700 hover:text-white' : '' }}"
                             data-filter="all">
                             All ({{ $vehicles->total() }})
                         </button>
                         <button
-                            class="tab-button px-3 py-1 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition {{ request('filter') === 'ready' ? 'bg-gray-600 text-white hover:bg-blue-700 hover:text-white' : '' }}"
+                            class="tab-button px-3 py-1 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition {{ request('filter') === 'ready' ? 'bg-gray-400 text-white hover:bg-blue-700 hover:text-white' : '' }}"
                             data-filter="ready">
                             Ready ({{ $vehicles->where('status', 'ready')->count() }})
                         </button>
                         <button
-                            class="tab-button px-3 py-1 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition {{ request('filter') === 'maintenance' ? 'bg-gray-600 text-white hover:bg-blue-700 hover:text-white' : '' }}"
+                            class="tab-button px-3 py-1 text-sm font-medium text-gray-700 bg-white rounded-full shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition {{ request('filter') === 'maintenance' ? 'bg-gray-400 text-white hover:bg-blue-700 hover:text-white' : '' }}"
                             data-filter="maintenance">
                             Maintenance ({{ $vehicles->where('status', 'maintenance')->count() }})
                         </button>

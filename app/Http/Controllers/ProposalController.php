@@ -30,7 +30,7 @@ class ProposalController extends Controller
             abort(403);
         }
 
-        $query = Proposal::with('user')->orderBy('created_at', 'desc');
+        $query = Proposal::with('user')->orderBy('ai_score', 'desc');
 
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
@@ -63,13 +63,13 @@ class ProposalController extends Controller
         try {
             $request->validate([
                 'proposal_title' => 'required|string|max:255',
-                'vendor_name' => 'nullable|string|max:255',
-                'email' => 'nullable|email|max:255',
-                'product_service_type' => 'nullable|string|in:service,product,both',
+                'vendor_name' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'product_service_type' => 'required|string|in:service,product,both',
                 'description' => 'nullable|string',
-                'delivery_timeline' => 'nullable|string|max:255',
-                'pricing' => 'nullable|string|max:255',
-                'valid_until' => 'nullable|date',
+                'delivery_timeline' => 'required|string|max:255',
+                'pricing' => 'required|string|max:255',
+                'valid_until' => 'required|date',
             ]);
 
             $bidData = [
@@ -138,7 +138,7 @@ class ProposalController extends Controller
                 'proposal' => $proposal,
             ], 201);
         } catch (Exception $e) {
-            flash()->error('Store method exception: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+            // flash()->error('Store method exception: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
             return response()->json([
                 'error' => 'Server error: ' . $e->getMessage(),
             ], 500);

@@ -120,7 +120,7 @@
     </nav>
 
     <!-- Profile Section (Admin Only) -->
-    @if (Auth::user()->role === 'Admin')
+    {{-- @if (Auth::user()->role === 'Admin')
         <div class="p-4 border-t border-blue-700 bg-blue-600">
             <div class="flex items-center gap-3">
                 <div
@@ -144,5 +144,5 @@
                 @csrf
             </form>
         </div>
-    @endif
+    @endif --}}
 </div>

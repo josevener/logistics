@@ -388,7 +388,6 @@
                         if (response.ok) {
                             closeProposalModal();
                             setTimeout(() => location.reload(), 500);
-                            alert(result.message);
                         } else {
                             console.error('Submission failed:', result.error);
                             alert('Error: ' + (result.error || 'Unknown server error'));
