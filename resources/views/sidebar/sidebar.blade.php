@@ -41,11 +41,11 @@
                 icon="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
                 Purchase Orders
             </x-nav-item> --}}
-            <x-nav-item href="{{ route('contracts.admin') }}"
+            {{-- <x-nav-item href="{{ route('contracts.admin') }}"
                 active="{{ Route::currentRouteName() === 'contracts.admin' }}"
                 icon="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
                 Contract Management
-            </x-nav-item>
+            </x-nav-item> --}}
             <x-nav-item href="{{ route('proposals.admin') }}"
                 active="{{ Route::currentRouteName() === 'proposals.admin' }}"
                 icon="M7 21h10a2 2 0 002-2V9l-5-5H7a2 2 0 00-2 2v13a2 2 0 002 2zM13 4v5h5">
