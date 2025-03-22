@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\AnalyzeProposal;
 use App\Models\Proposal;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use PDF;
 use Symfony\Component\Process\Process;
 
 class ProposalController extends Controller
@@ -56,6 +53,11 @@ class ProposalController extends Controller
 
         return view('proposals.admin', compact('proposals'));
     }
+    public function show($id)
+    {
+        $proposal = Proposal::with('user')->findOrFail($id);
+        return response()->json($proposal);
+    }
     public function store(Request $request)
     {
         try {
@@ -83,7 +85,7 @@ class ProposalController extends Controller
             $scriptPath = base_path('scripts/analyze_bid.py');
             $command = ['python', $scriptPath, $jsonBidData];
 
-            flash()->info('Executing command: ' . implode(' ', $command));
+            // flash()->info('Executing command: ' . implode(' ', $command));
 
             $process = new Process($command);
             $process->run();
@@ -98,7 +100,7 @@ class ProposalController extends Controller
             }
 
             $output = $process->getOutput();
-            flash()->info("Script Output: $output");
+            // flash()->info("Script Output: $output");
 
             $result = json_decode($output, true);
 
@@ -128,6 +130,8 @@ class ProposalController extends Controller
                 'is_fraud' => $result['is_fraud'],
                 'notes' => json_encode($result['notes']),
             ]);
+
+            flash()->success('Bid submitted successfully');
 
             return response()->json([
                 'message' => 'Bid submitted successfully!',
