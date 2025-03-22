@@ -69,13 +69,9 @@ class MaintenanceController extends Controller
             'created_by' => Auth::user()->id,
         ]);
 
-        return response()->json([
-            'message' => 'Maintenance task created successfully',
-            'maintenance' => $maintenance
-        ], 201);
+        flash()->success('Maintenance task created successfully');
+        return redirect()->route('maintenance.index');
     }
-
-
 
     /**
      * Display the specified resource.

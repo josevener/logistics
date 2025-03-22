@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('pricing')->nullable();
             $table->string('delivery_timeline')->nullable();
             $table->date('valid_until')->nullable();
-            $table->float('ai_score')->nullable();
+            $table->float('proposal_evaluation_score')->nullable();
             $table->boolean('is_fraud')->nullable(); // Add this
             $table->text('notes')->nullable(); // Add this (changed from JSON to text)
             $table->string('admin_status')->nullable();

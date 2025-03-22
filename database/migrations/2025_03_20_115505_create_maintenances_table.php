@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('vehicle_id')->constrained('vehicles')->onDelete('cascade')->index();
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->text('description')->nullable();
+            $table->string('priority')->nullable();
             $table->date('maintenance_date');
             $table->enum('maintenance_type', ['oil change', 'brake check', 'tire replacement', 'general service'])->default('general service');
             $table->decimal('cost', 10, 2)->nullable();
