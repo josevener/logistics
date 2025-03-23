@@ -80,7 +80,7 @@
                                 </div>
                             </div>
                             <div class="relative">
-                                <img src="{{ $vehicle->image_url }}" alt="Bus image"
+                                <img src="{{ $vehicle->image_url }}" alt="Bus Image"
                                     class="w-full h-auto object-cover rounded-md" />
                             </div>
                         </div>

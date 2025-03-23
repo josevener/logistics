@@ -37,6 +37,8 @@ class VehicleInventoryController extends Controller
         // Handle image upload
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('vehicles', 'public');
+        } else {
+            $data['image'] = 'vehicles\default_bus.jpg';
         }
 
         $vehicle = VehicleInventory::create($data);
