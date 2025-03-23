@@ -137,7 +137,38 @@ class MarketPlaceVendorController extends Controller
             }
         }
 
+        // Update PurchaseOrder status
         $purchaseOrder->update(['status' => $newStatus]);
+
+        // Sync Order status if order_id exists
+        if ($purchaseOrder->order_id) {
+            $order = Order::find($purchaseOrder->order_id);
+            if ($order) {
+                $relatedPurchaseOrders = PurchaseOrder::where('order_id', $order->id)->get();
+                $allStatuses = $relatedPurchaseOrders->pluck('status')->unique();
+
+                // Define Order status based on all PurchaseOrder statuses
+                if ($allStatuses->count() === 1) {
+                    // All PurchaseOrders have the same status
+                    $orderStatus = match ($allStatuses->first()) {
+                        'Pending' => 'Pending',
+                        'Approved' => 'Processing',
+                        'Rejected' => 'Canceled',
+                        'Completed' => 'Delivered',
+                        'Canceled' => 'Canceled',
+                        default => $order->status, // Fallback to current status
+                    };
+                    $order->update(['status' => $orderStatus]);
+                } elseif ($allStatuses->contains('Rejected') && !$allStatuses->contains('Pending')) {
+                    // If any PO is Rejected and none are Pending, cancel the Order
+                    $order->update(['status' => 'Canceled']);
+                } elseif ($allStatuses->contains('Approved') && !$allStatuses->contains('Pending') && !$allStatuses->contains('Rejected')) {
+                    // If some are Approved and none are Pending/Rejected, set to Processing
+                    $order->update(['status' => 'Processing']);
+                }
+            }
+        }
+
         flash()->success("Purchase Order #{$purchaseOrder->po_number} status updated to {$newStatus}.");
         return redirect()->route('marketplace.vendor.orders');
     }
