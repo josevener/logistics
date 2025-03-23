@@ -83,6 +83,8 @@ Route::prefix('marketplace')->group(function () {
     Route::post('/vendor/orders/{purchaseOrder}/approve', [MarketPlaceVendorController::class, 'approveOrder'])->name('marketplace.vendor.orders.approve');
     Route::post('/vendor/orders/{purchaseOrder}/reject', [MarketPlaceVendorController::class, 'rejectOrder'])->name('marketplace.vendor.orders.reject');
     Route::post('/vendor/orders/{purchaseOrder}/update-status', [MarketPlaceVendorController::class, 'updateOrderStatus'])->name('marketplace.vendor.orders.update-status');
+    Route::get('/vendor/purchase-order/{id}', [DashboardController::class, 'showPurchaseOrder'])
+        ->name('vendor.purchase-order.show');
 })->middleware('auth');
 
 Route::middleware('auth')->group(function () {

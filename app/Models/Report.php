@@ -14,6 +14,7 @@ class Report extends Model
         'comment',
         'follow_up',
         'report_by',
+        'vendor_id', // Add this
         'created_at',
         'updated_at'
     ];
@@ -25,9 +26,6 @@ class Report extends Model
         'updated_at' => 'datetime',
     ];
 
-    /**
-     * Get the user who submitted the report.
-     */
     public function user()
     {
         return $this->belongsTo(User::class, 'report_by')->withDefault([
@@ -35,9 +33,11 @@ class Report extends Model
         ]);
     }
 
-    /**
-     * Format the created_at date.
-     */
+    public function vendor()
+    {
+        return $this->belongsTo(Vendor::class, 'vendor_id');
+    }
+
     public function formattedDate()
     {
         return $this->created_at->format('F d, Y');

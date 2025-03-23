@@ -61,6 +61,15 @@ class PurchaseOrderController extends Controller
      * @return \Illuminate\View\View
      */
 
+    public function show(PurchaseOrder $purchaseOrder)
+    {
+        // Ensure the PO belongs to the authenticated vendor
+        if ($purchaseOrder->vendor_id !== Auth::user()->vendor->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        return response()->json($purchaseOrder);
+    }
+
     public function create()
     {
         try {

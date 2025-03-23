@@ -8,7 +8,7 @@
                 <div class="flex items-center gap-4 sm:gap-6">
                     <div
                         class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                        <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-stat-blue"></div>
+                        <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-blue-500"></div>
                     </div>
                     <div>
                         <p class="text-gray-600 text-sm sm:text-base font-medium">Registered Vendors</p>
@@ -26,7 +26,7 @@
                 <div class="flex items-center gap-4 sm:gap-6">
                     <div
                         class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                        <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-stat-orange"></div>
+                        <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-orange-500"></div>
                     </div>
                     <div>
                         <p class="text-gray-600 text-sm sm:text-base font-medium">Active RFPs</p>
@@ -41,13 +41,17 @@
                 <div class="flex items-center gap-4 sm:gap-6">
                     <div
                         class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                        <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-stat-green"></div>
+                        <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-green-500"></div>
                     </div>
                     <div>
                         <p class="text-gray-600 text-sm sm:text-base font-medium">Proposals Submitted</p>
                         <div class="flex items-center gap-2 sm:gap-3">
-                            <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">342</h3>
-                            <span class="text-green-500 text-xs sm:text-sm font-semibold">↑ 15</span>
+                            <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
+                                {{ $proposalsSubmittedCount }}</h3>
+                            <span
+                                class="{{ $proposalsChange >= 0 ? 'text-green-500' : 'text-red-500' }} text-xs sm:text-sm font-semibold">
+                                {{ $proposalsChange >= 0 ? '↑' : '↓' }} {{ abs($proposalsChange) }}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -55,13 +59,17 @@
                 <div class="flex items-center gap-4 sm:gap-6">
                     <div
                         class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-pink-100 flex items-center justify-center flex-shrink-0">
-                        <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-stat-pink"></div>
+                        <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-pink-500"></div>
                     </div>
                     <div>
                         <p class="text-gray-600 text-sm sm:text-base font-medium">Contracts Awarded</p>
                         <div class="flex items-center gap-2 sm:gap-3">
-                            <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">78</h3>
-                            <span class="text-red-500 text-xs sm:text-sm font-semibold">↓ 5</span>
+                            <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
+                                {{ $contractsAwardedCount }}</h3>
+                            <span
+                                class="{{ $contractsChange >= 0 ? 'text-green-500' : 'text-red-500' }} text-xs sm:text-sm font-semibold">
+                                {{ $contractsChange >= 0 ? '↑' : '↓' }} {{ abs($contractsChange) }}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -73,76 +81,47 @@
                 <div class="col-span-1 lg:col-span-2 bg-white rounded-2xl p-6 sm:p-8 shadow-md">
                     <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 mb-4 sm:mb-6">Monthly Vendor
                         Registrations</h2>
-                    <div class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">150 Registrations
+                    <div class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">
+                        {{ array_sum($monthlyRegistrations) }} Registrations
                     </div>
                     <!-- Bar Chart -->
                     <div class="flex items-end h-40 sm:h-48 md:h-64 gap-2 sm:gap-4 md:gap-6 overflow-x-auto">
-                        <div
-                            class="flex flex-col items-center gap-2 sm:gap-3 flex-1 min-w-[2.5rem] sm:min-w-[3rem] relative group">
+                        @php
+                            $months = [
+                                'Mar',
+                                'Apr',
+                                'May',
+                                'Jun',
+                                'Jul',
+                                'Aug',
+                                'Sep',
+                                'Oct',
+                                'Nov',
+                                'Dec',
+                                'Jan',
+                                'Feb',
+                            ];
+                            $maxHeight = max($monthlyRegistrations ?: [1]); // Avoid division by zero
+                        @endphp
+                        @foreach ($months as $month)
                             <div
-                                class="w-full bg-gray-100 rounded-t-lg h-20 sm:h-24 md:h-28 hover:bg-gray-200 transition">
+                                class="flex flex-col items-center gap-2 sm:gap-3 flex-1 min-w-[2.5rem] sm:min-w-[3rem] relative group">
+                                @if (isset($monthlyRegistrations[$month]))
+                                    <div
+                                        class="absolute -top-8 sm:-top-10 md:-top-12 bg-gray-900 text-white px-2 py-1 rounded text-xs hidden group-hover:block">
+                                        {{ $monthlyRegistrations[$month] }}
+                                    </div>
+                                    <div class="w-full bg-blue-500 rounded-t-lg hover:bg-blue-600 transition"
+                                        style="height: {{ ($monthlyRegistrations[$month] / $maxHeight) * 100 }}%;">
+                                    </div>
+                                @else
+                                    <div
+                                        class="w-full bg-gray-100 rounded-t-lg h-20 sm:h-24 md:h-28 hover:bg-gray-200 transition">
+                                    </div>
+                                @endif
+                                <span class="text-xs sm:text-sm text-gray-600">{{ $month }}</span>
                             </div>
-                            <span class="text-xs sm:text-sm text-gray-600">Mar</span>
-                        </div>
-                        <div
-                            class="flex flex-col items-center gap-2 sm:gap-3 flex-1 min-w-[2.5rem] sm:min-w-[3rem] relative group">
-                            <div
-                                class="w-full bg-gray-100 rounded-t-lg h-24 sm:h-28 md:h-32 hover:bg-gray-200 transition">
-                            </div>
-                            <span class="text-xs sm:text-sm text-gray-600">Apr</span>
-                        </div>
-                        <div
-                            class="flex flex-col items-center gap-2 sm:gap-3 flex-1 min-w-[2.5rem] sm:min-w-[3rem] relative group">
-                            <div
-                                class="w-full bg-gray-100 rounded-t-lg h-16 sm:h-20 md:h-24 hover:bg-gray-200 transition">
-                            </div>
-                            <span class="text-xs sm:text-sm text-gray-600">May</span>
-                        </div>
-                        <div
-                            class="flex flex-col items-center gap-2 sm:gap-3 flex-1 min-w-[2.5rem] sm:min-w-[3rem] relative group">
-                            <div
-                                class="absolute -top-8 sm:-top-10 md:-top-12 bg-gray-900 text-white px-2 py-1 rounded text-xs hidden group-hover:block">
-                                45</div>
-                            <div
-                                class="w-full bg-blue-500 rounded-t-lg h-28 sm:h-32 md:h-36 hover:bg-blue-600 transition">
-                            </div>
-                            <span class="text-xs sm:text-sm text-gray-600">Jun</span>
-                        </div>
-                        <div
-                            class="flex flex-col items-center gap-2 sm:gap-3 flex-1 min-w-[2.5rem] sm:min-w-[3rem] relative group">
-                            <div
-                                class="w-full bg-gray-100 rounded-t-lg h-20 sm:h-24 md:h-28 hover:bg-gray-200 transition">
-                            </div>
-                            <span class="text-xs sm:text-sm text-gray-600">Jul</span>
-                        </div>
-                        <div
-                            class="flex flex-col items-center gap-2 sm:gap-3 flex-1 min-w-[2.5rem] sm:min-w-[3rem] relative group">
-                            <div
-                                class="w-full bg-gray-100 rounded-t-lg h-24 sm:h-28 md:h-32 hover:bg-gray-200 transition">
-                            </div>
-                            <span class="text-xs sm:text-sm text-gray-600">Aug</span>
-                        </div>
-                        <div
-                            class="flex flex-col items-center gap-2 sm:gap-3 flex-1 min-w-[2.5rem] sm:min-w-[3rem] relative group">
-                            <div
-                                class="w-full bg-gray-100 rounded-t-lg h-20 sm:h-24 md:h-28 hover:bg-gray-200 transition">
-                            </div>
-                            <span class="text-xs sm:text-sm text-gray-600">Sep</span>
-                        </div>
-                        <div
-                            class="flex flex-col items-center gap-2 sm:gap-3 flex-1 min-w-[2.5rem] sm:min-w-[3rem] relative group">
-                            <div
-                                class="w-full bg-gray-100 rounded-t-lg h-28 sm:h-32 md:h-36 hover:bg-gray-200 transition">
-                            </div>
-                            <span class="text-xs sm:text-sm text-gray-600">Oct</span>
-                        </div>
-                        <div
-                            class="flex flex-col items-center gap-2 sm:gap-3 flex-1 min-w-[2.5rem] sm:min-w-[3rem] relative group">
-                            <div
-                                class="w-full bg-gray-100 rounded-t-lg h-24 sm:h-28 md:h-32 hover:bg-gray-200 transition">
-                            </div>
-                            <span class="text-xs sm:text-sm text-gray-600">Nov</span>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
                 <!-- Registration Call-to-Action Card -->
@@ -157,10 +136,10 @@
                     <p class="text-blue-100 text-sm sm:text-base mb-6 sm:mb-8 relative z-10 leading-relaxed">
                         Register your company now to gain access to exclusive RFPs and bidding opportunities.
                     </p>
-                    <button
+                    <a href="{{ route('vendors.create') }}"
                         class="bg-white text-blue-600 px-4 sm:px-6 py-2 rounded-lg font-semibold hover:bg-blue-50 transition-colors relative z-10">
                         Register Now
-                    </button>
+                    </a>
                 </div>
             </div>
 
@@ -171,30 +150,37 @@
                     <h2 class="text-lg sm:text-xl md:text-2xl font-semibold text-gray-900 mb-4 sm:mb-6">Recent Vendor
                         Activities</h2>
                     <div class="space-y-6 sm:space-y-8">
-                        <div class="flex items-start gap-4 sm:gap-6">
-                            <img src="/placeholder.svg"
-                                class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0"
-                                alt="Vendor avatar" />
-                            <div>
-                                <p class="text-sm sm:text-base text-gray-700">
-                                    <span class="font-semibold text-gray-900">ABC Corp</span> updated their profile.
-                                </p>
-                                <span class="text-xs sm:text-sm text-gray-500">Just Now</span>
+                        @forelse ($recentActivities as $activity)
+                            <div class="flex items-start gap-4 sm:gap-6">
+                                @if (!isset($activity['proposal_id']) || !$activity['proposal_id'])
+                                    <img src="/placeholder.svg"
+                                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0"
+                                        alt="Vendor avatar" />
+                                @else
+                                    <div
+                                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-orange-100 flex items-center justify-center text-orange-500 font-medium text-base sm:text-lg flex-shrink-0">
+                                        {{ strtoupper(substr($activity['vendor_name'] ?? 'Proposal', 0, 2)) }}
+                                    </div>
+                                @endif
+                                <div>
+                                    <p class="text-sm sm:text-base text-gray-700">
+                                        @if (!isset($activity['proposal_id']) || !$activity['proposal_id'])
+                                            <span
+                                                class="font-semibold text-gray-900">{{ $activity['vendor_name'] ?? 'Unknown' }}</span>
+                                            {{ $activity['action'] }}.
+                                        @else
+                                            Proposal <span
+                                                class="font-semibold text-gray-900">{{ $activity['proposal_id'] }}</span>
+                                            {{ $activity['action'] }} by <span
+                                                class="font-semibold text-gray-900">{{ $activity['vendor_name'] ?? 'Unknown' }}</span>.
+                                        @endif
+                                    </p>
+                                    <span class="text-xs sm:text-sm text-gray-500">{{ $activity['time'] }}</span>
+                                </div>
                             </div>
-                        </div>
-                        <div class="flex items-start gap-4 sm:gap-6">
-                            <div
-                                class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-orange-100 flex items-center justify-center text-orange-500 font-medium text-base sm:text-lg flex-shrink-0">
-                                RP
-                            </div>
-                            <div>
-                                <p class="text-sm sm:text-base text-gray-700">
-                                    Proposal for <span class="font-semibold text-gray-900">RFP-2023-001</span>
-                                    submitted.
-                                </p>
-                                <span class="text-xs sm:text-sm text-gray-500">Friday, 12:30 PM</span>
-                            </div>
-                        </div>
+                        @empty
+                            <p class="text-sm sm:text-base text-gray-500">No recent activities.</p>
+                        @endforelse
                     </div>
                 </div>
                 <!-- Active RFPs & Proposals Table -->
@@ -212,42 +198,35 @@
                             </tr>
                         </thead>
                         <tbody class="text-gray-700">
-                            <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
-                                <td class="py-3 px-3 sm:px-4 font-medium">RFP-2023-001</td>
-                                <td class="py-3 px-3 sm:px-4">3 Aug, 2023</td>
-                                <td class="py-3 px-3 sm:px-4">XYZ Corp</td>
-                                <td class="py-3 px-3 sm:px-4">$50,000</td>
-                                <td class="py-3 px-3 sm:px-4">
-                                    <span
-                                        class="inline-block px-2 sm:px-3 py-1 bg-green-100 text-green-600 rounded-full text-xs sm:text-sm font-medium">Open</span>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
-                                <td class="py-3 px-3 sm:px-4 font-medium">RFP-2023-002</td>
-                                <td class="py-3 px-3 sm:px-4">15 Sep, 2023</td>
-                                <td class="py-3 px-3 sm:px-4">Acme Inc</td>
-                                <td class="py-3 px-3 sm:px-4">$75,000</td>
-                                <td class="py-3 px-3 sm:px-4">
-                                    <span
-                                        class="inline-block px-2 sm:px-3 py-1 bg-yellow-100 text-yellow-600 rounded-full text-xs sm:text-sm font-medium">Under
-                                        Review</span>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="py-3 px-3 sm:px-4 font-medium">RFP-2023-003</td>
-                                <td class="py-3 px-3 sm:px-4">10 Oct, 2023</td>
-                                <td class="py-3 px-3 sm:px-4">Global Tech</td>
-                                <td class="py-3 px-3 sm:px-4">$120,000</td>
-                                <td class="py-3 px-3 sm:px-4">
-                                    <span
-                                        class="inline-block px-2 sm:px-3 py-1 bg-green-100 text-green-600 rounded-full text-xs sm:text-sm font-medium">Awarded</span>
-                                </td>
-                            </tr>
+                            @forelse ($activeProposals as $proposal)
+                                <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                                    <td class="py-3 px-3 sm:px-4 font-medium">{{ $proposal->id }}</td>
+                                    <td class="py-3 px-3 sm:px-4">
+                                        {{ $proposal->valid_until?->format('d M, Y') ?? 'N/A' }}</td>
+                                    <td class="py-3 px-3 sm:px-4">{{ $proposal->vendor_name ?? 'Unknown' }}</td>
+                                    <td class="py-3 px-3 sm:px-4">
+                                        {{ $proposal->pricing ? '$' . number_format($proposal->pricing) : 'N/A' }}</td>
+                                    <td class="py-3 px-3 sm:px-4">
+                                        <span
+                                            class="inline-block px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium
+                                            @if ($proposal->admin_status === 'pending') bg-green-100 text-green-600
+                                            @elseif ($proposal->admin_status === 'under_review') bg-yellow-100 text-yellow-600
+                                            @elseif ($proposal->admin_status === 'approved') bg-blue-100 text-blue-600
+                                            @else bg-red-100 text-red-600 @endif">
+                                            {{ ucfirst($proposal->admin_status ?? 'Pending') }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="py-3 px-3 sm:px-4 text-gray-500">No active RFPs or
+                                        proposals.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </main>
-
 </x-app-layout>
