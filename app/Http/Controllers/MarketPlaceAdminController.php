@@ -157,7 +157,8 @@ class MarketPlaceAdminController extends Controller
 
     public function checkout(Request $request)
     {
-        $selectedIds = $request->input('selected', []);
+
+        $selectedIds = $request->input('selected_items', []);
         if (empty($selectedIds)) {
             flash()->error('Please select at least one item to checkout.');
             return redirect()->route('marketplace.admin.cart');
@@ -181,7 +182,7 @@ class MarketPlaceAdminController extends Controller
             $description = $items->map(fn($item) => "Order for {$item->product->name} (Qty: {$item->quantity})")->implode(', ');
 
             PurchaseOrder::create([
-                'order_id' => $order->id, // Link to the order
+                'order_id' => $order->id,
                 'vendor_id' => $vendorId,
                 'po_number' => $poNumber,
                 'description' => $description,
