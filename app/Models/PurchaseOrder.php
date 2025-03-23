@@ -10,7 +10,7 @@ class PurchaseOrder extends Model
     /** @use HasFactory<\Database\Factories\PurchaseOrderFactory> */
     use HasFactory;
 
-    protected $fillable = ['vendor_id', 'po_number', 'description', 'amount', 'status'];
+    protected $fillable = ['vendor_id', 'order_id', 'po_number', 'description', 'amount', 'status'];
 
     public function vendor()
     {
