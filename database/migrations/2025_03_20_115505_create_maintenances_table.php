@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('maintenances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('vehicle_id')->constrained('vehicles')->onDelete('cascade')->index();
+            $table->foreignId('vehicle_id')->constrained('vehicle_inventories')->onDelete('cascade')->index();
             $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
             $table->foreignId('assigned_tech')->nullable()->constrained('users')->onDelete('set null');
             $table->text('description')->nullable();
             $table->text('notes')->nullable();
-            $table->tinyInteger('isPriority')->default(0);
+            $table->boolean('is_priority')->default(false); // Use boolean instead of tinyInteger
             $table->date('maintenance_date');
-            $table->enum('maintenance_type', ['oil change', 'brake check', 'tire replacement', 'general service'])->default('general service');
+            $table->string('maintenance_type')->nullable()->default('general service'); // Nullable with default
             $table->decimal('cost', 10, 2)->nullable();
             $table->string('status')->default('pending');
             $table->timestamps();

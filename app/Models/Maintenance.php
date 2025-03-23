@@ -18,15 +18,19 @@ class Maintenance extends Model
         'maintenance_type',
         'cost',
         'status',
-        'isPriority',
+        'is_priority',
         'assigned_tech',
         'notes',
     ];
 
-    // Define relationship with Vehicle
+    protected $casts = [
+        'is_priority' => 'boolean',
+        'maintenance_date' => 'date',
+    ];
+
     public function vehicle()
     {
-        return $this->belongsTo(VehicleInventory::class);
+        return $this->belongsTo(VehicleInventory::class, 'vehicle_id');
     }
 
     public function createdBy()
