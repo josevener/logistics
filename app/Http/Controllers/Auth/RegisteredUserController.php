@@ -34,6 +34,7 @@ class RegisteredUserController extends Controller
             'firstname' => ['required', 'string', 'max:255'],
             'middlename' => ['nullable', 'string', 'max:255'],
             'lastname' => ['required', 'string', 'max:255'],
+            'role' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -41,17 +42,20 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->firstname . ' ' . $request->lastname,
             'email' => $request->email,
+            'role' => $request->role,
             'password' => Hash::make($request->password),
         ]);
 
         event(new Registered($user));
 
-        Vendor::create([
-            'user_id' => $user->id,
-            'firstname' => $request->firstname,
-            'middlename' => $request->middlename,
-            'lastname' => $request->lastname,
-        ]);
+        if ($user->role == 'Vendor') {
+            Vendor::create([
+                'user_id' => $user->id,
+                'firstname' => $request->firstname,
+                'middlename' => $request->middlename,
+                'lastname' => $request->lastname,
+            ]);
+        }
 
         flash()->success('Account created successfully!');
         Auth::login($user);

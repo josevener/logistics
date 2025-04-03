@@ -5,22 +5,22 @@
 
             <!-- Header -->
             <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Vendor Marketplace</h1>
+                <h3 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white"></h3>
                 <div class="mt-4 sm:mt-0 flex gap-4">
                     <a href="{{ route('marketplace.vendor.orders') }}"
                         class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-green-500 dark:hover:bg-green-600 flex items-center">
-                        <i class="fas fa-shopping-bag mr-2"></i> My Orders
+                        <i class="fas fa-shopping-bag mr-2"></i> Procured Services/Items
                     </a>
                     <button id="open-product-modal"
                         class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600">
-                        Add New Product/Service
+                        Add New Service/Item
                     </button>
                 </div>
             </div>
 
             <!-- Vendor Product Table -->
             <div class="mb-10">
-                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">My Products</h2>
+                <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">My Listings</h2>
                 <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 shadow-md">
                     <table class="w-full text-sm text-left divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-700">
@@ -81,7 +81,7 @@
             <x-modal name="productModal" :show="false" focusable maxWidth="2xl"
                 class="flex items-center justify-center">
                 <div class="p-6 bg-white rounded-lg dark:bg-gray-800 w-full max-w-3xl">
-                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Add Product/Service</h2>
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Add New Service/Item</h2>
                     <form action="{{ route('marketplace.vendor.products.store') }}" method="POST"
                         class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         @csrf

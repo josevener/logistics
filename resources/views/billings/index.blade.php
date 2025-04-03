@@ -1,6 +1,8 @@
 <x-app-layout>
     <main class="flex-1 p-4 sm:p-6 md:p-8 lg:p-12 bg-gray-50 min-h-screen">
+        @include('navigation.header')
         <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 sm:gap-8">
+
             <!-- Center Column: Billing and Invoicing -->
             <div class="flex-1">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">

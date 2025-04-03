@@ -1,32 +1,14 @@
 <x-app-layout>
     <div class="flex-1 p-4 sm:p-6 md:p-8 lg:p-10 bg-gray-100 min-h-screen dark:bg-gray-900">
         <div class="max-w-7xl mx-auto">
-            <!-- Flash Messages -->
-            @if (session('success'))
-                <div
-                    class="mb-6 p-4 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-200 rounded-lg shadow-md flex items-center">
-                    <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
-                </div>
-            @elseif (session('info'))
-                <div
-                    class="mb-6 p-4 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200 rounded-lg shadow-md flex items-center">
-                    <i class="fas fa-info-circle mr-2"></i> {{ session('info') }}
-                </div>
-            @elseif (session('error'))
-                <div
-                    class="mb-6 p-4 bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200 rounded-lg shadow-md flex items-center">
-                    <i class="fas fa-exclamation-circle mr-2"></i> {{ session('error') }}
-                </div>
-            @endif
-
             <!-- Header -->
             <div class="flex flex-col sm:flex-row justify-between items-center mb-8">
                 <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-                    <i class="fas fa-shopping-bag mr-2 text-blue-600 dark:text-blue-400"></i> My Orders
+                    <i class="fas fa-shopping-bag mr-2 text-blue-600 dark:text-blue-400"></i> Procured Services/Items
                 </h1>
                 <a href="{{ route('marketplace.admin.store') }}"
                     class="mt-4 sm:mt-0 bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600 shadow-md flex items-center">
-                    <i class="fas fa-arrow-left mr-2"></i> Back to Store
+                    <i class="fas fa-arrow-left mr-2"></i> Find More Services/Items
                 </a>
             </div>
 

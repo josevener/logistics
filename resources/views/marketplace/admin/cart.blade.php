@@ -18,11 +18,11 @@
 
             <!-- Header -->
             <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">My Cart</h1>
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Pending Procurements</h1>
                 <div class="mt-4 sm:mt-0 flex items-center gap-4">
                     <a href="{{ route('marketplace.admin.store') }}"
                         class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition duration-200">
-                        <i class="fas fa-arrow-left mr-2"></i> Continue Shopping
+                        <i class="fas fa-arrow-left mr-2"></i> View More Listings
                     </a>
                     @if ($cartItems->isNotEmpty())
                         <label class="flex items-center text-gray-700 dark:text-gray-300">
@@ -36,7 +36,8 @@
             </div>
 
             @if ($cartItems->isNotEmpty())
-                <form action="{{ route('marketplace.admin.cart.checkout') }}" method="POST" id="cart-form">
+                <!-- Checkout Form Wrapping All Cart Items -->
+                <form action="{{ route('marketplace.admin.cart.checkout') }}" method="POST" id="checkout-form">
                     @csrf
                     <!-- Cart Items Grouped by Vendor -->
                     @foreach ($cartItems->groupBy('product.vendor_id') as $vendorId => $items)
@@ -64,19 +65,24 @@
                                             </th>
                                             <th
                                                 class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
-                                                Product</th>
+                                                Product
+                                            </th>
                                             <th
                                                 class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
-                                                Price</th>
+                                                Price
+                                            </th>
                                             <th
                                                 class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
-                                                Quantity</th>
+                                                Quantity
+                                            </th>
                                             <th
                                                 class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
-                                                Total</th>
+                                                Total
+                                            </th>
                                             <th
                                                 class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
-                                                Actions</th>
+                                                Actions
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -87,13 +93,16 @@
                                                     <input type="checkbox" name="selected_items[]"
                                                         value="{{ $item->id }}"
                                                         class="item-checkbox vendor-{{ $vendorId }} h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-                                                        onchange="updateSelectAll('{{ $vendorId }}')">
+                                                        onchange="updateSelectAll('{{ $vendorId }}')"
+                                                        {{ request()->query('buy_product_id') == $item->product_id || (old('selected_items', []) && in_array($item->id, old('selected_items', []))) ? 'checked' : '' }}>
                                                 </td>
                                                 <td
                                                     class="px-4 py-4 sm:px-6 text-gray-900 dark:text-gray-100 truncate max-w-xs">
-                                                    {{ $item->product->name }}</td>
+                                                    {{ $item->product->name }}
+                                                </td>
                                                 <td class="px-4 py-4 sm:px-6 text-gray-700 dark:text-gray-300">
-                                                    ₱{{ number_format($item->product->price, 2) }}</td>
+                                                    ₱{{ number_format($item->product->price, 2) }}
+                                                </td>
                                                 <td class="px-4 py-4 sm:px-6 text-gray-700 dark:text-gray-300">
                                                     <div class="flex items-center gap-2">
                                                         <button type="button"
@@ -113,7 +122,7 @@
                                                 <td class="px-4 py-4 sm:px-6">
                                                     <form action="{{ route('marketplace.admin.cart.remove') }}"
                                                         method="POST" class="inline"
-                                                        onsubmit="return confirm('Remove {{ $item->product->name }} from your cart?');">
+                                                        onsubmit="return confirm('Remove {{ $item->product->name }} from your procurement list?');">
                                                         @csrf
                                                         <input type="hidden" name="product_id"
                                                             value="{{ $item->product_id }}">
@@ -136,7 +145,7 @@
                         </div>
                     @endforeach
 
-                    <!-- Overall Cart Summary and Checkout -->
+                    <!-- Overall Cart Summary and Checkout Buttons -->
                     <div
                         class="mt-6 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex flex-col sm:flex-row justify-between items-center gap-4">
                         <p class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -146,11 +155,11 @@
                         <div class="flex gap-4">
                             <button type="button" onclick="removeSelected()"
                                 class="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-600">
-                                Remove Selected
+                                Remove Selection
                             </button>
                             <button type="submit"
                                 class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-green-500 dark:hover:bg-green-600">
-                                Checkout Selected
+                                Proceed with Selection
                             </button>
                         </div>
                     </div>
@@ -159,10 +168,10 @@
                 <!-- Empty Cart State -->
                 <div class="text-center py-12">
                     <i class="fas fa-shopping-cart text-4xl text-gray-400 dark:text-gray-500 mb-4"></i>
-                    <p class="text-lg text-gray-700 dark:text-gray-300">Your cart is empty.</p>
+                    <p class="text-lg text-gray-700 dark:text-gray-300">No items yet. Browse and add some!</p>
                     <a href="{{ route('marketplace.admin.store') }}"
                         class="mt-4 inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600">
-                        Start Shopping
+                        Proceed to Listings
                     </a>
                 </div>
             @endif
@@ -171,6 +180,15 @@
 
     <!-- JavaScript for Quantity Updates and Checkbox Handling -->
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initial update of "Select All" states
+            document.querySelectorAll('.select-all-vendor').forEach(vendorCheckbox => {
+                const vendorId = vendorCheckbox.dataset.vendorId;
+                updateSelectAll(vendorId);
+            });
+            updateSelectAllGlobal();
+        });
+
         async function updateQuantity(cartItemId, change) {
             const response = await fetch('{{ route('marketplace.admin.cart.update') }}', {
                 method: 'POST',
@@ -228,7 +246,7 @@
                 return;
             }
 
-            if (!confirm(`Remove ${selectedItems.length} selected item(s) from your cart?`)) return;
+            if (!confirm(`Remove ${selectedItems.length} selected item(s) from your procurement list?`)) return;
 
             const response = await fetch('{{ route('marketplace.admin.cart.remove-selected') }}', {
                 method: 'POST',

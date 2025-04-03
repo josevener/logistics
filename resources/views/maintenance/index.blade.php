@@ -12,6 +12,8 @@
             </div>
         @endif
 
+        @include('navigation.header')
+
         <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 sm:gap-8">
             <!-- Center Column: Upcoming Maintenance -->
             <div class="flex-1">

@@ -1,5 +1,8 @@
 <x-app-layout>
     <main class="flex-1 p-4 sm:p-6 md:p-8 lg:p-12 bg-gray-50 min-h-screen">
+
+        @include('navigation.header')
+
         <div class="max-w-7xl mx-auto space-y-6 sm:space-y-8 md:space-y-10">
             <!-- Stats Grid -->
             <div

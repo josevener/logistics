@@ -79,10 +79,31 @@
                     <div class="mb-4">
                         <x-input-label for="email" :value="__('Email')" class="block text-gray-600 mb-1 text-sm" />
                         <x-text-input id="email"
-                            class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outlinequilo-none transition-colors text-sm"
+                            class="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-colors text-sm"
                             type="email" name="email" :value="old('email')" required autocomplete="username"
                             placeholder="example@gmail.com" />
                         <x-input-error :messages="$errors->get('email')" class="mt-1 text-red-500 text-xs" />
+                    </div>
+
+                    <!-- Role Selection -->
+                    <div class="mb-4">
+                        <x-input-label for="role" :value="__('Select Role')" class="block text-gray-600 mb-1 text-sm" />
+                        <div class="relative">
+                            <select id="role" name="role"
+                                class="w-full px-4 py-2 rounded-lg border border-gray-300 bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-colors text-sm appearance-none cursor-pointer">
+                                <option value="" disabled selected>🔽 Choose a Role</option>
+                                <option value="Vendor">📦 Vendor</option>
+                                <option value="Driver">🚛 Driver</option>
+                            </select>
+                            <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
+                        <x-input-error :messages="$errors->get('role')" class="mt-1 text-red-500 text-xs" />
                     </div>
 
                     <!-- Password Grid -->

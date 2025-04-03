@@ -5,14 +5,14 @@
 
             <!-- Header -->
             <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Marketplace Store</h1>
+                <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white"></h2>
                 <div class="mt-4 sm:mt-0 flex items-center gap-4">
                     <a href="{{ route('marketplace.admin.orders') }}"
-                        class="text-gray-700 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition duration-200 flex items-center">
-                        <i class="fas fa-list mr-2"></i> My Orders
+                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition duration-200 flex items-center">
+                        <i class="fas fa-list mr-2"></i> Procured Services/Items
                     </a>
                     <a href="{{ route('marketplace.admin.cart') }}"
-                        class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center">
+                        class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center">
                         <i class="fas fa-shopping-cart mr-2 text-white dark:text-gray-400"></i>
                         {{ $cartItems->count() }}
                     </a>
@@ -25,7 +25,7 @@
                     <div class="flex-1 relative">
                         <i
                             class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"></i>
-                        <input type="text" id="search" placeholder="Search products..."
+                        <input type="text" id="search" placeholder="Search items/services..."
                             class="w-full pl-10 p-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div class="flex gap-2">
@@ -78,11 +78,11 @@
                                         <i class="fas fa-ban mr-2"></i> Out of Stock
                                     </span>
                                 @else
-                                    <button type="button" id="open-add-to-cart-{{ $product->id }}"
+                                    {{-- <button type="button" id="open-add-to-cart-{{ $product->id }}"
                                         class="flex-1 bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center justify-center"
                                         title="Add to Cart">
                                         <i class="fas fa-cart-plus mr-1"></i> <span class="text-sm">Cart</span>
-                                    </button>
+                                    </button> --}}
                                     <form action="{{ route('marketplace.admin.cart.buy') }}" method="POST"
                                         class="flex-1">
                                         @csrf
@@ -90,7 +90,8 @@
                                         <button type="submit"
                                             class="w-full bg-green-600 text-white p-2 rounded-md hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-green-500 dark:hover:bg-green-600 flex items-center justify-center"
                                             title="Buy">
-                                            <i class="fas fa-shopping-bag mr-1"></i> <span class="text-sm">Buy</span>
+                                            <i class="fas fa-shopping-bag mr-1"></i> <span
+                                                class="text-sm">{{ $product->type == 'service' ? 'Avail service' : 'Buy Items/Products' }}</span>
                                         </button>
                                     </form>
                                 @endif

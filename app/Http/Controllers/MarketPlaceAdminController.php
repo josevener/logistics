@@ -17,42 +17,42 @@ class MarketPlaceAdminController extends Controller
         $cartItems = Auth::check() ? Cart::where('user_id', Auth::id())->with('product')->get() : collect();
         return view('marketplace.admin.store', compact('products', 'cartItems'));
     }
+
     public function orders()
     {
         $orders = Order::where('user_id', Auth::id())
-            ->with('products.vendor.user') // Eager load products and their vendors
+            ->with('products.vendor.user')
             ->orderBy('created_at', 'desc')
             ->get();
 
         return view('marketplace.admin.orders', compact('orders'));
     }
+
     public function cancelOrder(Request $request, $orderId)
     {
         $order = Order::where('user_id', Auth::id())->findOrFail($orderId);
 
         if ($order->status !== 'Pending') {
-            flash()->error('Only pending orders can be canceled.');
+            flash()->error('Only pending procurement requests can be canceled.');
             return redirect()->route('marketplace.admin.orders');
         }
 
-        // Restore stock for items
         foreach ($order->products as $product) {
             if ($product->type === 'items') {
                 $product->increment('stock', $product->pivot->quantity);
             }
         }
 
-        // Update related purchase orders to "Canceled"
         PurchaseOrder::whereIn('description', $order->products->map(fn($p) => "Order for {$p->name} (Qty: {$p->pivot->quantity})"))
             ->where('status', 'Pending')
             ->update(['status' => 'Canceled']);
 
-        // Update order status
         $order->update(['status' => 'Canceled']);
 
-        flash()->success("Order #{$order->id} has been canceled.");
+        flash()->success("Procurement request #{$order->id} has been canceled.");
         return redirect()->route('marketplace.admin.orders');
     }
+
     public function cart()
     {
         $cartItems = Cart::where('user_id', Auth::id())->with('product.vendor.user')->get();
@@ -68,7 +68,7 @@ class MarketPlaceAdminController extends Controller
         ])['quantity'];
 
         if ($product->type === 'items' && $product->stock < $quantity) {
-            flash()->error('Not enough stock available!');
+            flash()->error('Insufficient stock available for this procurement request!');
             return redirect()->route('marketplace.admin.store');
         }
 
@@ -77,12 +77,12 @@ class MarketPlaceAdminController extends Controller
         if ($cartItem) {
             $newQuantity = $cartItem->quantity + $quantity;
             if ($product->type === 'items' && $newQuantity > $product->stock) {
-                flash()->error('Cannot add more than available stock!');
+                flash()->error('Requested quantity exceeds available stock!');
                 return redirect()->route('marketplace.admin.store');
             }
             $cartItem->update(['quantity' => $newQuantity]);
         } else {
-            Cart::create([
+            $cartItem = Cart::create([
                 'user_id' => Auth::id(),
                 'product_id' => $product->id,
                 'quantity' => $quantity,
@@ -93,8 +93,8 @@ class MarketPlaceAdminController extends Controller
             $product->decrement('stock', $quantity);
         }
 
-        flash()->success("Added $quantity x {$product->name} to cart!");
-        return redirect()->route('marketplace.admin.store');
+        // flash()->success("Added $quantity x {$product->name} to your procurement list!");
+        return redirect()->route('marketplace.admin.cart', ['buy_product_id' => $product->id]);
     }
 
     public function removeFromCart(Request $request)
@@ -107,7 +107,9 @@ class MarketPlaceAdminController extends Controller
                 $product->increment('stock', $cartItem->quantity);
             }
             $cartItem->delete();
-            // flash()->success('Item removed from cart!');
+            flash()->success("Removed {$product->name} from your procurement list!");
+        } else {
+            flash()->error('Item not found in your procurement list.');
         }
 
         return redirect()->route('marketplace.admin.cart');
@@ -117,11 +119,16 @@ class MarketPlaceAdminController extends Controller
     {
         $selectedItems = $request->input('selected_items', []);
         if (empty($selectedItems)) {
-            flash()->error('No items selected for removal.');
+            flash()->error('No items selected for removal from your procurement list.');
             return redirect()->route('marketplace.admin.cart');
         }
 
         $cartItems = Cart::where('user_id', Auth::id())->whereIn('id', $selectedItems)->get();
+        if ($cartItems->isEmpty()) {
+            flash()->error('No valid items selected for removal from your procurement list.');
+            return redirect()->route('marketplace.admin.cart');
+        }
+
         foreach ($cartItems as $cartItem) {
             if ($cartItem->product->type === 'items') {
                 $cartItem->product->increment('stock', $cartItem->quantity);
@@ -129,7 +136,7 @@ class MarketPlaceAdminController extends Controller
             $cartItem->delete();
         }
 
-        // flash()->success('Selected items removed from your cart.');
+        flash()->success('Selected items removed from your procurement list.');
         return redirect()->route('marketplace.admin.cart');
     }
 
@@ -140,14 +147,14 @@ class MarketPlaceAdminController extends Controller
 
         $newQuantity = $cartItem->quantity + $change;
         if ($newQuantity < 1) {
-            $newQuantity = 1; // Minimum quantity
+            $newQuantity = 1;
         } elseif ($cartItem->product->type === 'items' && $newQuantity > $cartItem->product->stock) {
-            $newQuantity = $cartItem->product->stock; // Max stock limit
+            $newQuantity = $cartItem->product->stock;
         }
 
         $quantityDifference = $newQuantity - $cartItem->quantity;
         if ($quantityDifference !== 0 && $cartItem->product->type === 'items') {
-            $cartItem->product->increment('stock', -$quantityDifference); // Adjust stock
+            $cartItem->product->increment('stock', -$quantityDifference);
         }
 
         $cartItem->update(['quantity' => $newQuantity]);
@@ -157,16 +164,15 @@ class MarketPlaceAdminController extends Controller
 
     public function checkout(Request $request)
     {
-
         $selectedIds = $request->input('selected_items', []);
         if (empty($selectedIds)) {
-            flash()->error('Please select at least one item to checkout.');
+            flash()->error('Please select at least one item to proceed with procurement.');
             return redirect()->route('marketplace.admin.cart');
         }
 
         $cartItems = Cart::where('user_id', Auth::id())->whereIn('id', $selectedIds)->get();
         if ($cartItems->isEmpty()) {
-            flash()->error('No valid items selected for checkout.');
+            flash()->error('No valid items selected for procurement.');
             return redirect()->route('marketplace.admin.cart');
         }
 
@@ -199,7 +205,7 @@ class MarketPlaceAdminController extends Controller
 
         Cart::whereIn('id', $selectedIds)->delete();
 
-        flash()->success('Checkout successful! Your order has been placed.');
+        flash()->success('Procurement request submitted successfully!');
         return redirect()->route('marketplace.admin.orders');
     }
 
@@ -208,7 +214,7 @@ class MarketPlaceAdminController extends Controller
         $product = Product::findOrFail($request->product_id);
 
         if ($product->type === 'items' && $product->stock <= 0) {
-            flash()->error('Product out of stock!');
+            flash()->error('Item is out of stock for procurement!');
             return redirect()->route('marketplace.admin.store');
         }
 
@@ -218,24 +224,23 @@ class MarketPlaceAdminController extends Controller
         if ($cartItem) {
             $newQuantity = $cartItem->quantity + $quantity;
             if ($product->type === 'items' && $newQuantity > $product->stock) {
-                flash()->error('Cannot add more than available stock!');
+                flash()->error('Requested quantity exceeds available stock!');
                 return redirect()->route('marketplace.admin.store');
             }
             $cartItem->update(['quantity' => $newQuantity]);
-            // flash()->success("Increased quantity of {$product->name} in your cart.");
         } else {
-            Cart::create([
+            $cartItem = Cart::create([
                 'user_id' => Auth::id(),
                 'product_id' => $product->id,
                 'quantity' => $quantity,
             ]);
-            // flash()->success("Added {$product->name} to your cart.");
         }
 
         if ($product->type === 'items') {
             $product->decrement('stock', $quantity);
         }
 
-        return redirect()->route('marketplace.admin.cart');
+        flash()->success("Added {$product->name} to your procurement list!");
+        return redirect()->route('marketplace.admin.cart', ['buy_product_id' => $product->id]);
     }
 }

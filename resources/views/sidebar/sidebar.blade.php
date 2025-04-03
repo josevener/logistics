@@ -12,24 +12,35 @@
     <!-- Sidebar Header -->
     <div class="p-4 flex items-center border-b border-blue-700">
         <span class="font-semibold text-lg tracking-tight md:text-xl">
-            {{ Auth::check() && Auth::user()->role === 'Admin' ? 'ADMIN' : 'VENDOR' }} PORTAL
+            {{ Auth::check()
+                ? (Auth::user()->role === 'Admin'
+                    ? 'ADMIN'
+                    : (Auth::user()->role === 'Staff'
+                        ? 'STAFF'
+                        : (Auth::user()->role === 'Driver'
+                            ? 'DRIVER'
+                            : 'VENDOR')))
+                : 'VENDOR' }}
+            PORTAL
         </span>
     </div>
 
     <!-- Scrollable Navigation -->
     <nav class="flex-1 overflow-y-auto py-4 space-y-1">
         <!-- Shared Dashboard Link -->
-        <x-nav-item href="{{ route('dashboard') }}" active="{{ Route::currentRouteName() === 'dashboard' }}"
-            icon="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
-            Dashboard
-        </x-nav-item>
+        @if (Auth::user()->role !== 'Driver')
+            <x-nav-item href="{{ route('dashboard') }}" active="{{ Route::currentRouteName() === 'dashboard' }}"
+                icon="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                Dashboard
+            </x-nav-item>
+        @endif
 
         <!-- Admin Routes -->
         @if (Auth::user()->role === 'Admin')
             <x-nav-item href="{{ route('marketplace.admin.store') }}"
                 active="{{ Route::currentRouteName() === 'marketplace.admin.store' }}"
                 icon="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
-                Marketplace
+                Procurement Portal
             </x-nav-item>
             <x-nav-item href="{{ route('vehicles.index') }}"
                 active="{{ Route::currentRouteName() === 'vehicles.index' }}"
@@ -66,7 +77,7 @@
             <x-nav-item href="{{ route('marketplace.vendor.index') }}"
                 active="{{ Route::currentRouteName() === 'marketplace.vendor.index' }}"
                 icon="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
-                Marketplace
+                Procurement Portal
             </x-nav-item>
             {{-- <x-nav-item href="{{ route('purchase_orders.vendor.index') }}"
                 active="{{ Route::currentRouteName() === 'purchase_orders.vendor.index' }}"
@@ -101,11 +112,22 @@
                 icon="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
                 Profile Information
             </x-nav-item>
+        @elseif (Auth::user()->role === 'Driver')
+            <x-nav-item href="{{ route('maintenance.index') }}"
+                active="{{ Route::currentRouteName() === 'maintenance.index' }}"
+                icon="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z">
+                Maintenance Management
+            </x-nav-item>
         @endif
-        <x-nav-item href="{{ route('billings.index') }}" active="{{ Route::currentRouteName() === 'billings.index' }}"
-            icon="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-            Billing and Invoicing
-        </x-nav-item>
+
+        @if (Auth::user()->role !== 'Driver')
+            <x-nav-item href="{{ route('billings.index') }}"
+                active="{{ Route::currentRouteName() === 'billings.index' }}"
+                icon="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                Billing and Invoicing
+            </x-nav-item>
+        @endif
+
         <!-- Notifications Section -->
         {{-- <div class="mt-4 px-4 py-3 text-white font-semibold text-sm md:text-base">
             Notifications & Reminders
