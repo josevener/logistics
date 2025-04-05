@@ -19,10 +19,12 @@
             <div class="flex-1">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
                     <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">Upcoming Maintenance</h2>
-                    <button onclick="openModal()"
-                        class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm sm:text-base font-semibold">
-                        <span class="text-lg sm:text-xl">+</span> Schedule Task
-                    </button>
+                    @if (Auth::user()->role === 'Driver')
+                        <button onclick="openModal()"
+                            class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm sm:text-base font-semibold">
+                            <span class="text-lg sm:text-xl">+</span> Schedule Task
+                        </button>
+                    @endif
                 </div>
 
                 <div class="space-y-4 sm:space-y-6">

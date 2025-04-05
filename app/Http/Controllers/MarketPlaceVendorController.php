@@ -15,6 +15,7 @@ class MarketPlaceVendorController extends Controller
         $vendorProducts = Product::where('vendor_id', Auth::user()->vendor->id)->get();
         $allOrders = Order::with(['products.vendor.user', 'purchaseOrders'])
             ->orderBy('created_at', 'desc')
+            ->where('approval_status', 'Approved')
             ->get();
 
         return view('marketplace.vendor.index', compact('vendorProducts', 'allOrders'));
@@ -67,7 +68,12 @@ class MarketPlaceVendorController extends Controller
     public function vendorOrders()
     {
         $vendorId = Auth::user()->vendor->id;
+
+        // Get only purchase orders where the related order is Approved
         $purchaseOrders = PurchaseOrder::where('vendor_id', $vendorId)
+            ->whereHas('order', function ($query) {
+                $query->where('approval_status', 'Approved');
+            })
             ->orderBy('created_at', 'desc')
             ->get();
 

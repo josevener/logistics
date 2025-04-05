@@ -19,6 +19,10 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+
+    protected $dates = [
+        'deleted_at',
+    ];
     protected $fillable = [
         'name',
         'email',

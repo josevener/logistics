@@ -4,30 +4,37 @@
             <!-- Header -->
             <div class="flex flex-col sm:flex-row justify-between items-center mb-8">
                 <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-                    <i class="fas fa-shopping-bag mr-2 text-blue-600 dark:text-blue-400"></i> Procured Services/Items
+                    <i class="fas fa-file-alt mr-2 text-blue-600 dark:text-blue-400"></i> My Procurement Requests
                 </h1>
                 <a href="{{ route('marketplace.admin.store') }}"
                     class="mt-4 sm:mt-0 bg-blue-600 text-white px-5 py-2 rounded-full hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600 shadow-md flex items-center">
-                    <i class="fas fa-arrow-left mr-2"></i> Find More Services/Items
+                    <i class="fas fa-arrow-left mr-2"></i> Back to Listings
                 </a>
             </div>
 
-            @if ($orders->isNotEmpty())
-                <!-- Orders List -->
+            @if ($requests->isNotEmpty())
+                <!-- Requests List -->
                 <div class="space-y-8">
-                    @foreach ($orders as $order)
+                    @foreach ($requests as $request)
                         <div
                             class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
                             <div
                                 class="bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-600 dark:to-indigo-700 p-4 flex justify-between items-center">
                                 <h2 class="text-xl font-semibold text-white">
-                                    Order #{{ $order->id }} - {{ $order->created_at->format('M d, Y H:i') }}
+                                    Request #{{ $request->id }} - {{ $request->created_at->format('M d, Y H:i') }}
                                 </h2>
-                                <span
-                                    class="px-3 py-1 rounded-full text-sm font-medium text-white
-                                    {{ $order->status === 'Pending' ? 'bg-yellow-500' : ($order->status === 'Canceled' ? 'bg-red-500' : 'bg-green-500') }}">
-                                    {{ $order->status }}
-                                </span>
+                                <div class="flex gap-2">
+                                    <span
+                                        class="px-3 py-1 rounded-full text-sm font-medium text-white
+                                        {{ $request->status === 'Pending' ? 'bg-yellow-500' : ($request->status === 'Canceled' ? 'bg-red-500' : 'bg-green-500') }}">
+                                        {{ $request->status }}
+                                    </span>
+                                    <span
+                                        class="px-3 py-1 rounded-full text-sm font-medium text-white
+                                        {{ $request->approval_status === 'Pending Approval' ? 'bg-yellow-700' : ($request->approval_status === 'Rejected' ? 'bg-red-700' : 'bg-green-700') }}">
+                                        {{ $request->approval_status }}
+                                    </span>
+                                </div>
                             </div>
                             <div class="overflow-x-auto">
                                 <table class="w-full text-sm text-left divide-y divide-gray-200 dark:divide-gray-700">
@@ -42,7 +49,7 @@
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                                        @foreach ($order->products as $product)
+                                        @foreach ($request->products as $product)
                                             <tr
                                                 class="hover:bg-gray-100 dark:hover:bg-gray-700 transition duration-150">
                                                 <td
@@ -65,16 +72,16 @@
                             <div
                                 class="p-4 flex justify-between items-center border-t border-gray-200 dark:border-gray-700">
                                 <p class="text-lg font-semibold text-gray-900 dark:text-white">
-                                    Order Total: ₱{{ number_format($order->total, 2) }}
+                                    Total: ₱{{ number_format($request->total, 2) }}
                                 </p>
-                                @if ($order->status === 'Pending')
-                                    <form action="{{ route('marketplace.admin.orders.cancel', $order->id) }}"
+                                @if ($request->status === 'Pending' && $request->approval_status === 'Pending Approval')
+                                    <form action="{{ route('marketplace.admin.orders.cancel', $request->id) }}"
                                         method="POST" class="inline"
-                                        onsubmit="return confirm('Are you sure you want to cancel procurement #{{ $order->id }}?');">
+                                        onsubmit="return confirm('Are you sure you want to cancel Request #{{ $request->id }}?');">
                                         @csrf
                                         <button type="submit"
                                             class="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-600 flex items-center">
-                                            <i class="fas fa-times mr-2"></i> Cancel Procurement
+                                            <i class="fas fa-times mr-2"></i> Cancel Request
                                         </button>
                                     </form>
                                 @endif
@@ -83,13 +90,14 @@
                     @endforeach
                 </div>
             @else
-                <!-- Empty Orders State -->
+                <!-- Empty Requests State -->
                 <div class="text-center py-16 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
-                    <i class="fas fa-box-open text-5xl text-gray-400 dark:text-gray-500 mb-4"></i>
-                    <p class="text-xl text-gray-700 dark:text-gray-300 font-medium">You have no orders yet.</p>
+                    <i class="fas fa-file-alt text-5xl text-gray-400 dark:text-gray-500 mb-4"></i>
+                    <p class="text-xl text-gray-700 dark:text-gray-300 font-medium">You have no procurement requests
+                        yet.</p>
                     <a href="{{ route('marketplace.admin.store') }}"
                         class="mt-6 inline-block bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600 shadow-md">
-                        <i class="fas fa-shopping-cart mr-2"></i> Start Shopping
+                        <i class="fas fa-shopping-cart mr-2"></i> Start Requesting
                     </a>
                 </div>
             @endif

@@ -14,8 +14,23 @@ class MarketPlaceAdminController extends Controller
     public function store()
     {
         $products = Product::with('vendor.user')->get();
-        $cartItems = Auth::check() ? Cart::where('user_id', Auth::id())->with('product')->get() : collect();
-        return view('marketplace.admin.store', compact('products', 'cartItems'));
+        $pendingApprovalCount = 0; // Default for non-Admins or unauthenticated users
+
+        if (Auth::check()) {
+            $user = Auth::user();
+            if ($user->role === 'Admin') {
+                // Admins see the count of all cart items and pending approval requests
+                $cartItems = Cart::with('product')->get();
+                $pendingApprovalCount = Order::where('approval_status', 'Pending Approval')->count();
+            } else {
+                // Staff (and others) see only their own cart items
+                $cartItems = Cart::where('user_id', Auth::id())->with('product')->get();
+            }
+        } else {
+            $cartItems = collect(); // Empty collection for unauthenticated users
+        }
+
+        return view('marketplace.admin.store', compact('products', 'cartItems', 'pendingApprovalCount'));
     }
 
     public function orders()
@@ -55,7 +70,16 @@ class MarketPlaceAdminController extends Controller
 
     public function cart()
     {
-        $cartItems = Cart::where('user_id', Auth::id())->with('product.vendor.user')->get();
+        $user = Auth::user();
+
+        if ($user->role === 'Admin') {
+            // Admins see all cart records
+            $cartItems = Cart::with('product.vendor.user', 'user')->get();
+        } else {
+            // Staff (and others) see only their own cart
+            $cartItems = Cart::where('user_id', Auth::id())->with('product.vendor.user')->get();
+        }
+
         return view('marketplace.admin.cart', compact('cartItems'));
     }
 
@@ -176,10 +200,14 @@ class MarketPlaceAdminController extends Controller
             return redirect()->route('marketplace.admin.cart');
         }
 
+        $user = Auth::user();
+        $approvalStatus = $user->role === 'Admin' ? 'Approved' : 'Pending Approval';
+        // dd($approvalStatus);
         $order = Order::create([
             'user_id' => Auth::id(),
             'total' => $cartItems->sum(fn($item) => $item->product->price * $item->quantity),
             'status' => 'Pending',
+            'approval_status' => $approvalStatus,
         ]);
 
         foreach ($cartItems->groupBy('product.vendor_id') as $vendorId => $items) {
@@ -206,7 +234,11 @@ class MarketPlaceAdminController extends Controller
         Cart::whereIn('id', $selectedIds)->delete();
 
         flash()->success('Procurement request submitted successfully!');
-        return redirect()->route('marketplace.admin.orders');
+        if ($user->role === 'Admin') {
+            return redirect()->route('marketplace.admin.orders');
+        } else {
+            return redirect()->route('marketplace.admin.staff_requests');
+        }
     }
 
     public function buyNow(Request $request)
@@ -240,7 +272,79 @@ class MarketPlaceAdminController extends Controller
             $product->decrement('stock', $quantity);
         }
 
-        flash()->success("Added {$product->name} to your procurement list!");
+        // flash()->success("Added {$product->name} to your procurement list!");
         return redirect()->route('marketplace.admin.cart', ['buy_product_id' => $product->id]);
+    }
+
+    // New method for Admin to view and manage approval requests
+    public function approvalRequests()
+    {
+        $orders = Order::where('approval_status', 'Pending Approval')
+            ->with('products.vendor.user', 'user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('marketplace.admin.approval_requests', compact('orders'));
+    }
+    public function approveOrder(Request $request, $orderId)
+    {
+        $order = Order::findOrFail($orderId);
+
+        if (Auth::user()->role !== 'Admin') {
+            flash()->error('Only Admins can approve procurement requests.');
+            return redirect()->route('marketplace.admin.orders');
+        }
+
+        if ($order->approval_status !== 'Pending Approval') {
+            flash()->error('This procurement request is not pending approval.');
+            return redirect()->route('marketplace.admin.approval_requests');
+        }
+
+        $order->update(['approval_status' => 'Approved']);
+        flash()->success("Procurement request #{$order->id} has been approved.");
+        return redirect()->route('marketplace.admin.approval_requests');
+    }
+
+    public function rejectOrder(Request $request, $orderId)
+    {
+        $order = Order::findOrFail($orderId);
+
+        if (Auth::user()->role !== 'Admin') {
+            flash()->error('Only Admins can reject procurement requests.');
+            return redirect()->route('marketplace.admin.orders');
+        }
+
+        if ($order->approval_status !== 'Pending Approval') {
+            flash()->error('This procurement request is not pending approval.');
+            return redirect()->route('marketplace.admin.approval_requests');
+        }
+
+        foreach ($order->products as $product) {
+            if ($product->type === 'items') {
+                $product->increment('stock', $product->pivot->quantity);
+            }
+        }
+
+        $order->update(['approval_status' => 'Rejected', 'status' => 'Canceled']);
+        $order->purchaseOrders()->update(['status' => 'Canceled']);
+
+        flash()->success("Procurement request #{$order->id} has been rejected.");
+        return redirect()->route('marketplace.admin.approval_requests');
+    }
+
+    public function staffRequests()
+    {
+        // Ensure only Staff can access this
+        if (Auth::user()->role !== 'Staff') {
+            flash()->error('Only Staff users can view their procurement requests.');
+            return redirect()->route('marketplace.admin.store');
+        }
+
+        $requests = Order::where('user_id', Auth::id())
+            ->with('products.vendor.user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('marketplace.admin.staff_requests', compact('requests'));
     }
 }

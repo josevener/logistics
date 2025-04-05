@@ -18,11 +18,22 @@
 
             <!-- Header -->
             <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Pending Procurements</h1>
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+                    @if (Auth::user()->role === 'Admin')
+                        All Pending Procurements
+                    @else
+                        My Pending Procurements
+                    @endif
+                </h1>
                 <div class="mt-4 sm:mt-0 flex items-center gap-4">
                     <a href="{{ route('marketplace.admin.store') }}"
                         class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition duration-200">
-                        <i class="fas fa-arrow-left mr-2"></i> View More Listings
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        @if (Auth::user()->role === 'Admin')
+                            Browse Listings
+                        @else
+                            Add More Items
+                        @endif
                     </a>
                     @if ($cartItems->isNotEmpty())
                         <label class="flex items-center text-gray-700 dark:text-gray-300">
@@ -67,6 +78,12 @@
                                                 class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
                                                 Product
                                             </th>
+                                            @if (Auth::user()->role === 'Admin')
+                                                <th
+                                                    class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
+                                                    Requested By
+                                                </th>
+                                            @endif
                                             <th
                                                 class="px-4 py-3 sm:px-6 text-xs font-medium text-gray-500 uppercase dark:text-gray-300">
                                                 Price
@@ -100,6 +117,11 @@
                                                     class="px-4 py-4 sm:px-6 text-gray-900 dark:text-gray-100 truncate max-w-xs">
                                                     {{ $item->product->name }}
                                                 </td>
+                                                @if (Auth::user()->role === 'Admin')
+                                                    <td class="px-4 py-4 sm:px-6 text-gray-700 dark:text-gray-300">
+                                                        {{ $item->user->name }}
+                                                    </td>
+                                                @endif
                                                 <td class="px-4 py-4 sm:px-6 text-gray-700 dark:text-gray-300">
                                                     ₱{{ number_format($item->product->price, 2) }}
                                                 </td>
@@ -122,12 +144,18 @@
                                                 <td class="px-4 py-4 sm:px-6">
                                                     <form action="{{ route('marketplace.admin.cart.remove') }}"
                                                         method="POST" class="inline"
-                                                        onsubmit="return confirm('Remove {{ $item->product->name }} from your procurement list?');">
+                                                        onsubmit="return confirm('Remove {{ $item->product->name }} from the procurement list?');">
                                                         @csrf
                                                         <input type="hidden" name="product_id"
                                                             value="{{ $item->product_id }}">
                                                         <button type="submit"
-                                                            class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-500">Remove</button>
+                                                            class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-500">
+                                                            @if (Auth::user()->role === 'Admin')
+                                                                Cancel Item
+                                                            @else
+                                                                Discard Item
+                                                            @endif
+                                                        </button>
                                                     </form>
                                                 </td>
                                             </tr>
@@ -155,11 +183,19 @@
                         <div class="flex gap-4">
                             <button type="button" onclick="removeSelected()"
                                 class="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-600">
-                                Remove Selection
+                                @if (Auth::user()->role === 'Admin')
+                                    Cancel Selected
+                                @else
+                                    Discard Selected
+                                @endif
                             </button>
                             <button type="submit"
                                 class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-green-500 dark:hover:bg-green-600">
-                                Proceed with Selection
+                                @if (Auth::user()->role === 'Admin')
+                                    Finalize Procurement
+                                @else
+                                    Submit Request
+                                @endif
                             </button>
                         </div>
                     </div>
@@ -168,10 +204,20 @@
                 <!-- Empty Cart State -->
                 <div class="text-center py-12">
                     <i class="fas fa-shopping-cart text-4xl text-gray-400 dark:text-gray-500 mb-4"></i>
-                    <p class="text-lg text-gray-700 dark:text-gray-300">No items yet. Browse and add some!</p>
+                    <p class="text-lg text-gray-700 dark:text-gray-300">
+                        @if (Auth::user()->role === 'Admin')
+                            No pending procurements from any users yet.
+                        @else
+                            No items in your procurement list yet. Browse and add some!
+                        @endif
+                    </p>
                     <a href="{{ route('marketplace.admin.store') }}"
                         class="mt-4 inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600">
-                        Proceed to Listings
+                        @if (Auth::user()->role === 'Admin')
+                            Explore Listings
+                        @else
+                            Start Requesting
+                        @endif
                     </a>
                 </div>
             @endif
@@ -246,7 +292,7 @@
                 return;
             }
 
-            if (!confirm(`Remove ${selectedItems.length} selected item(s) from your procurement list?`)) return;
+            if (!confirm(`Remove ${selectedItems.length} selected item(s) from the procurement list?`)) return;
 
             const response = await fetch('{{ route('marketplace.admin.cart.remove-selected') }}', {
                 method: 'POST',

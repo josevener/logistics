@@ -20,6 +20,8 @@ class DashboardController extends Controller
             return $this->vendor();
         } elseif (Auth::user()->role === 'Driver') {
             return redirect()->route('maintenance.index');
+        } elseif (Auth::user()->role === 'Staff') {
+            return redirect()->route('marketplace.admin.store');
         }
         return view('welcome');
     }

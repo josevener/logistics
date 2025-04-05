@@ -7,14 +7,25 @@
             <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
                 <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white"></h2>
                 <div class="mt-4 sm:mt-0 flex items-center gap-4">
-                    <a href="{{ route('marketplace.admin.orders') }}"
-                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition duration-200 flex items-center">
-                        <i class="fas fa-list mr-2"></i> Procured Services/Items
-                    </a>
+                    @if (Auth::user()->role === 'Admin')
+                        <a href="{{ route('marketplace.admin.orders') }}"
+                            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition duration-200 flex items-center">
+                            <i class="fas fa-list mr-2"></i> View All Orders
+                        </a>
+                        <a href="{{ route('marketplace.admin.approval_requests') }}"
+                            class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 transition duration-200 focus:outline-none focus:ring-2 flex items-center">
+                            <i class="fas fa-check-circle mr-2"></i> Review Requests ({{ $pendingApprovalCount }})
+                        </a>
+                    @elseif (Auth::user()->role === 'Staff')
+                        <a href="{{ route('marketplace.admin.staff_requests') }}"
+                            class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition duration-200 focus:outline-none focus:ring-2 flex items-center">
+                            <i class="fas fa-file-alt mr-2"></i> Track My Requests
+                        </a>
+                    @endif
                     <a href="{{ route('marketplace.admin.cart') }}"
-                        class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center">
+                        class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 flex items-center">
                         <i class="fas fa-shopping-cart mr-2 text-white dark:text-gray-400"></i>
-                        {{ $cartItems->count() }}
+                        View Cart ({{ $cartItems->count() }})
                     </a>
                 </div>
             </div>
@@ -78,20 +89,21 @@
                                         <i class="fas fa-ban mr-2"></i> Out of Stock
                                     </span>
                                 @else
-                                    {{-- <button type="button" id="open-add-to-cart-{{ $product->id }}"
-                                        class="flex-1 bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center justify-center"
-                                        title="Add to Cart">
-                                        <i class="fas fa-cart-plus mr-1"></i> <span class="text-sm">Cart</span>
-                                    </button> --}}
                                     <form action="{{ route('marketplace.admin.cart.buy') }}" method="POST"
                                         class="flex-1">
                                         @csrf
                                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                                         <button type="submit"
                                             class="w-full bg-green-600 text-white p-2 rounded-md hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-green-500 dark:hover:bg-green-600 flex items-center justify-center"
-                                            title="Buy">
-                                            <i class="fas fa-shopping-bag mr-1"></i> <span
-                                                class="text-sm">{{ $product->type == 'service' ? 'Avail service' : 'Buy Items/Products' }}</span>
+                                            title="{{ Auth::user()->role === 'Staff' ? 'Request Item/Service' : 'Purchase Item/Service' }}">
+                                            <i class="fas fa-shopping-bag mr-1"></i>
+                                            <span class="text-sm">
+                                                @if (Auth::user()->role === 'Staff')
+                                                    {{ $product->type === 'service' ? 'Request Service' : 'Request Item' }}
+                                                @else
+                                                    {{ $product->type === 'service' ? 'Purchase Service' : 'Purchase Item' }}
+                                                @endif
+                                            </span>
                                         </button>
                                     </form>
                                 @endif
@@ -102,9 +114,9 @@
                     <div class="col-span-full text-center py-10">
                         <i class="fas fa-box-open text-4xl text-gray-400 dark:text-gray-500 mb-4"></i>
                         <p class="text-lg text-gray-700 dark:text-gray-300">No products available.</p>
-                        <a href="#"
+                        <a href="{{ route('marketplace.admin.store') }}"
                             class="mt-4 inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600">
-                            Refresh
+                            Reload Listings
                         </a>
                     </div>
                 @endforelse
@@ -117,7 +129,8 @@
                         class="flex items-center justify-center">
                         <div class="p-6 bg-white rounded-lg dark:bg-gray-800 w-full max-w-md">
                             <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
-                                <i class="fas fa-cart-plus mr-2"></i> Add {{ $product->name }} to Cart
+                                <i class="fas fa-cart-plus mr-2"></i>
+                                {{ Auth::user()->role === 'Staff' ? 'Request ' : 'Add ' }}{{ $product->name }} to Cart
                             </h2>
                             <form action="{{ route('marketplace.admin.cart.add') }}" method="POST" class="space-y-6">
                                 @csrf
@@ -188,11 +201,12 @@
                                 <div class="flex justify-end gap-3">
                                     <button type="button" id="close-add-to-cart-{{ $product->id }}"
                                         class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500 transition duration-200 focus:outline-none focus:ring-2 focus:ring-gray-400">
-                                        Cancel
+                                        Discard
                                     </button>
                                     <button type="submit"
                                         class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center">
-                                        <i class="fas fa-cart-plus mr-2"></i> Add to Cart
+                                        <i class="fas fa-cart-plus mr-2"></i>
+                                        {{ Auth::user()->role === 'Staff' ? 'Submit Request' : 'Add to Cart' }}
                                     </button>
                                 </div>
                             </form>
@@ -240,29 +254,10 @@
             typeFilter.addEventListener('change', filterAndSortProducts);
             priceFilter.addEventListener('change', filterAndSortProducts);
 
-            // Modal Handling
-            @foreach ($products as $product)
-                @if (!($product->type === 'items' && $product->stock <= 0))
-                    const openAddToCart{{ $product->id }} = document.getElementById(
-                        'open-add-to-cart-{{ $product->id }}');
-                    const closeAddToCart{{ $product->id }} = document.getElementById(
-                        'close-add-to-cart-{{ $product->id }}');
-                    if (openAddToCart{{ $product->id }}) {
-                        openAddToCart{{ $product->id }}.addEventListener('click', () => {
-                            window.dispatchEvent(new CustomEvent('open-modal', {
-                                detail: 'add-to-cart-modal-{{ $product->id }}'
-                            }));
-                        });
-                    }
-                    if (closeAddToCart{{ $product->id }}) {
-                        closeAddToCart{{ $product->id }}.addEventListener('click', () => {
-                            window.dispatchEvent(new CustomEvent('close-modal', {
-                                detail: 'add-to-cart-modal-{{ $product->id }}'
-                            }));
-                        });
-                    }
-                @endif
-            @endforeach
+            // Modal Handling (Commented out since "Add to Cart" button is not present)
+            /*
+            // Modal Handling logic can be implemented here if needed.
+            */
         });
 
         function adjustQuantity(inputId, change) {

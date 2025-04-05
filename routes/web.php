@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ComplianceController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\VehicleInventoryController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\VendorProductController;
@@ -72,6 +74,11 @@ Route::prefix('procurement')->middleware('auth')->group(function () {
     Route::post('/admin/cart/update', [MarketPlaceAdminController::class, 'updateQuantity'])->name('marketplace.admin.cart.update');
     Route::get('/admin/orders', [MarketPlaceAdminController::class, 'orders'])->name('marketplace.admin.orders');
     Route::post('/admin/orders/{order}/cancel', [MarketPlaceAdminController::class, 'cancelOrder'])->name('marketplace.admin.orders.cancel');
+    Route::get('/admin/procurement-requests', [MarketPlaceAdminController::class, 'approvalRequests'])->name('marketplace.admin.approval_requests');
+    Route::post('admin/orders/{orderId}/approve', [MarketPlaceAdminController::class, 'approveOrder'])->name('marketplace.admin.orders.approve');
+    Route::post('admin/orders/{orderId}/reject', [MarketPlaceAdminController::class, 'rejectOrder'])->name('marketplace.admin.orders.reject');
+
+    Route::get('/staff-requests', [MarketPlaceAdminController::class, 'staffRequests'])->name('marketplace.admin.staff_requests');
 
     // Vendor Routes
     Route::get('/vendor', [MarketPlaceVendorController::class, 'index'])->name('marketplace.vendor.index');
@@ -124,6 +131,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/proposals/{id}/approve', [ProposalController::class, 'approve'])->name('proposals.approve');
     Route::post('/proposals/{id}/decline', [ProposalController::class, 'decline'])->name('proposals.decline');
     Route::get('/proposals/generate', [ProposalController::class, 'generateCustomContract'])->name('proposals.generate');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/usermanagement', [UserManagementController::class, 'index'])->name('usermanagement.index');
+    Route::get('/usermanagement/create', [UserManagementController::class, 'create'])->name('usermanagement.create');
+    Route::post('/usermanagement', [UserManagementController::class, 'store'])->name('usermanagement.store');
+    Route::get('/usermanagement/{user}', [UserManagementController::class, 'show'])->name('usermanagement.show');
+    Route::get('/usermanagement/{user}/edit', [UserManagementController::class, 'edit'])->name('usermanagement.edit');
+    Route::put('/usermanagement/{user}', [UserManagementController::class, 'update'])->name('usermanagement.update');
+    Route::delete('/usermanagement/{user}', [UserManagementController::class, 'destroy'])->name('usermanagement.destroy');
 });
 
 Route::middleware('auth')->group(function () {

@@ -3,7 +3,7 @@
         <div class="max-w-7xl mx-auto">
             <!-- Header -->
             <div class="flex flex-col sm:flex-row justify-between items-center mb-6">
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">My Purchase Orders</h1>
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">My Procured Services/Items</h1>
                 <a href="{{ route('marketplace.vendor.index') }}"
                     class="mt-4 sm:mt-0 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center">
                     <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
