@@ -148,6 +148,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/upload_file', [ComplianceController::class, 'upload'])->name('vendor_compliance.upload');
     Route::get('/submissions', [ComplianceController::class, 'list'])->name('vendor_compliance.list');
     Route::get('/vendor_compliance/list', [ComplianceController::class, 'list'])->name('vendor_compliance.list');
+
+    Route::get('/staff/compliance', [ComplianceController::class, 'secretary'])->name('compliance.secretary');
 });
 
 require __DIR__ . '/auth.php';

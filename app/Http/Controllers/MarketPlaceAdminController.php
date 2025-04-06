@@ -272,20 +272,26 @@ class MarketPlaceAdminController extends Controller
             $product->decrement('stock', $quantity);
         }
 
-        // flash()->success("Added {$product->name} to your procurement list!");
-        return redirect()->route('marketplace.admin.cart', ['buy_product_id' => $product->id]);
+        if (Auth::user()->role === 'Admin') {
+            return redirect()->route('marketplace.admin.cart', ['buy_product_id' => $product->id]);
+        } else {
+            flash()->success("Added $quantity x {$product->name} to your procurement list!");
+            return redirect()->route('marketplace.admin.store');
+        }
     }
 
     // New method for Admin to view and manage approval requests
     public function approvalRequests()
     {
         $orders = Order::where('approval_status', 'Pending Approval')
+            ->whereNot('status', 'Canceled') // Exclude orders with status "Canceled"
             ->with('products.vendor.user', 'user')
             ->orderBy('created_at', 'desc')
             ->get();
 
         return view('marketplace.admin.approval_requests', compact('orders'));
     }
+
     public function approveOrder(Request $request, $orderId)
     {
         $order = Order::findOrFail($orderId);

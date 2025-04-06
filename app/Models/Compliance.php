@@ -28,4 +28,9 @@ class Compliance extends Model
     {
         return $this->hasMany(ComplianceDocument::class, 'vendor_compliance_id');
     }
+
+    public function vendor()
+    {
+        return $this->belongsTo(Vendor::class, 'vendor_id');
+    }
 }

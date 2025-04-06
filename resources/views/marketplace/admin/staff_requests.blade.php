@@ -24,16 +24,20 @@
                                     Request #{{ $request->id }} - {{ $request->created_at->format('M d, Y H:i') }}
                                 </h2>
                                 <div class="flex gap-2">
-                                    <span
-                                        class="px-3 py-1 rounded-full text-sm font-medium text-white
+                                    @if ($request->status === 'Canceled')
+                                        <span
+                                            class="px-3 py-1 rounded-full text-sm font-medium text-white
                                         {{ $request->status === 'Pending' ? 'bg-yellow-500' : ($request->status === 'Canceled' ? 'bg-red-500' : 'bg-green-500') }}">
-                                        {{ $request->status }}
-                                    </span>
-                                    <span
-                                        class="px-3 py-1 rounded-full text-sm font-medium text-white
+                                            {{ $request->status }}
+                                        </span>
+                                    @endif
+                                    @if ($request->status !== 'Canceled')
+                                        <span
+                                            class="px-3 py-1 rounded-full text-sm font-medium text-white
                                         {{ $request->approval_status === 'Pending Approval' ? 'bg-yellow-700' : ($request->approval_status === 'Rejected' ? 'bg-red-700' : 'bg-green-700') }}">
-                                        {{ $request->approval_status }}
-                                    </span>
+                                            {{ $request->approval_status }}
+                                        </span>
+                                    @endif
                                 </div>
                             </div>
                             <div class="overflow-x-auto">

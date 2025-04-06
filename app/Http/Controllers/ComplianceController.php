@@ -69,7 +69,6 @@ class ComplianceController extends Controller
         }
     }
 
-
     public function list()
     {
         // Fetch compliance records with all related documents
@@ -77,45 +76,20 @@ class ComplianceController extends Controller
         return response()->json($compliances);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function secretary()
     {
-        //
+        // Ensure only staff can access this
+        if (Auth::user()->role !== 'Staff') {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Fetch all compliance records with their documents and vendor details
+        $compliances = Compliance::with(['documents', 'vendor'])->latest()->get();
+
+        return view('compliance.secretary', compact('compliances'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Compliance $compliance)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Compliance $compliance)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Compliance $compliance)
-    {
-        //
-    }
 
     /**
      * Remove the specified resource from storage.
